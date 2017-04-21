@@ -7,9 +7,9 @@
     "lint": "standard",
     "pretest": "npm run lint",
     "posttest": "npm run coverage",
-    "test:local": "node --harmony-async-await ./node_modules/.bin/japa",
+    "test:local": "node ./node_modules/.bin/japa",
     "test": "./node_modules/.bin/nyc npm run test:local",
-    "test:win": "node --harmony-async-await ./node_modules/japa-cli/index.js",
+    "test:win": "node ./node_modules/japa-cli/index.js",
     "coverage": "nyc report --reporter=text-lcov | coveralls"
   },
   "keywords": [
@@ -20,9 +20,12 @@
   "author": "adonisjs, amanvirk",
   "license": "MIT",
   "devDependencies": {
+    "coveralls": "^2.13.0",
     "cz-conventional-changelog": "^2.0.0",
     "japa": "^1.0.3",
-    "japa-cli": "^1.0.1"
+    "japa-cli": "^1.0.1",
+    "nyc": "^10.2.0",
+    "standard": "^10.0.2"
   },
   "dependencies": {
     "lodash": "^4.17.4"
