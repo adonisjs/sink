@@ -25,7 +25,7 @@ const setupResolver = function (directories, appNamespace = 'App') {
     commands: 'Commands'
   }
 
-  const { resolver } = require('resolver')
+  const { resolver } = require('adonis-fold')
   resolver.directories(_.merge(defaultDirectories, directories))
   resolver.appNamespace(appNamespace)
 }
