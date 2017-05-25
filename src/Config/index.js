@@ -71,7 +71,7 @@ class Config {
    */
   merge (key, defaultValues) {
     const value = _.get(this._config, key, {})
-    return _.merge(defaultValues, value)
+    return _.mergeWith(defaultValues, value, (base, value) => typeof (value) === 'undefined' ? base : value)
   }
 
   /**
