@@ -107,7 +107,12 @@ test.group('Config', () => {
         host: '127.0.0.1',
         port: 3306
       }
+    }, (obj, src, key) => {
+      if (key === 'connection') {
+        return src
+      }
     })
+
     assert.deepEqual(database, {
       client: 'mysql',
       connection: {}
