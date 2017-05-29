@@ -1,3 +1,15 @@
+<a name="1.0.3"></a>
+## [1.0.3](https://github.com/adonisjs/adonis-sink/compare/v1.0.2...v1.0.3) (2017-05-29)
+
+
+### Features
+
+* **config:** allow customizer for config.merge ([c7ebade](https://github.com/adonisjs/adonis-sink/commit/c7ebade))
+* **config:** merge method give priority to user fields ([feb4e40](https://github.com/adonisjs/adonis-sink/commit/feb4e40))
+* **env:** add env provider ([2582754](https://github.com/adonisjs/adonis-sink/commit/2582754))
+
+
+
 <a name="1.0.2"></a>
 ## [1.0.2](https://github.com/adonisjs/adonis-sink/compare/v1.0.1...v1.0.2) (2017-04-28)
 
