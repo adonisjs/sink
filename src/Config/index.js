@@ -66,12 +66,13 @@ class Config {
    *
    * @param  {String} key
    * @param  {Object} defaultValues
+   * @param  {Function} [customizer]
    *
    * @return {Object}
    */
-  merge (key, defaultValues) {
+  merge (key, defaultValues, customizer) {
     const value = _.get(this._config, key, {})
-    return _.merge(defaultValues, value)
+    return _.mergeWith(defaultValues, value, customizer)
   }
 
   /**

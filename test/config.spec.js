@@ -93,4 +93,29 @@ test.group('Config', () => {
       }
     })
   })
+
+  test('merge empty sets with user values', (assert) => {
+    const config = new Config()
+    config.set('database', {
+      client: 'mysql',
+      connection: {}
+    })
+
+    const database = config.merge('database', {
+      client: 'foo',
+      connection: {
+        host: '127.0.0.1',
+        port: 3306
+      }
+    }, (obj, src, key) => {
+      if (key === 'connection') {
+        return src
+      }
+    })
+
+    assert.deepEqual(database, {
+      client: 'mysql',
+      connection: {}
+    })
+  })
 })

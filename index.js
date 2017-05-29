@@ -13,6 +13,7 @@ const _ = require('lodash')
 const Config = require('./src/Config')
 const Helpers = require('./src/Helpers')
 const Logger = require('./src/Logger')
+const Env = require('./src/Env')
 
 const setupResolver = function (directories, appNamespace = 'App') {
   const defaultDirectories = {
@@ -30,4 +31,4 @@ const setupResolver = function (directories, appNamespace = 'App') {
   resolver.appNamespace(appNamespace)
 }
 
-module.exports = { Config, Helpers, Logger, setupResolver }
+module.exports = { Config, Helpers, Logger, setupResolver, Env }

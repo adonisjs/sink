@@ -18,7 +18,6 @@ const path = require('path')
  * @module Adonis
  * @submodule sink
  */
-
 class Helpers {
   constructor (appRoot) {
     this._appRoot = appRoot
