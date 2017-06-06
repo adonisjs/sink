@@ -10,6 +10,7 @@
 */
 
 const path = require('path')
+const pify = require('pify')
 
 /**
  * The Adonis framework is the core module containing all the required
@@ -165,6 +166,20 @@ class Helpers {
    */
   tmpPath (toFile = '') {
     return path.join(this._appRoot, '/tmp', toFile)
+  }
+
+  /**
+   * Promisify callback style functions
+   *
+   * @method promisify
+   *
+   * @param  {Function} fn
+   * @param  {Object}   options
+   *
+   * @return {Promise}
+   */
+  promisify (fn, options) {
+    return pify(fn, options)
   }
 }
 
