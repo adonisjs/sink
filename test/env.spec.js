@@ -21,6 +21,7 @@ test.group('Env', () => {
 
   test('get value for a given key from process.env', (assert) => {
     const env = new Env()
+    process.env.PWD = process.cwd()
     assert.equal(env.get('PWD'), process.cwd())
   })
 
