@@ -23,7 +23,8 @@ const setupResolver = function (directories, appNamespace = 'App') {
     listeners: 'Listeners',
     exceptions: 'Exceptions',
     middleware: 'Middleware',
-    commands: 'Commands'
+    commands: 'Commands',
+    exceptionHandlers: 'Exceptions/Handlers'
   }
 
   const { resolver } = require('adonis-fold')
