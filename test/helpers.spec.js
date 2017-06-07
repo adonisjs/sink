@@ -76,8 +76,8 @@ test.group('Helpers', (group) => {
     assert.equal(this.helpers.tmpPath('logs.txt'), path.join(__dirname, './tmp/logs.txt'))
   })
 
-  test('promisify callback style functions', async (assert) => {
+  test('promisify callback style functions', (assert) => {
     const readFile = this.helpers.promisify(fs.readFile)
-    await readFile(path.join(__dirname, '../package.json'))
+    return readFile(path.join(__dirname, '../package.json'))
   })
 })
