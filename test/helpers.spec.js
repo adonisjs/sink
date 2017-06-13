@@ -11,6 +11,7 @@
 
 const test = require('japa')
 const path = require('path')
+const fs = require('fs')
 
 const Helpers = require('../src/Helpers')
 
@@ -73,5 +74,10 @@ test.group('Helpers', (group) => {
 
   test('return path to a file inside tmp dir', (assert) => {
     assert.equal(this.helpers.tmpPath('logs.txt'), path.join(__dirname, './tmp/logs.txt'))
+  })
+
+  test('promisify callback style functions', (assert) => {
+    const readFile = this.helpers.promisify(fs.readFile)
+    return readFile(path.join(__dirname, '../package.json'))
   })
 })
