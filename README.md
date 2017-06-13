@@ -1,5 +1,7 @@
 # Adonis Sink
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/adonisjs/adonis-sink.svg)](https://greenkeeper.io/)
+
 Adonis sink contains fake implementations for commonly used AdonisJs providers. You can use this package to write tests for your own providers.
 
 [![NPM Version][npm-image]][npm-url]
