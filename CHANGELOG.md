@@ -1,3 +1,15 @@
+<a name="1.0.4"></a>
+## [1.0.4](https://github.com/adonisjs/adonis-sink/compare/v1.0.3...v1.0.4) (2017-06-13)
+
+
+### Features
+
+* **helpers:** add appRoot and isAceCommand methods ([bed1fbd](https://github.com/adonisjs/adonis-sink/commit/bed1fbd))
+* **helpers:** add promisify method ([f6f7fb2](https://github.com/adonisjs/adonis-sink/commit/f6f7fb2))
+* **resolver:** add exceptions handler dir ([9ff3b0c](https://github.com/adonisjs/adonis-sink/commit/9ff3b0c))
+
+
+
 <a name="1.0.3"></a>
 ## [1.0.3](https://github.com/adonisjs/adonis-sink/compare/v1.0.2...v1.0.3) (2017-05-29)
 
