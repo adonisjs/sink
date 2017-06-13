@@ -2,12 +2,20 @@
 
 Adonis sink contains fake implementations for commonly used AdonisJs providers. You can use this package to write tests for your own providers.
 
+[![NPM Version][npm-image]][npm-url]
+[![Build Status][travis-image]][travis-url]
+[![Appveyor][appveyor-image]][appveyor-url]
+[![Coveralls][coveralls-image]][coveralls-url]
+
+<img src="http://res.cloudinary.com/adonisjs/image/upload/q_100/v1497112678/adonis-purple_pzkmzt.svg" width="200px" align="right" hspace="30px" vspace="30px">
+
 It contains fake implmentations for
 
 1. Config provider
 2. Helpers provider
 3. Logger provider
-4. Setup `adonis-fold` resolver.
+4. Env provider
+5. Setup `adonis-fold` resolver.
 
 ## Config provider
 If your provider has a dependency on **Config provider**, you must use a fake implementation to write tests.
@@ -107,6 +115,18 @@ this.logger.debug('user profile %j', { name: 'virk' })
 this.logger.contains('user profile')
 ```
 
+## Env Provider
+
+Also env provider can be used to read environment variables. The fake implementation doesn't load any `.env` file, whereas you can set values manually before writing tests.
+
+```js
+const { Env } = require('adonis-sink')
+
+const env = new Env()
+
+env.set('HOST', '127.0.0.1')
+```
+
 ## Resolver Setup
 
 The `resolver` is an object to make namespaces and resolve values for a given namespace based upon the directory structure and autoloaded namespace.
@@ -131,3 +151,17 @@ resolver.for('httpControllers').resolveFunc('HomeController.render')
 
 // returns { instance: HomeController, isClosure: false, method: render }
 ```
+
+[appveyor-image]: https://img.shields.io/appveyor/ci/thetutlage/adonis-sink/master.svg?style=flat-square
+
+[appveyor-url]: https://ci.appveyor.com/project/thetutlage/adonis-sink
+
+[npm-image]: https://img.shields.io/npm/v/adonis-sink.svg?style=flat-square
+[npm-url]: https://npmjs.org/package/adonis-sink
+
+[travis-image]: https://img.shields.io/travis/adonisjs/adonis-sink/master.svg?style=flat-square
+[travis-url]: https://travis-ci.org/adonisjs/adonis-sink
+
+[coveralls-image]: https://img.shields.io/coveralls/adonisjs/adonis-sink/develop.svg?style=flat-square
+
+[coveralls-url]: https://coveralls.io/github/adonisjs/adonis-sink
