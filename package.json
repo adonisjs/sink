@@ -24,7 +24,7 @@
     "cz-conventional-changelog": "^2.0.0",
     "japa": "^1.0.3",
     "japa-cli": "^1.0.1",
-    "nyc": "^10.2.0",
+    "nyc": "^11.0.0",
     "standard": "^10.0.2"
   },
   "dependencies": {
