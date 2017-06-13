@@ -13,15 +13,26 @@ const path = require('path')
 const pify = require('pify')
 
 /**
- * The Adonis framework is the core module containing all the required
- * classes to run an HTTP server.
+ * This class returns absolute path to commonly
+ * used AdonisJs directories.
  *
- * @module Adonis
- * @submodule sink
+ * @class Helpers
+ * @constructor
  */
 class Helpers {
   constructor (appRoot) {
     this._appRoot = appRoot
+  }
+
+  /**
+   * Returns path to the application root
+   *
+   * @method appRoot
+   *
+   * @return {String}
+   */
+  appRoot () {
+    return this._appRoot
   }
 
   /**
@@ -180,6 +191,19 @@ class Helpers {
    */
   promisify (fn, options) {
     return pify(fn, options)
+  }
+
+  /**
+   * Tells whether the process has been started by
+   * ace command.
+   *
+   * @method isAceCommand
+   *
+   * @return {Boolean}
+   */
+  isAceCommand () {
+    const processFile = process.mainModule.filename
+    return processFile.endsWith('ace')
   }
 }
 
