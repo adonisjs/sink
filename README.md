@@ -5,7 +5,6 @@ Adonis sink contains fake implementations for commonly used AdonisJs providers. 
 [![NPM Version][npm-image]][npm-url]
 [![Build Status][travis-image]][travis-url]
 [![Appveyor][appveyor-image]][appveyor-url]
-[![Coveralls][coveralls-image]][coveralls-url]
 
 <img src="http://res.cloudinary.com/adonisjs/image/upload/q_100/v1497112678/adonis-purple_pzkmzt.svg" width="200px" align="right" hspace="30px" vspace="30px">
 
@@ -161,7 +160,3 @@ resolver.for('httpControllers').resolveFunc('HomeController.render')
 
 [travis-image]: https://img.shields.io/travis/adonisjs/adonis-sink/master.svg?style=flat-square
 [travis-url]: https://travis-ci.org/adonisjs/adonis-sink
-
-[coveralls-image]: https://img.shields.io/coveralls/adonisjs/adonis-sink/develop.svg?style=flat-square
-
-[coveralls-url]: https://coveralls.io/github/adonisjs/adonis-sink
