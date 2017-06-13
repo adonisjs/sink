@@ -8,7 +8,7 @@
     "pretest": "npm run lint",
     "posttest": "npm run coverage",
     "test:local": "node ./node_modules/.bin/japa",
-    "test": "./node_modules/.bin/nyc npm run test:local",
+    "test": "nyc npm run test:local",
     "test:win": "node ./node_modules/japa-cli/index.js",
     "coverage": "nyc report --reporter=text-lcov | coveralls"
   },
@@ -34,5 +34,16 @@
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
     }
-  }
+  },
+  "directories": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/adonisjs/adonis-sink.git"
+  },
+  "bugs": {
+    "url": "https://github.com/adonisjs/adonis-sink/issues"
+  },
+  "homepage": "https://github.com/adonisjs/adonis-sink#readme"
 }
