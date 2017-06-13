@@ -1,6 +1,6 @@
 {
   "name": "adonis-sink",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Development kitchen sink for writing adonisjs providers",
   "main": "index.js",
   "scripts": {
