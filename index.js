@@ -27,7 +27,7 @@ const setupResolver = function (directories, appNamespace = 'App') {
     exceptionHandlers: 'Exceptions/Handlers'
   }
 
-  const { resolver } = require('adonis-fold')
+  const { resolver } = require('@adonisjs/fold')
   resolver.directories(_.merge(defaultDirectories, directories))
   resolver.appNamespace(appNamespace)
 }
