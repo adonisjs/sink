@@ -1,16 +1,14 @@
 {
   "name": "adonis-sink",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Development kitchen sink for writing adonisjs providers",
   "main": "index.js",
   "scripts": {
     "lint": "standard",
     "pretest": "npm run lint",
-    "posttest": "npm run coverage",
     "test:local": "node ./node_modules/.bin/japa",
-    "test": "./node_modules/.bin/nyc npm run test:local",
-    "test:win": "node ./node_modules/japa-cli/index.js",
-    "coverage": "nyc report --reporter=text-lcov | coveralls"
+    "test": "nyc npm run test:local",
+    "test:win": "node ./node_modules/japa-cli/index.js"
   },
   "keywords": [
     "adonisjs",
@@ -20,11 +18,9 @@
   "author": "adonisjs, amanvirk",
   "license": "MIT",
   "devDependencies": {
-    "coveralls": "^2.13.0",
     "cz-conventional-changelog": "^2.0.0",
     "japa": "^1.0.3",
     "japa-cli": "^1.0.1",
-    "nyc": "^10.2.0",
     "standard": "^10.0.2"
   },
   "dependencies": {
@@ -34,5 +30,16 @@
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
     }
-  }
+  },
+  "directories": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/adonisjs/adonis-sink.git"
+  },
+  "bugs": {
+    "url": "https://github.com/adonisjs/adonis-sink/issues"
+  },
+  "homepage": "https://github.com/adonisjs/adonis-sink#readme"
 }
