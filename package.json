@@ -7,7 +7,7 @@
     "lint": "standard",
     "pretest": "npm run lint",
     "test:local": "node ./node_modules/.bin/japa",
-    "test": "nyc npm run test:local",
+    "test": "npm run test:local",
     "test:win": "node ./node_modules/japa-cli/index.js"
   },
   "keywords": [
