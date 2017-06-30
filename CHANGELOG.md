@@ -1,3 +1,13 @@
+<a name="1.0.9"></a>
+## [1.0.9](https://github.com/adonisjs/adonis-sink/compare/v1.0.8...v1.0.9) (2017-06-30)
+
+
+### Features
+
+* **resolver:** add models specific dirs to setupResolver ([0ed6d0e](https://github.com/adonisjs/adonis-sink/commit/0ed6d0e))
+
+
+
 <a name="1.0.8"></a>
 ## [1.0.8](https://github.com/adonisjs/adonis-sink/compare/v1.0.7...v1.0.8) (2017-06-13)
 
