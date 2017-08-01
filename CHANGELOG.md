@@ -1,3 +1,13 @@
+<a name="1.0.10"></a>
+## [1.0.10](https://github.com/adonisjs/adonis-sink/compare/v1.0.9...v1.0.10) (2017-08-01)
+
+
+### Bug Fixes
+
+* **logger:** rename warn to warning ([4106d54](https://github.com/adonisjs/adonis-sink/commit/4106d54))
+
+
+
 <a name="1.0.9"></a>
 ## [1.0.9](https://github.com/adonisjs/adonis-sink/compare/v1.0.8...v1.0.9) (2017-06-30)
 
