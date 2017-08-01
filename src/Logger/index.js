@@ -85,14 +85,14 @@ class Logger {
   /**
    * Log warning message.
    *
-   * @method warn
+   * @method warning
    *
    * @param  {String}    message
    * @param  {...Spread} args
    *
    * @return {void}
    */
-  warn (message, ...args) {
+  warning (message, ...args) {
     this._lines.warn.push(util.format(message, ...args))
   }
 
