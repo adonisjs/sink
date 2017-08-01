@@ -28,12 +28,12 @@ test.group('Logger', (group) => {
   })
 
   test('find if a message was logged', (assert) => {
-    this.logger.warn('hello %s', 'world')
+    this.logger.warning('hello %s', 'world')
     assert.isTrue(this.logger.has('warn', 'hello world'))
   })
 
   test('return false when message was not logged', (assert) => {
-    this.logger.warn('hello %s', 'world')
+    this.logger.warning('hello %s', 'world')
     assert.isFalse(this.logger.has('error', 'hello world'))
   })
 
