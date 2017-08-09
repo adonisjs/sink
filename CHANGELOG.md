@@ -1,3 +1,13 @@
+<a name="1.0.12"></a>
+## [1.0.12](https://github.com/adonisjs/adonis-sink/compare/v1.0.11...v1.0.12) (2017-08-09)
+
+
+### Bug Fixes
+
+* **config:** merge method should not mutate defaults object ([025855e](https://github.com/adonisjs/adonis-sink/commit/025855e))
+
+
+
 <a name="1.0.11"></a>
 ## [1.0.11](https://github.com/adonisjs/adonis-sink/compare/v1.0.10...v1.0.11) (2017-08-01)
 
