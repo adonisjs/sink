@@ -72,7 +72,7 @@ class Config {
    */
   merge (key, defaultValues, customizer) {
     const value = _.get(this._config, key, {})
-    return _.mergeWith(defaultValues, value, customizer)
+    return _.mergeWith({}, defaultValues, value, customizer)
   }
 
   /**
