@@ -26,7 +26,8 @@ const setupResolver = function (directories, appNamespace = 'App') {
     commands: 'Commands',
     exceptionHandlers: 'Exceptions/Handlers',
     modelTraits: 'Models/Traits',
-    modelHooks: 'Models/Hooks'
+    modelHooks: 'Models/Hooks',
+    validators: 'Validators'
   }
 
   const { resolver } = require('@adonisjs/fold')
