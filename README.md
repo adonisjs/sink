@@ -21,7 +21,7 @@ If your provider has a dependency on **Config provider**, you must use a fake im
 
 
 ```js
-const { Config } = require('adonis-sink')
+const { Config } = require('@adonisjs/sink')
 const test = require('japa')
 
 test.group('My Package', (group) => {
@@ -56,7 +56,7 @@ class Redis {
 Helpers provider is used to get path to certain application directories. All the methods from the actual provider are available in the fake implementation.
 
 ```js
-const { Helpers } = require('adonis-sink')
+const { Helpers } = require('@adonisjs/sink')
 const test = require('japa')
 const path = require('path')
 
@@ -73,7 +73,7 @@ The `Helpers` provider needs the `appRoot` as the constructor argument.
 Logger provider is used to log messages. The fake implementation also let you verify whether a message for a given level was logged or not.
 
 ```js
-const { Logger } = require('adonis-sink')
+const { Logger } = require('@adonisjs/sink')
 const test = require('japa')
 const path = require('path')
 
@@ -119,7 +119,7 @@ this.logger.contains('user profile')
 Also env provider can be used to read environment variables. The fake implementation doesn't load any `.env` file, whereas you can set values manually before writing tests.
 
 ```js
-const { Env } = require('adonis-sink')
+const { Env } = require('@adonisjs/sink')
 
 const env = new Env()
 
@@ -133,7 +133,7 @@ The `resolver` is an object to make namespaces and resolve values for a given na
 Setup of `resolver` is done before AdonisJs application boots, but at the time of writing tests, there is no application and hence you can **setup the resolver** using a pre-configured method.
 
 ```js
-const { setupResolver } = require('adonis-sink')
+const { setupResolver } = require('@adonisjs/sink')
 
 test.group('My Package', (group) => {
   group.before(() => {
@@ -145,7 +145,7 @@ test.group('My Package', (group) => {
 Now your application code under the test can make use of the `adonis-fold` resolver to resolve dependencies.
 
 ```js
-const { resolver } = require('adonis-fold')
+const { resolver } = require('@adonisjs/fold')
 resolver.for('httpControllers').resolveFunc('HomeController.render')
 
 // returns { instance: HomeController, isClosure: false, method: render }
