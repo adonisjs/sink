@@ -18,13 +18,13 @@
   "author": "adonisjs, amanvirk",
   "license": "MIT",
   "devDependencies": {
-    "cz-conventional-changelog": "^2.0.0",
-    "japa": "^1.0.3",
+    "cz-conventional-changelog": "^2.1.0",
+    "japa": "^1.0.6",
     "japa-cli": "^1.0.1",
-    "standard": "^10.0.2"
+    "standard": "^10.0.3"
   },
   "dependencies": {
-    "lodash": "^4.17.4"
+    "lodash": "^4.17.5"
   },
   "config": {
     "commitizen": {
