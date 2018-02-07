@@ -10,26 +10,13 @@
 */
 
 const _ = require('lodash')
+const defaultDirectories = require('./src/directories')
 const Config = require('./src/Config')
 const Helpers = require('./src/Helpers')
 const Logger = require('./src/Logger')
 const Env = require('./src/Env')
 
 const setupResolver = function (directories, appNamespace = 'App') {
-  const defaultDirectories = {
-    httpControllers: 'Controllers/Http',
-    wsControllers: 'Controllers/Ws',
-    models: 'Models',
-    listeners: 'Listeners',
-    exceptions: 'Exceptions',
-    middleware: 'Middleware',
-    commands: 'Commands',
-    exceptionHandlers: 'Exceptions/Handlers',
-    modelTraits: 'Models/Traits',
-    modelHooks: 'Models/Hooks',
-    validators: 'Validators'
-  }
-
   const { resolver } = require('@adonisjs/fold')
   resolver.directories(_.merge(defaultDirectories, directories))
   resolver.appNamespace(appNamespace)
