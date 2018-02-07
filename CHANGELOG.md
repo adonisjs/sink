@@ -1,3 +1,13 @@
+<a name="1.0.14"></a>
+## [1.0.14](https://github.com/adonisjs/adonis-sink/compare/v1.0.13...v1.0.14) (2018-02-07)
+
+
+### Features
+
+* **helpers:** add directories to helpers constructor ([563ac9f](https://github.com/adonisjs/adonis-sink/commit/563ac9f))
+
+
+
 <a name="1.0.13"></a>
 ## [1.0.13](https://github.com/adonisjs/adonis-sink/compare/v1.0.12...v1.0.13) (2017-08-22)
 
