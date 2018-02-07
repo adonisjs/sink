@@ -80,4 +80,13 @@ test.group('Helpers', (group) => {
     const readFile = this.helpers.promisify(fs.readFile)
     return readFile(path.join(__dirname, '../package.json'))
   })
+
+  test('can access directories object', (assert) => {
+    assert.deepEqual(this.helpers.directories, require('../src/directories'))
+  })
+
+  test('must not be able to modify the directories object', (assert) => {
+    const fn = () => this.helpers.directories.exceptions = 'foo'
+    assert.throw(fn, /Cannot assign to read only property 'exceptions' of object/)
+  })
 })
