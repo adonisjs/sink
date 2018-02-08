@@ -1,3 +1,13 @@
+<a name="1.0.16"></a>
+## [1.0.16](https://github.com/adonisjs/adonis-sink/compare/v1.0.15...v1.0.16) (2018-02-08)
+
+
+### Reverts
+
+* **helpers:** remove the concept of sharing directories ([99e2bd8](https://github.com/adonisjs/adonis-sink/commit/99e2bd8))
+
+
+
 <a name="1.0.15"></a>
 ## [1.0.15](https://github.com/adonisjs/adonis-sink/compare/v1.0.13...v1.0.15) (2018-02-08)
 
