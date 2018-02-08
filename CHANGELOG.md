@@ -1,3 +1,18 @@
+<a name="1.0.15"></a>
+## [1.0.15](https://github.com/adonisjs/adonis-sink/compare/v1.0.13...v1.0.15) (2018-02-08)
+
+
+### Bug Fixes
+
+* **linter:** fix linting issue ([9f051d4](https://github.com/adonisjs/adonis-sink/commit/9f051d4))
+
+
+### Features
+
+* **helpers:** add directories to helpers constructor ([4d62e22](https://github.com/adonisjs/adonis-sink/commit/4d62e22))
+
+
+
 <a name="1.0.14"></a>
 ## [1.0.14](https://github.com/adonisjs/adonis-sink/compare/v1.0.13...v1.0.14) (2018-02-07)
 
