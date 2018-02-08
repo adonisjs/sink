@@ -86,7 +86,7 @@ test.group('Helpers', (group) => {
   })
 
   test('must not be able to modify the directories object', (assert) => {
-    const fn = () => this.helpers.directories.exceptions = 'foo'
+    const fn = () => (this.helpers.directories.exceptions = 'foo')
     assert.throw(fn, /Cannot assign to read only property 'exceptions' of object/)
   })
 })
