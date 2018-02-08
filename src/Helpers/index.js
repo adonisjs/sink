@@ -22,25 +22,6 @@ const pify = require('pify')
 class Helpers {
   constructor (appRoot) {
     this._appRoot = appRoot
-    /**
-     * For sink we update the directories within the constructor,
-     * ideally they will be set by ignitor when instantiating
-     * a new instance.
-     */
-    this.appDirectories(require('../directories'))
-  }
-
-  /**
-   * Set app directories
-   *
-   * @method appDirectories
-   *
-   * @param  {Object}       directories
-   *
-   * @return {void}
-   */
-  appDirectories (directories) {
-    this.directories = Object.freeze(Object.assign({}, directories))
   }
 
   /**
