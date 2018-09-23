@@ -1,3 +1,13 @@
+<a name="1.0.17"></a>
+## [1.0.17](https://github.com/adonisjs/adonis-sink/compare/v1.0.16...v1.0.17) (2018-09-23)
+
+
+### Bug Fixes
+
+* **package:** add missing pify dependency ([47ab7c7](https://github.com/adonisjs/adonis-sink/commit/47ab7c7))
+
+
+
 <a name="1.0.16"></a>
 ## [1.0.16](https://github.com/adonisjs/adonis-sink/compare/v1.0.15...v1.0.16) (2018-02-08)
 

@@ -4,3 +4,6 @@ node_modules
 npm-debug.log
 out
 .nyc_output
+yarn.lock
+shrinkwrap.yaml
+package-lock.json
