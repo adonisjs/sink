@@ -8,7 +8,9 @@
     "pretest": "npm run lint",
     "test:local": "node ./node_modules/.bin/japa",
     "test": "npm run test:local",
-    "test:win": "node ./node_modules/japa-cli/index.js"
+    "test:win": "node ./node_modules/japa-cli/index.js",
+    "snyk-protect": "snyk protect",
+    "prepublish": "npm run snyk-protect"
   },
   "keywords": [
     "adonisjs",
@@ -25,7 +27,8 @@
   },
   "dependencies": {
     "lodash": "^4.17.5",
-    "pify": "^4.0.0"
+    "pify": "^4.0.0",
+    "snyk": "^1.189.0"
   },
   "config": {
     "commitizen": {
@@ -42,5 +45,6 @@
   "bugs": {
     "url": "https://github.com/adonisjs/adonis-sink/issues"
   },
-  "homepage": "https://github.com/adonisjs/adonis-sink#readme"
+  "homepage": "https://github.com/adonisjs/adonis-sink#readme",
+  "snyk": true
 }
