@@ -1,3 +1,8 @@
+# @adonisjs/sink
+> A collection of utilities for creating AdonisJs packages and boilerplates.
+
+[![circleci-image]][circleci-url] [![npm-image]][npm-url] ![][typescript-image] [![license-image]][license-url]
+
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 ## Table of contents
@@ -9,31 +14,16 @@
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-# @adonisjs/boilerplate-utils
+## Maintainers
+[Harminder virk](https://github.com/thetutlage)
 
-[![circleci-image]][circleci-url]
-[![npm-image]][npm-url]
-![](https://img.shields.io/badge/Typescript-294E80.svg?style=for-the-badge&logo=typescript)
+[circleci-image]: https://img.shields.io/circleci/project/github/adonisjs/adonis-sink/master.svg?style=for-the-badge&logo=circleci
+[circleci-url]: https://circleci.com/gh/adonisjs/adonis-sink "circleci"
 
-## Change log
+[npm-image]: https://img.shields.io/npm/v/@adonisjs/sink.svg?style=for-the-badge&logo=npm
+[npm-url]: https://npmjs.org/package/@adonisjs/sink "npm"
 
-The change log can be found in the [CHANGELOG.md](CHANGELOG.md) file.
+[typescript-image]: https://img.shields.io/badge/Typescript-294E80.svg?style=for-the-badge&logo=typescript
 
-## Contributing
-
-Everyone is welcome to contribute. Please go through the following guides, before getting started.
-
-1. [Contributing](https://adonisjs.com/contributing)
-2. [Code of conduct](https://adonisjs.com/code-of-conduct)
-
-
-## Authors & License
-[Harminder virk](https://github.com/Harminder virk) and [contributors](https://github.com/null/null/graphs/contributors).
-
-MIT License, see the included [MIT](LICENSE.md) file.
-
-[circleci-image]: https://img.shields.io/circleci/project/github/null/null/master.svg?style=for-the-badge&logo=circleci
-[circleci-url]: https://circleci.com/gh/null/null "circleci"
-
-[npm-image]: https://img.shields.io/npm/v/@adonisjs/boilerplate-utils.svg?style=for-the-badge&logo=npm
-[npm-url]: https://npmjs.org/package/@adonisjs/boilerplate-utils "npm"
+[license-url]: LICENSE.md
+[license-image]: https://img.shields.io/aur/license/pac.svg?style=for-the-badge
