@@ -17,6 +17,7 @@ export class TemplateFile extends BaseFile {
   protected $actions = []
   public filePointer: ReturnType<typeof template>
   public removeOnRollback = true
+  public overwrite = false
 
   constructor (basePath: string, filename: string, templatePath: string) {
     super(basePath)
@@ -48,10 +49,10 @@ export class TemplateFile extends BaseFile {
     this.$cdIn()
 
     /**
-     * Do not overwrite contents when file already exists, since
-     * templates are supposed to grow of their own
+     * Do not overwrite contents when file already exists and
+     * `overwrite = false`
      */
-    if (this.filePointer.exists()) {
+    if (this.filePointer.exists() && !this.overwrite) {
       this.$cdOut()
       return
     }

@@ -44,6 +44,18 @@ test.group('Template file', (group) => {
     assert.equal(contents.trim(), 'hi world')
   })
 
+  test('modify template file when overwrite is true', async (assert) => {
+    await fs.add('template.txt', 'hello world')
+    await fs.add('foo.txt', 'hi world')
+
+    const file = new TemplateFile(fs.basePath, 'foo.txt', join(fs.basePath, 'template.txt'))
+    file.overwrite = true
+    file.apply().commit()
+
+    const contents = await fs.get('foo.txt')
+    assert.equal(contents.trim(), 'hello world')
+  })
+
   test('remove file on rollback', async (assert) => {
     await fs.add('template.txt', 'hello world')
     await fs.add('foo.txt', 'hi world')
