@@ -9,10 +9,8 @@ AdonisJs sink is a collection of file utilities to mutate the contents of a file
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 ## Table of contents
 
-- [@adonisjs/boilerplate-utils](#adonisjsboilerplate-utils)
-  - [Change log](#change-log)
-  - [Contributing](#contributing)
-  - [Authors & License](#authors--license)
+- [Usage](#usage)
+- [Maintainers](#maintainers)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
