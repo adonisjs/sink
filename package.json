@@ -1,46 +1,71 @@
 {
-  "name": "@adonisjs/sink",
-  "version": "1.0.17",
-  "description": "Development kitchen sink for writing adonisjs providers",
-  "main": "index.js",
+  "name": "foo-app",
+  "version": "0.0.0",
+  "description": "A collection of utilities to create scaffold AdonisJs apps",
   "scripts": {
-    "lint": "standard",
+    "mrm": "mrm --preset=@adonisjs/mrm-preset",
     "pretest": "npm run lint",
-    "test:local": "node ./node_modules/.bin/japa",
-    "test": "npm run test:local",
-    "test:win": "node ./node_modules/japa-cli/index.js"
+    "test": "node japaFile.js",
+    "prepublishOnly": "npm run build",
+    "lint": "tslint --project tsconfig.json",
+    "clean": "del build",
+    "compile": "npm run lint && npm run clean && tsc",
+    "build": "npm run compile",
+    "commit": "git-cz"
   },
   "keywords": [
     "adonisjs",
-    "adonis-development",
-    "adonis-tests"
+    "mrm",
+    "scaffold",
+    "utils"
   ],
-  "author": "adonisjs, amanvirk",
+  "author": "virk,adonisjs",
   "license": "MIT",
   "devDependencies": {
+    "@adonisjs/dev-utils": "^1.4.0",
+    "@adonisjs/mrm-preset": "^2.0.3",
+    "@types/node": "^12.6.2",
+    "commitizen": "^3.1.1",
     "cz-conventional-changelog": "^2.1.0",
-    "japa": "^1.0.6",
-    "japa-cli": "^1.0.1",
-    "standard": "^11.0.0"
+    "del-cli": "^2.0.0",
+    "doctoc": "^1.4.0",
+    "husky": "^3.0.0",
+    "ini": "^1.3.5",
+    "japa": "^2.0.10",
+    "mrm": "^1.2.2",
+    "pkg-ok": "^2.3.1",
+    "ts-node": "^8.3.0",
+    "tslint": "^5.18.0",
+    "tslint-eslint-rules": "^5.4.0",
+    "typescript": "^3.5.3",
+    "yaml": "^1.6.0"
   },
-  "dependencies": {
-    "lodash": "^4.17.5",
-    "pify": "^4.0.0"
+  "nyc": {
+    "exclude": [
+      "test"
+    ],
+    "extension": [
+      ".ts"
+    ]
+  },
+  "main": "build/index.js",
+  "files": [
+    "build/src",
+    "build/index.d.ts",
+    "build/index.js"
+  ],
+  "husky": {
+    "hooks": {
+      "pre-commit": "doctoc README.md --title='## Table of contents' && git add README.md",
+      "commit-msg": "node ./node_modules/@adonisjs/mrm-preset/validateCommit/conventional/validate.js"
+    }
   },
   "config": {
     "commitizen": {
-      "path": "./node_modules/cz-conventional-changelog"
+      "path": "cz-conventional-changelog"
     }
   },
-  "directories": {
-    "test": "test"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/adonisjs/adonis-sink.git"
-  },
-  "bugs": {
-    "url": "https://github.com/adonisjs/adonis-sink/issues"
-  },
-  "homepage": "https://github.com/adonisjs/adonis-sink#readme"
+  "dependencies": {
+    "mrm-core": "^3.3.0"
+  }
 }
