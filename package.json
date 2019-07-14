@@ -1,6 +1,6 @@
 {
   "name": "@adonisjs/sink",
-  "version": "1.0.17",
+  "version": "2.0.0",
   "description": "Utilities to create AdonisJs boilerplates and custom providers",
   "scripts": {
     "mrm": "mrm --preset=@adonisjs/mrm-preset",
