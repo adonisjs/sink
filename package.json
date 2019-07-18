@@ -2,6 +2,12 @@
   "name": "@adonisjs/sink",
   "version": "2.0.0",
   "description": "Utilities to create AdonisJs boilerplates and custom providers",
+  "main": "build/index.js",
+  "files": [
+    "build/src",
+    "build/index.d.ts",
+    "build/index.js"
+  ],
   "scripts": {
     "mrm": "mrm --preset=@adonisjs/mrm-preset",
     "pretest": "npm run lint",
@@ -25,8 +31,8 @@
   "devDependencies": {
     "@adonisjs/dev-utils": "^1.4.0",
     "@adonisjs/mrm-preset": "^2.0.3",
-    "@types/node": "^12.6.2",
-    "commitizen": "^3.1.1",
+    "@types/node": "^12.6.8",
+    "commitizen": "^3.1.2",
     "cz-conventional-changelog": "^2.1.0",
     "del-cli": "^2.0.0",
     "doctoc": "^1.4.0",
@@ -49,12 +55,6 @@
       ".ts"
     ]
   },
-  "main": "build/index.js",
-  "files": [
-    "build/src",
-    "build/index.d.ts",
-    "build/index.js"
-  ],
   "husky": {
     "hooks": {
       "pre-commit": "doctoc README.md --title='## Table of contents' && git add README.md",
