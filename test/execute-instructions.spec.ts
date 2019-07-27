@@ -40,7 +40,7 @@ test.group('AdonisRc file', (group) => {
 
     const application = new Application(fs.basePath, {
       singleton () {},
-    }, {}, '1.0.0')
+    }, {}, {})
 
     const completed = await executeInstructions('@fake/app', fs.basePath, application)
     assert.isTrue(completed)
@@ -64,7 +64,7 @@ test.group('AdonisRc file', (group) => {
 
     const application = new Application(fs.basePath, {
       singleton () {},
-    }, {}, '1.0.0')
+    }, {}, {})
 
     const completed = await executeInstructions('@fake/app', fs.basePath, application)
     assert.isFalse(completed)
@@ -91,7 +91,7 @@ test.group('AdonisRc file', (group) => {
 
     const application = new Application(fs.basePath, {
       singleton () {},
-    }, {}, '1.0.0')
+    }, {}, {})
 
     const completed = await executeInstructions('@fake/app', fs.basePath, application)
     assert.isTrue(completed)
@@ -120,7 +120,7 @@ test.group('AdonisRc file', (group) => {
 
     const application = new Application(fs.basePath, {
       singleton () {},
-    }, {}, '1.0.0')
+    }, {}, {})
 
     const completed = await executeInstructions('@fake/app', fs.basePath, application)
     assert.isTrue(completed)
