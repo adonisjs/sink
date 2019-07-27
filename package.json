@@ -2,13 +2,13 @@
   "name": "@adonisjs/sink",
   "version": "2.0.5",
   "description": "Utilities to create AdonisJs boilerplates and custom providers",
-  "main": "build/index.js",
+  "main": "index.js",
   "files": [
-    "build/src",
-    "build/index.d.ts",
-    "build/index.js",
-    "build/exports.d.ts",
-    "build/exports.js"
+    "src",
+    "index.d.ts",
+    "index.js",
+    "exports.d.ts",
+    "exports.js"
   ],
   "scripts": {
     "mrm": "mrm --preset=@adonisjs/mrm-preset",
@@ -16,7 +16,7 @@
     "test": "node japaFile.js",
     "lint": "tslint --project tsconfig.json",
     "clean": "del build",
-    "compile": "npm run lint && npm run clean && tsc && del build/package.json",
+    "compile": "npm run lint && npm run clean && tsc",
     "build": "npm run compile",
     "commit": "git-cz",
     "release": "np",
