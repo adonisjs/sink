@@ -72,6 +72,9 @@
     "kleur": "^3.0.3",
     "mrm-core": "^3.3.0"
   },
+  "peerDependencies": {
+    "@poppinss/application": "1.x.x"
+  },
   "directories": {
     "test": "test"
   },
