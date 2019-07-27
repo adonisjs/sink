@@ -33,7 +33,7 @@
   "devDependencies": {
     "@adonisjs/dev-utils": "^1.4.0",
     "@adonisjs/mrm-preset": "^2.0.3",
-    "@poppinss/application": "^1.0.6",
+    "@poppinss/application": "^1.0.7",
     "@types/node": "^12.6.8",
     "commitizen": "^4.0.3",
     "cz-conventional-changelog": "^3.0.2",
