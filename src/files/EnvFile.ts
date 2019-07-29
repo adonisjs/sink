@@ -38,6 +38,24 @@ export class EnvFile {
   }
 
   /**
+   * Returns a key/value pair of the file contents.
+   */
+  public get (): { [key: string]: string } {
+    return this._envContents.get().reduce((result, line) => {
+      const [key, value] = line.split('=')
+      result[key.trim()] = value.trim()
+      return result
+    }, {})
+  }
+
+  /**
+   * Returns a boolean telling if the file exists.
+   */
+  public exists (): boolean {
+    return this._envContents.exists()
+  }
+
+  /**
    * Unset a key/value pair from the `.env` and `.env.example` file
    */
   public unset (key: string): this {

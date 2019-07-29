@@ -35,6 +35,13 @@ export class TemplateFile extends BaseFile {
   }
 
   /**
+   * A boolean telling if the file already exists
+   */
+  public exists () {
+    return this.filePointer.exists()
+  }
+
+  /**
    * Apply contents to the template to evaluate it's output
    */
   public apply (contents?: any) {

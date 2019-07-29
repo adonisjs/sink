@@ -106,4 +106,12 @@ test.group('EnvFile', (group) => {
     assert.deepEqual(contents.trim(), 'APP_KEY=foo')
     assert.deepEqual(exampleFileContents.trim(), 'APP_KEY=')
   })
+
+  test('get file contents', async (assert) => {
+    await fs.add('.env', 'APP_KEY=foo')
+    await fs.add('.env.example', 'APP_KEY=')
+
+    const envFile = new EnvFile(fs.basePath)
+    assert.deepEqual(envFile.get(), { APP_KEY: 'foo' })
+  })
 })

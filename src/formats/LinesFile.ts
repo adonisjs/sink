@@ -66,6 +66,13 @@ export class LinesFile extends BaseFile {
   }
 
   /**
+   * A boolean telling if the file already exists
+   */
+  public exists () {
+    return this.filePointer.exists()
+  }
+
+  /**
    * Commit mutations
    */
   public commit () {
