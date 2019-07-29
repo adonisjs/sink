@@ -23,12 +23,14 @@ export class PackageFile extends BaseFile {
   /**
    * A copy of install instructions
    */
-  protected $install: { list: string[] | { [key: string]: string }, dev: boolean }[] = []
+  protected $install: { dependency: string, version: string, dev: boolean }[] = []
 
   /**
    * A copy of uninstall instructions
    */
-  protected $uninstall: { list: string[], dev: boolean }[] = []
+  protected $uninstall: { dependency: string, dev: boolean }[] = []
+
+  private _useYarn: boolean | null = null
 
   constructor (basePath: string) {
     super(basePath)
@@ -42,6 +44,14 @@ export class PackageFile extends BaseFile {
    */
   public set (key: string, value: any): this {
     this.$addAction('set', { key, value })
+    return this
+  }
+
+  /**
+   * Enable/disable use of yarn
+   */
+  public yarn (useYarn: boolean): this {
+    this._useYarn = useYarn
     return this
   }
 
@@ -90,29 +100,19 @@ export class PackageFile extends BaseFile {
    * Install dependencies
    */
   public install (
-    dependencies: string | string[] | { [key: string]: string },
+    dependency: string,
+    version: string = 'latest',
     dev: boolean = true,
   ) {
-    if (Array.isArray(dependencies)) {
-      this.$install.push({ list: dependencies, dev })
-      return
-    }
-
-    if (typeof (dependencies) === 'string') {
-      this.$install.push({ list: [dependencies], dev })
-      return
-    }
-
-    this.$install.push({ list: dependencies, dev })
+    this.$install.push({ dependency, version, dev })
     return this
   }
 
   /**
    * Uninstall dependencies
    */
-  public uninstall (dependencies: string | string[], dev: boolean = true) {
-    const list = Array.isArray(dependencies) ? dependencies : [dependencies]
-    this.$uninstall.push({ list, dev })
+  public uninstall (dependency: string, dev: boolean = true) {
+    this.$uninstall.push({ dependency, dev })
     return this
   }
 
@@ -138,6 +138,59 @@ export class PackageFile extends BaseFile {
    */
   public exists () {
     return this.filePointer.exists()
+  }
+
+  /**
+   * Returns a list of dependencies along with specific versions (if any)
+   */
+  public getDependencies (dev: boolean = true) {
+    const dependencies: { list: string[], versions: any } = { versions: {}, list: [] }
+
+    return this.$install.reduce((result, dependency) => {
+      if (dependency.dev && dev) {
+        result.list.push(dependency.dependency)
+        if (dependency.version !== 'latest') {
+          result.versions[dependency.dependency] = dependency.version
+        }
+      } else if (!dependency.dev) {
+        result.list.push(dependency.dependency)
+        if (dependency.version !== 'latest') {
+          result.versions[dependency.dependency] = dependency.version
+        }
+      }
+
+      return result
+    }, dependencies)
+  }
+
+  /**
+   * Executes the install script
+   */
+  private _executeInstall (list: string[], options: Parameters<typeof install>[1] = {}) {
+    if (!list.length) {
+      return
+    }
+
+    if (this._useYarn !== null) {
+      options.yarn = this._useYarn
+    }
+
+    install(list, options)
+  }
+
+  /**
+   * Execute uninstall script
+   */
+  private _executeUninstall (list: string[], options: Parameters<typeof uninstall>[1] = {}) {
+    if (!list.length) {
+      return
+    }
+
+    if (this._useYarn !== null) {
+      options.yarn = this._useYarn
+    }
+
+    uninstall(list, options)
   }
 
   /**
@@ -176,12 +229,28 @@ export class PackageFile extends BaseFile {
     this.filePointer.save()
 
     /**
-     * Install/Uninstall dependencies. Make sure we do this after saving the
-     * file, otherwise the `filePointer.save` will override the dependencies
-     * object
+     * Install development dependencies
      */
-    this.$install.forEach(({ list, dev }) => install(list, { dev: dev }))
-    this.$uninstall.forEach(({ list, dev }) => uninstall(list, { dev: dev }))
+    const dev = this.getDependencies(true)
+    this._executeInstall(dev.list, { versions: dev.versions, dev: true })
+
+    /**
+     * Install production dependencies
+     */
+    const prod = this.getDependencies(false)
+    this._executeInstall(prod.list, { versions: prod.versions, dev: false })
+
+    /**
+     * Uninstall production dependencies
+     */
+    const prodRemove = this.$uninstall.filter(({ dev }) => !dev).map(({ dependency }) => dependency)
+    this._executeUninstall(prodRemove, { dev: false })
+
+    /**
+     * Uninstall development dependencies
+     */
+    const devRemove = this.$uninstall.filter(({ dev }) => dev).map(({ dependency }) => dependency)
+    this._executeUninstall(devRemove, { dev: true })
 
     this.$cdOut()
   }
@@ -216,17 +285,16 @@ export class PackageFile extends BaseFile {
     this.filePointer.save()
 
     /**
-     * Remove installed dependencies. Make sure we do this after saving the
-     * file, otherwise the `filePointer.save` will override the dependencies
-     * object
+     * Remove prod dependencies
      */
-    this.$install.forEach(({ list, dev }) => {
-      if (Array.isArray(list) || typeof (list) === 'string') {
-        uninstall(list, { dev: dev })
-        return
-      }
-      uninstall(Object.keys(list), { dev })
-    })
+    const prod = this.getDependencies(false)
+    this._executeUninstall(prod.list, { dev: false })
+
+    /**
+     * Remove dev dependencies
+     */
+    const dev = this.getDependencies(true)
+    this._executeUninstall(dev.list, { dev: true })
 
     this.$cdOut()
   }

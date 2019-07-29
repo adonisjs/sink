@@ -145,7 +145,7 @@ test.group('Package file', (group) => {
   test('install given version of a package', async (assert) => {
     await fs.add('package.json', JSON.stringify({ name: 'foo' }))
     const pkg = new PackageFile(fs.basePath)
-    pkg.install({ lodash: '1.0.0' })
+    pkg.install('lodash', '1.0.0')
     pkg.commit()
 
     const contents = await fs.get('package.json')
