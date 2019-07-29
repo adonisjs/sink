@@ -151,4 +151,22 @@ test.group('Package file', (group) => {
     const contents = await fs.get('package.json')
     assert.equal(JSON.parse(contents).devDependencies.lodash, '^1.0.0')
   }).timeout(0)
+
+  test('get list of dev & production dependencies', async (assert) => {
+    await fs.add('package.json', JSON.stringify({ name: 'foo' }))
+    const pkg = new PackageFile(fs.basePath)
+    pkg.install('lodash', '1.0.0', false)
+    pkg.install('@adonisjs/core', 'latest', false)
+    pkg.install('mrm-core')
+
+    assert.deepEqual(pkg.getDependencies(false), {
+      list: ['lodash', '@adonisjs/core'],
+      versions: { lodash: '1.0.0' },
+    })
+
+    assert.deepEqual(pkg.getDependencies(true), {
+      list: ['mrm-core'],
+      versions: {},
+    })
+  }).timeout(0)
 })

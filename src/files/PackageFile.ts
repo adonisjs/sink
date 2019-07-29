@@ -152,7 +152,7 @@ export class PackageFile extends BaseFile {
         if (dependency.version !== 'latest') {
           result.versions[dependency.dependency] = dependency.version
         }
-      } else if (!dependency.dev) {
+      } else if (!dependency.dev && !dev) {
         result.list.push(dependency.dependency)
         if (dependency.version !== 'latest') {
           result.versions[dependency.dependency] = dependency.version
