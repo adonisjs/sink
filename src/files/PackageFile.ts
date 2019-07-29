@@ -23,7 +23,7 @@ export class PackageFile extends BaseFile {
   /**
    * A copy of install instructions
    */
-  protected $install: { list: string[], dev: boolean }[] = []
+  protected $install: { list: string[] | { [key: string]: string }, dev: boolean }[] = []
 
   /**
    * A copy of uninstall instructions
@@ -89,9 +89,21 @@ export class PackageFile extends BaseFile {
   /**
    * Install dependencies
    */
-  public install (dependencies: string | string[], dev: boolean = true) {
-    const list = Array.isArray(dependencies) ? dependencies : [dependencies]
-    this.$install.push({ list, dev })
+  public install (
+    dependencies: string | string[] | { [key: string]: string },
+    dev: boolean = true,
+  ) {
+    if (Array.isArray(dependencies)) {
+      this.$install.push({ list: dependencies, dev })
+      return
+    }
+
+    if (typeof (dependencies) === 'string') {
+      this.$install.push({ list: [dependencies], dev })
+      return
+    }
+
+    this.$install.push({ list: dependencies, dev })
     return this
   }
 
@@ -208,7 +220,13 @@ export class PackageFile extends BaseFile {
      * file, otherwise the `filePointer.save` will override the dependencies
      * object
      */
-    this.$install.forEach(({ list, dev }) => uninstall(list, { dev: dev }))
+    this.$install.forEach(({ list, dev }) => {
+      if (Array.isArray(list) || typeof (list) === 'string') {
+        uninstall(list, { dev: dev })
+        return
+      }
+      uninstall(Object.keys(list), { dev })
+    })
 
     this.$cdOut()
   }
