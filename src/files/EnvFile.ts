@@ -24,16 +24,16 @@ export class EnvFile {
    * Set key/value pair inside the `.env` file
    */
   public set (key: string, value: any): this {
-    const matchingLine = this._envContents.get().find((line) => line.startsWith(`${key} = `))
-    const newText = `${key} = ${value}`
+    const matchingLine = this._envContents.get().find((line) => line.startsWith(`${key}=`))
+    const newText = `${key}=${value}`
 
     if (matchingLine && newText !== matchingLine) {
       this._envContents.update(matchingLine, newText)
       return this
     }
 
-    this._envContents.add(`${key} = ${value}`)
-    this._exampleEnvContents.add(`${key} =`)
+    this._envContents.add(`${key}=${value}`)
+    this._exampleEnvContents.add(`${key}=`)
     return this
   }
 
@@ -41,13 +41,13 @@ export class EnvFile {
    * Unset a key/value pair from the `.env` and `.env.example` file
    */
   public unset (key: string): this {
-    const matchingLine = this._envContents.get().find((line) => line.startsWith(`${key} =`))
+    const matchingLine = this._envContents.get().find((line) => line.startsWith(`${key}=`))
     if (matchingLine) {
       this._envContents.remove(matchingLine)
     }
 
     const exampleFileMatchingLine = this._exampleEnvContents.get().find((line) => {
-      return line.startsWith(`${key} =`)
+      return line.startsWith(`${key}=`)
     })
     if (exampleFileMatchingLine) {
       this._exampleEnvContents.remove(exampleFileMatchingLine)

@@ -30,8 +30,8 @@ test.group('EnvFile', (group) => {
 
     const contents = await fs.get('.env')
     const exampleFileContents = await fs.get('.env.example')
-    assert.deepEqual(contents.trim(), 'APP_KEY = foo-bar')
-    assert.deepEqual(exampleFileContents.trim(), 'APP_KEY =')
+    assert.deepEqual(contents.trim(), 'APP_KEY=foo-bar')
+    assert.deepEqual(exampleFileContents.trim(), 'APP_KEY=')
   })
 
   test('write subsitution variables inside .env file', async (assert) => {
@@ -43,13 +43,13 @@ test.group('EnvFile', (group) => {
     const contents = await fs.get('.env')
     const exampleFileContents = await fs.get('.env.example')
 
-    assert.deepEqual(contents.trim(), ['URL = $HOST:$PORT', 'PASSWORD = pa\\$\\$word'].join('\n'))
-    assert.deepEqual(exampleFileContents.trim(), ['URL =', 'PASSWORD ='].join('\n'))
+    assert.deepEqual(contents.trim(), ['URL=$HOST:$PORT', 'PASSWORD=pa\\$\\$word'].join('\n'))
+    assert.deepEqual(exampleFileContents.trim(), ['URL=', 'PASSWORD='].join('\n'))
   })
 
   test('update existing key value', async (assert) => {
-    await fs.add('.env', `APP_KEY = foo-bar`)
-    await fs.add('.env.example', `APP_KEY =`)
+    await fs.add('.env', `APP_KEY=foo-bar`)
+    await fs.add('.env.example', `APP_KEY=`)
 
     const envFile = new EnvFile(fs.basePath)
     envFile.set('APP_KEY', 'bar')
@@ -58,13 +58,13 @@ test.group('EnvFile', (group) => {
     const contents = await fs.get('.env')
     const exampleFileContents = await fs.get('.env.example')
 
-    assert.deepEqual(contents.trim(), 'APP_KEY = bar')
-    assert.deepEqual(exampleFileContents.trim(), 'APP_KEY =')
+    assert.deepEqual(contents.trim(), 'APP_KEY=bar')
+    assert.deepEqual(exampleFileContents.trim(), 'APP_KEY=')
   })
 
   test('remove existing key', async (assert) => {
-    await fs.add('.env', `APP_KEY = foo-bar`)
-    await fs.add('.env.example', `APP_KEY =`)
+    await fs.add('.env', `APP_KEY=foo-bar`)
+    await fs.add('.env.example', `APP_KEY=`)
 
     const envFile = new EnvFile(fs.basePath)
     envFile.unset('APP_KEY')
@@ -78,8 +78,8 @@ test.group('EnvFile', (group) => {
   })
 
   test('remove line to rollback', async (assert) => {
-    await fs.add('.env', `APP_KEY = foo-bar`)
-    await fs.add('.env.example', `APP_KEY =`)
+    await fs.add('.env', `APP_KEY=foo-bar`)
+    await fs.add('.env.example', `APP_KEY=`)
 
     const envFile = new EnvFile(fs.basePath)
     envFile.set('APP_KEY', 'foo-bar')
