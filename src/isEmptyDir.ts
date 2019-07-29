@@ -7,19 +7,17 @@
 * file that was distributed with this source code.
 */
 
-import * as emptyDir from 'empty-dir'
+import { readdirSync } from 'fs'
 
 /**
  * Returns a boolean telling if a directory is empty or
  * not.
  */
-export function isEmptyDir (
-  location: string,
-  filterFn?: (filePath: string) => boolean,
-): boolean {
+export function isEmptyDir (location: string): boolean {
   try {
-    return emptyDir.sync(location, filterFn)
+    const files = readdirSync(location)
+    return files.length === 0
   } catch (error) {
-    return false
+    return error.code === 'ENOENT'
   }
 }

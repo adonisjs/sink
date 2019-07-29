@@ -31,9 +31,4 @@ test.group('isEmptyDir', (group) => {
     await fs.add('.DS_STORE', '')
     assert.isFalse(isEmptyDir(fs.basePath))
   })
-
-  test('return true when folder has filtered files', async (assert) => {
-    await fs.add('.DS_STORE', '')
-    assert.isTrue(isEmptyDir(fs.basePath, (filePath) => filePath === '.DS_STORE'))
-  })
 })
