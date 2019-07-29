@@ -67,6 +67,25 @@ test.group('AdonisRc file', (group) => {
     })
   })
 
+  test('set mulitple preloads', async (assert) => {
+    const rcfile = new RcFile(fs.basePath)
+    rcfile.setPreload('start/routes')
+    rcfile.setPreload('start/kernel')
+    rcfile.commit()
+
+    const contents = await fs.get('.adonisrc.json')
+    assert.deepEqual(JSON.parse(contents), {
+      preloads: [
+        {
+          file: 'start/routes',
+        },
+        {
+          file: 'start/kernel',
+        },
+      ],
+    })
+  })
+
   test('append to preloads when already exists', async (assert) => {
     await fs.add('.adonisrc.json', JSON.stringify({
       preloads: [{
@@ -271,6 +290,18 @@ test.group('AdonisRc file', (group) => {
     const contents = await fs.get('.adonisrc.json')
     assert.deepEqual(JSON.parse(contents), {
       copyToBuild: ['.env'],
+    })
+  })
+
+  test('add multiple files to copyToBuild array', async (assert) => {
+    const rcfile = new RcFile(fs.basePath)
+    rcfile.addCopyToBuildFile('.env')
+    rcfile.addCopyToBuildFile('.gitignore')
+    rcfile.commit()
+
+    const contents = await fs.get('.adonisrc.json')
+    assert.deepEqual(JSON.parse(contents), {
+      copyToBuild: ['.env', '.gitignore'],
     })
   })
 

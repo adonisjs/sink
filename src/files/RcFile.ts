@@ -13,8 +13,22 @@ import { JsonFile } from '../formats/JsonFile'
  * Exposes API to mutate the contents of `.adonisrc.json` file.
  */
 export class RcFile extends JsonFile {
+  /**
+   * Storing a local copy of preloads for concatenating
+   * new entries.
+   */
+  private _preloads: any[] = []
+
+  /**
+   * Storing a local copy of copyToBuild for concatenating
+   * new entries.
+   */
+  private _copyToBuild: any[] = []
+
   constructor (basePath: string) {
     super(basePath, '.adonisrc.json')
+    this._preloads = this.get('preloads', [])
+    this._copyToBuild = this.get('copyToBuild', [])
   }
 
   /**
@@ -54,9 +68,8 @@ export class RcFile extends JsonFile {
     environment?: ('console' | 'test' | 'web')[],
     optional?: boolean,
   ): this {
-    const preloads = this.get('preloads', [])
-    let preloadIndex = preloads.findIndex((preload) => preload.file === filePath)
-    preloadIndex = preloadIndex === -1 ? preloads.length : preloadIndex
+    let preloadIndex = this._preloads.findIndex((preload) => preload.file === filePath)
+    preloadIndex = preloadIndex === -1 ? this._preloads.length : preloadIndex
 
     const preloadEntry: any = {
       file: filePath,
@@ -76,6 +89,7 @@ export class RcFile extends JsonFile {
       preloadEntry.optional = optional
     }
 
+    this._preloads[preloadIndex] = preloadEntry
     this.set(`preloads[${preloadIndex}]`, preloadEntry)
     return this
   }
@@ -100,10 +114,10 @@ export class RcFile extends JsonFile {
    * Add custom file to `copyToBuild` array.
    */
   public addCopyToBuildFile (filePath: string) {
-    const copyToBuild = this.get('copyToBuild', [])
-    let entryIndex = copyToBuild.findIndex((file) => file === filePath)
-    entryIndex = entryIndex === -1 ? copyToBuild.length : entryIndex
+    let entryIndex = this._copyToBuild.findIndex((file) => file === filePath)
+    entryIndex = entryIndex === -1 ? this._copyToBuild.length : entryIndex
 
+    this._copyToBuild[entryIndex] = filePath
     this.set(`copyToBuild[${entryIndex}]`, filePath)
   }
 }
