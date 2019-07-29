@@ -40,7 +40,7 @@ export class PackageFile extends BaseFile {
   /**
    * Set key/value pair in the package.json file
    */
-  public set (key: string, value: string): this {
+  public set (key: string, value: any): this {
     this.$addAction('set', { key, value })
     return this
   }
@@ -105,11 +105,46 @@ export class PackageFile extends BaseFile {
   }
 
   /**
+   * Remove file
+   */
+  public delete () {
+    this.$addAction('delete')
+    return this
+  }
+
+  /**
+   * Returns value for a given key from the file
+   */
+	public get (): any
+	public get (address: string | string[], defaultValue?: any): any
+  public get (address?: string | string[], defaultValue?: any): any {
+    return address ? this.filePointer.get(address, defaultValue) : this.filePointer.get()
+  }
+
+  /**
+   * A boolean telling if the file already exists
+   */
+  public exists () {
+    return this.filePointer.exists()
+  }
+
+  /**
    * Commit mutations
    */
   public commit () {
     this.$cdIn()
     const actions = this.$getCommitActions()
+    const deleteFile = actions.find(({ action }) => action === 'delete')
+
+    /**
+     * In case of `delete` action. There is no point running
+     * other actions and we can simply delete the file
+     */
+    if (deleteFile) {
+      this.filePointer.delete()
+      this.$cdOut()
+      return
+    }
 
     actions.forEach(({ action, body }) => {
       if (['set', 'unset'].indexOf(action) > -1) {
