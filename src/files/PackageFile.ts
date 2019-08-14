@@ -7,6 +7,7 @@
  * file that was distributed with this source code.
 */
 
+import { execFileSync } from 'fs';
 import { packageJson, install, uninstall } from 'mrm-core'
 import { BaseFile } from '../base/BaseFile'
 
@@ -175,7 +176,7 @@ export class PackageFile extends BaseFile {
       options.yarn = this._useYarn
     }
 
-    install(list, options)
+    install(list, options, execFileSync)
   }
 
   /**
@@ -190,7 +191,7 @@ export class PackageFile extends BaseFile {
       options.yarn = this._useYarn
     }
 
-    uninstall(list, options)
+    uninstall(list, options, execFileSync)
   }
 
   /**
