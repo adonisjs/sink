@@ -7,7 +7,7 @@
  * file that was distributed with this source code.
 */
 
-import { execFileSync } from 'fs';
+import { execFileSync } from 'child_process'
 import { packageJson, install, uninstall } from 'mrm-core'
 import { BaseFile } from '../base/BaseFile'
 
