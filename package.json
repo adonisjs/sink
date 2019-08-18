@@ -1,6 +1,6 @@
 {
   "name": "@adonisjs/sink",
-  "version": "2.0.13",
+  "version": "2.1.0",
   "description": "Utilities to create AdonisJs boilerplates and custom providers",
   "main": "index.js",
   "files": [
