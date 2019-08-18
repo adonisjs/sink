@@ -47,6 +47,8 @@ test.group('AdonisRc file', (group) => {
   })
 
   test('raise error when defined and instructions file is missing', async (assert) => {
+    assert.plan(1)
+
     await fs.add('package.json', JSON.stringify({
       name: 'my-app',
       dependencies: {
@@ -66,8 +68,11 @@ test.group('AdonisRc file', (group) => {
       singleton () {},
     }, {}, {})
 
-    const completed = await executeInstructions('@fake/app', fs.basePath, application)
-    assert.isFalse(completed)
+    try {
+      await executeInstructions('@fake/app', fs.basePath, application)
+    } catch ({ message }) {
+      assert.match(message, /Cannot find module/)
+    }
   })
 
   test('execute instructions when defined', async (assert) => {

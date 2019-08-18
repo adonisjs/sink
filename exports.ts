@@ -8,6 +8,7 @@
 */
 
 import * as pkg from './package.json'
+import './src/disableLogger'
 
 export const sinkVersion = pkg.version
 export { copyFiles, deleteFiles, makeDirs } from 'mrm-core'

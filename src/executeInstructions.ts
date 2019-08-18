@@ -8,7 +8,6 @@
 */
 
 import { normalize } from 'path'
-import { cyan, red } from 'kleur'
 import { ApplicationContract } from '@poppinss/application'
 import { esmRequire } from '@poppinss/utils'
 import * as sink from '../exports'
@@ -34,25 +33,24 @@ export async function executeInstructions (
     return true
   }
 
-  try {
-    const instructionsPath = require.resolve(
-      normalize(`${packageName}/${pkg.adonisjs.instructions}`),
-      {
-        paths: [projectRoot],
-      },
-    )
-    const instructions = esmRequire(instructionsPath)
-    await instructions(projectRoot, application, sink)
-    return true
-  } catch (error) {
-    const stack = error.stack.split('\n').map((line, index) => {
-      return index === 0 ? `  ${line}` : `${new Array(15).join(' ')}${line}`
-    }).join('\n')
+  /**
+   * Normalizing path
+   */
+  const normalizedPath = normalize(`${packageName}/${pkg.adonisjs.instructions}`)
 
-    console.log(red(`Unable to execute instructions for ${packageName}. Check following stack`))
-    console.log(`Sink version:  ${cyan(sink.sinkVersion)}`)
-    console.log(`Project root:  ${cyan(projectRoot)}`)
-    console.log(`Error stack:${red(stack)}`)
-    return false
-  }
+  /**
+   * Resolving instructions path from the project root
+   */
+  const instructionsPath = require.resolve(normalizedPath, { paths: [projectRoot] })
+
+  /**
+   * Requiring instructions
+   */
+  const instructions = esmRequire(instructionsPath)
+
+  /**
+   * Executing instructions
+   */
+  await instructions(projectRoot, application, sink)
+  return true
 }
