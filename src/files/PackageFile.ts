@@ -7,11 +7,13 @@
  * file that was distributed with this source code.
 */
 
-import { spawnSync, SpawnSyncReturns } from 'child_process'
+import { spawnSync, SpawnSyncReturns, StdioOptions, spawn } from 'child_process'
 import { packageJson, install, uninstall } from 'mrm-core'
 import { BaseFile } from '../base/BaseFile'
 
+type InstallerFns = 'install' | 'uninstall'
 type InstallerNotifier = (list: string[], dev: boolean) => void
+type Dependencies = { list: string[], versions?: any, dev: boolean }
 
 /**
  * Exposes the API to work with `package.json` file. The file is
@@ -21,6 +23,9 @@ type InstallerNotifier = (list: string[], dev: boolean) => void
 export class PackageFile extends BaseFile {
   public filePointer: ReturnType<typeof packageJson>
 
+  /**
+   * Collection of actions to be executed on package file
+   */
   protected $actions = []
 
   /**
@@ -46,12 +51,9 @@ export class PackageFile extends BaseFile {
   /**
    * Method invoked before uninstalling dependencies
    */
-  private _beforeUnInstall?: InstallerNotifier
+  private _beforeUninstall?: InstallerNotifier
 
-  constructor (
-    basePath: string,
-    private _installerOutput: 'pipe' | 'ignore' | 'inherit' = 'pipe',
-  ) {
+  constructor (basePath: string, private _installerOutput: StdioOptions = 'pipe') {
     super(basePath)
     this.$cdIn()
     this.filePointer = packageJson()
@@ -59,22 +61,39 @@ export class PackageFile extends BaseFile {
   }
 
   /**
-   * Executes the install script
+   * Run hooks for action or uninstall action
    */
-  private _executeInstall (list: string[], options: Parameters<typeof install>[1] = {}) {
+  private _runHooks (action: InstallerFns, list: string[], dev: boolean) {
+    if (action === 'install' && typeof (this._beforeInstall) === 'function') {
+      this._beforeInstall(list, dev)
+    } else if (action === 'uninstall' && typeof (this._beforeUninstall) === 'function') {
+      this._beforeUninstall(list, dev)
+    }
+  }
+
+  /**
+   * Sets installation client
+   */
+  private _setClient (options: NpmOptions) {
+    if (this._useYarn !== null) {
+      options.yarn = this._useYarn
+    }
+  }
+
+  /**
+   * Executes the installer `install` or `uninstall` action. Use
+   * `this._installerFnAsync` for async version
+   */
+  private _installerFn (action: InstallerFns, list: string[], options: NpmOptions) {
     if (!list.length) {
       return
     }
 
-    if (this._useYarn !== null) {
-      options.yarn = this._useYarn
-    }
+    this._setClient(options)
+    this._runHooks(action, list, options.dev!)
 
-    if (typeof (this._beforeInstall) === 'function') {
-      this._beforeInstall(list, options.dev!)
-    }
-
-    return install(list, options, (command: string, args: string[]) => {
+    const fn = action === 'install' ? install : uninstall
+    return fn(list, options, (command: string, args: string[]) => {
       return spawnSync(command, args, {
         stdio: this._installerOutput,
       })
@@ -82,66 +101,69 @@ export class PackageFile extends BaseFile {
   }
 
   /**
-   * Execute uninstall script
+   * Executes the installer `install` or `uninstall` action. Use
+   * `this._installerFn` for sync version
    */
-  private _executeUninstall (list: string[], options: Parameters<typeof uninstall>[1] = {}) {
-    if (!list.length) {
-      return
-    }
+  private _installerFnAsync (action: InstallerFns, list: string[], options: NpmOptions) {
+    return new Promise<undefined | SpawnSyncReturns<Buffer>>((resolve) => {
+      if (!list.length) {
+        resolve()
+        return
+      }
 
-    if (this._useYarn !== null) {
-      options.yarn = this._useYarn
-    }
+      this._setClient(options)
+      this._runHooks(action, list, options.dev!)
 
-    if (typeof (this._beforeUnInstall) === 'function') {
-      this._beforeUnInstall(list, options.dev!)
-    }
+      let response: SpawnSyncReturns<Buffer>
 
-    return uninstall(list, options, (command: string, args: string[]) => {
-      return spawnSync(command, args, {
-        stdio: this._installerOutput,
+      const fn = action === 'install' ? install : uninstall
+      fn(list, options, (command: string, args: string[]) => {
+        const runner = spawn(command, args, { stdio: 'pipe' })
+        response = {
+          pid: runner.pid,
+          output: [],
+          stdout: Buffer.from(''),
+          stderr: Buffer.from(''),
+          status: null,
+          signal: null,
+        }
+
+        runner.stdout.on('data', (chunk) => {
+          response.stdout = Buffer.concat([response.stdout, chunk])
+        })
+
+        runner.stderr.on('data', (chunk) => {
+          response.stderr = Buffer.concat([response.stderr, chunk])
+        })
+
+        runner.on('close', (code, signal) => {
+          response.status = code
+          response.signal = signal
+          resolve(response)
+        })
       })
-    }) as SpawnSyncReturns<Buffer>
+    })
   }
 
   /**
-   * Install and uninstall packages defined in actions
+   * Install and uninstall packages defined via `this.install`
+   * and `this.uninstall`
    */
-  private _install () {
-    /**
-     * Install development dependencies
-     */
-    const dev = this.getDependencies(true)
-    let response = this._executeInstall(dev.list, { versions: dev.versions, dev: true })
-    if (response && response.status === 1) {
-      return response
+  private _commitDependencies (installs: Dependencies[], uninstalls: Dependencies[]) {
+    let response: SpawnSyncReturns<Buffer> | undefined
+
+    for (let { list, versions, dev } of installs) {
+      response = this._installerFn('install', list, { versions, dev })
+      if (response && response.status === 1) {
+        return response
+      }
     }
 
-    /**
-     * Install production dependencies
-     */
-    const prod = this.getDependencies(false)
-    response = this._executeInstall(prod.list, { versions: prod.versions, dev: false })
-    if (response && response.status === 1) {
-      return response
-    }
-
-    /**
-     * Uninstall production dependencies
-     */
-    const prodRemove = this.$uninstall.filter(({ dev }) => !dev).map(({ dependency }) => dependency)
-    response = this._executeUninstall(prodRemove, { dev: false })
-    if (response && response.status === 1) {
-      return response
-    }
-
-    /**
-     * Uninstall development dependencies
-     */
-    const devRemove = this.$uninstall.filter(({ dev }) => dev).map(({ dependency }) => dependency)
-    response = this._executeUninstall(devRemove, { dev: true })
-    if (response && response.status === 1) {
-      return response
+    for (let { list, dev } of uninstalls) {
+      response = this._installerFn('uninstall', list, { dev })
+      if (response && response.status === 1) {
+        return response
+      }
     }
   }
 
@@ -149,18 +171,122 @@ export class PackageFile extends BaseFile {
    * Performing uninstalling as a rollback step. Which means, this method
    * will remove packages marked for installation.
    */
-  private _uninstall () {
-    /**
-     * Remove prod dependencies
-     */
-    const prod = this.getDependencies(false)
-    this._executeUninstall(prod.list, { dev: false })
+  private _rollbackDependencies (installs: Dependencies[]) {
+    let response: SpawnSyncReturns<Buffer> | undefined
+
+    for (let { list, dev } of installs) {
+      response = this._installerFn('uninstall', list, { dev })
+      if (response && response.status === 1) {
+        return response
+      }
+    }
+  }
+
+  /**
+   * Same as `_commitInstalls` but async
+   */
+  private async _commitDependenciesAsync (installs: Dependencies[], uninstalls: Dependencies[]) {
+    let response: SpawnSyncReturns<Buffer> | undefined
+
+    for (let { list, versions, dev } of installs) {
+      response = await this._installerFnAsync('install', list, { versions, dev })
+      if (response && response.status === 1) {
+        return response
+      }
+    }
+
+    for (let { list, dev } of uninstalls) {
+      response = await this._installerFnAsync('uninstall', list, { dev })
+      if (response && response.status === 1) {
+        return response
+      }
+    }
+  }
+
+  /**
+   * Same as `_rollbackInstalls` but async.
+   */
+  private async _rollbackDependenciesAsync (installs: Dependencies[]) {
+    let response: SpawnSyncReturns<Buffer> | undefined
+
+    for (let { list, dev } of installs) {
+      response = await this._installerFnAsync('uninstall', list, { dev })
+      if (response && response.status === 1) {
+        return response
+      }
+    }
+  }
+
+  /**
+   * Commits actions defined on the given file
+   */
+  private _commitActions (): boolean {
+    const actions = this.$getCommitActions()
+    const deleteFile = actions.find(({ action }) => action === 'delete')
 
     /**
-     * Remove dev dependencies
+     * In case of `delete` action. There is no point running
+     * other actions and we can simply delete the file
      */
-    const dev = this.getDependencies(true)
-    this._executeUninstall(dev.list, { dev: true })
+    if (deleteFile) {
+      this.filePointer.delete()
+      this.$cdOut()
+      return false
+    }
+
+    /**
+     * Executing all actions
+     */
+    actions.forEach(({ action, body }) => {
+      if (['set', 'unset'].indexOf(action) > -1) {
+        this.filePointer[action](body.key, body.value)
+        return
+      }
+
+      if (['prependScript', 'appendScript', 'setScript', 'removeScript'].indexOf(action) > -1) {
+        this.filePointer[action](body.name, body.script)
+        return
+      }
+    })
+
+    /**
+     * Save the file to the disk before starting install process.
+     */
+    this.filePointer.save()
+    return true
+  }
+
+  /**
+   * Rollsback actions defined on the package file
+   */
+  private _rollbackActions () {
+    const actions = this.$getCommitActions()
+
+    /**
+     * Executing actions in reverse.
+     */
+    actions.forEach(({ action, body }) => {
+      if (action === 'set') {
+        this.filePointer.unset(body.key)
+        return
+      }
+
+      if (action === 'setScript') {
+        this.filePointer.removeScript(body.name)
+        return
+      }
+
+      if (['prependScript', 'appendScript'].indexOf(action) > -1) {
+        this.filePointer.removeScript(body.name, new RegExp(body.script))
+        return
+      }
+    })
+
+    /**
+     * Write file to the disk
+     */
+    this.filePointer.save()
+    return true
   }
 
   /**
@@ -267,8 +393,8 @@ export class PackageFile extends BaseFile {
   /**
    * Returns a list of dependencies along with specific versions (if any)
    */
-  public getDependencies (dev: boolean = true) {
-    const dependencies: { list: string[], versions: any } = { versions: {}, list: [] }
+  public getInstalls (dev: boolean = true) {
+    const dependencies: Dependencies = { versions: {}, list: [], dev }
 
     return this.$install.reduce((result, dependency) => {
       if (dependency.dev && dev) {
@@ -288,6 +414,24 @@ export class PackageFile extends BaseFile {
   }
 
   /**
+   * Returns uninstalls list for prod or development
+   * dependencies.
+   */
+  public getUninstalls (dev: boolean) {
+    const dependencies: Dependencies = { list: [], dev }
+
+    return this.$uninstall.reduce((result, dependency) => {
+      if (dependency.dev && dev) {
+        result.list.push(dependency.dependency)
+      } else if (!dependency.dev && !dev) {
+        result.list.push(dependency.dependency)
+      }
+
+      return result
+    }, dependencies)
+  }
+
+  /**
    * Define a function to be called before installing dependencies
    */
   public beforeInstall (callback: InstallerNotifier): this {
@@ -298,8 +442,8 @@ export class PackageFile extends BaseFile {
   /**
    * Define a function to be called before uninstalling dependencies
    */
-  public beforeUnInstall (callback: InstallerNotifier): this {
-    this._beforeUnInstall = callback
+  public beforeUninstall (callback: InstallerNotifier): this {
+    this._beforeUninstall = callback
     return this
   }
 
@@ -308,53 +452,45 @@ export class PackageFile extends BaseFile {
    */
   public commit () {
     this.$cdIn()
-    const actions = this.$getCommitActions()
-    const deleteFile = actions.find(({ action }) => action === 'delete')
 
-    /**
-     * In case of `delete` action. There is no point running
-     * other actions and we can simply delete the file
-     */
-    if (deleteFile) {
-      this.filePointer.delete()
-      this.$cdOut()
+    const success = this._commitActions()
+    if (!success) {
       return
     }
 
     /**
-     * Executing all actions
+     * Install/uninstall dependencies
      */
-    actions.forEach(({ action, body }) => {
-      if (['set', 'unset'].indexOf(action) > -1) {
-        this.filePointer[action](body.key, body.value)
-        return
-      }
+    const response = this._commitDependencies(
+      [this.getInstalls(true), this.getInstalls(false)],
+      [this.getUninstalls(true), this.getUninstalls(false)],
+    )
 
-      if (['prependScript', 'appendScript', 'setScript', 'removeScript'].indexOf(action) > -1) {
-        this.filePointer[action](body.name, body.script)
-        return
-      }
-    })
+    this.$cdOut()
+    return response
+  }
 
-    /**
-     * Save the file to the disk before starting install process.
-     */
-    this.filePointer.save()
+  /**
+   * Commits async. The files are still written using synchronous
+   * API. However, the install and uninstall becomes async.
+   */
+  public async commitAsync () {
+    this.$cdIn()
+
+    const success = this._commitActions()
+    if (!success) {
+      return
+    }
 
     /**
      * Install/uninstall dependencies
      */
-    const response = this._install()
+    const response = await this._commitDependenciesAsync(
+      [this.getInstalls(true), this.getInstalls(false)],
+      [this.getUninstalls(true), this.getUninstalls(false)],
+    )
 
-    /**
-     * cd out to process.cwd()
-     */
     this.$cdOut()
-
-    /**
-     * Return response, which can be used to know if the commit passed
-     * or failed.
-     */
     return response
   }
 
@@ -363,47 +499,45 @@ export class PackageFile extends BaseFile {
    */
   public rollback () {
     this.$cdIn()
-    const actions = this.$getCommitActions()
 
-    /**
-     * Executing actions in reverse.
-     */
-    actions.forEach(({ action, body }) => {
-      if (action === 'set') {
-        this.filePointer.unset(body.key)
-        return
-      }
-
-      if (action === 'setScript') {
-        this.filePointer.removeScript(body.name)
-        return
-      }
-
-      if (['prependScript', 'appendScript'].indexOf(action) > -1) {
-        this.filePointer.removeScript(body.name, new RegExp(body.script))
-        return
-      }
-    })
-
-    /**
-     * Write file to the disk
-     */
-    this.filePointer.save()
+    const success = this._rollbackActions()
+    if (!success) {
+      return
+    }
 
     /**
      * Uninstalling installed packages
      */
-    const response = this._uninstall()
+    const response = this._rollbackDependencies([
+      this.getInstalls(true),
+      this.getInstalls(false),
+    ])
 
-    /**
-     * Cd out to process.cwd()
-     */
     this.$cdOut()
+    return response
+  }
+
+  /**
+   * Rollsback async. The files are still written using synchronous
+   * API. However, the uninstall becomes async.
+   */
+  public async rollbackAsync () {
+    this.$cdIn()
+
+    const success = this._rollbackActions()
+    if (!success) {
+      return
+    }
 
     /**
-     * Return response, which can be used to know if the commit passed
-     * or failed.
+     * Uninstalling installed packages
      */
+    const response = await this._rollbackDependenciesAsync([
+      this.getInstalls(true),
+      this.getInstalls(false),
+    ])
+
+    this.$cdOut()
     return response
   }
 }

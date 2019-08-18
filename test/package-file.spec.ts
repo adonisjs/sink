@@ -153,21 +153,41 @@ test.group('Package file', (group) => {
     assert.equal(JSON.parse(contents).devDependencies.lodash, '^1.0.0')
   }).timeout(0)
 
-  test('get list of dev & production dependencies', async (assert) => {
+  test('get list of dev & production installs', async (assert) => {
     await fs.add('package.json', JSON.stringify({ name: 'foo' }))
     const pkg = new PackageFile(fs.basePath)
+
     pkg.install('lodash', '1.0.0', false)
     pkg.install('@adonisjs/core', 'latest', false)
     pkg.install('mrm-core')
 
-    assert.deepEqual(pkg.getDependencies(false), {
+    assert.deepEqual(pkg.getInstalls(false), {
       list: ['lodash', '@adonisjs/core'],
       versions: { lodash: '1.0.0' },
+      dev: false,
     })
 
-    assert.deepEqual(pkg.getDependencies(true), {
+    assert.deepEqual(pkg.getInstalls(true), {
       list: ['mrm-core'],
       versions: {},
+      dev: true,
+    })
+  }).timeout(0)
+
+  test('get list of dev & production uninstalls', async (assert) => {
+    await fs.add('package.json', JSON.stringify({ name: 'foo' }))
+    const pkg = new PackageFile(fs.basePath)
+    pkg.uninstall('lodash', false)
+    pkg.uninstall('mrm-core')
+
+    assert.deepEqual(pkg.getUninstalls(false), {
+      list: ['lodash'],
+      dev: false,
+    })
+
+    assert.deepEqual(pkg.getUninstalls(true), {
+      list: ['mrm-core'],
+      dev: true,
     })
   }).timeout(0)
 
@@ -218,11 +238,49 @@ test.group('Package file', (group) => {
     const pkg = new PackageFile(fs.basePath)
 
     pkg.install('lodash')
-    pkg.beforeUnInstall((list, dev) => {
+    pkg.beforeUninstall((list, dev) => {
       assert.deepEqual(list, ['lodash'])
       assert.isTrue(dev)
     })
 
     pkg.rollback()
+  }).timeout(0)
+
+  test('install given version of a package asynchronously', async (assert) => {
+    await fs.add('package.json', JSON.stringify({ name: 'foo' }))
+    const pkg = new PackageFile(fs.basePath)
+    pkg.install('lodash', '1.0.0')
+    const response = await pkg.commitAsync()
+    assert.isUndefined(response)
+
+    const contents = await fs.get('package.json')
+    assert.equal(JSON.parse(contents).devDependencies.lodash, '^1.0.0')
+  }).timeout(0)
+
+  test('return install errors from asynchronous commit action', async (assert) => {
+    await fs.add('package.json', JSON.stringify({ name: 'foo' }))
+    const pkg = new PackageFile(fs.basePath)
+    pkg.install('sdasdjksadjkasdkja')
+
+    const response = await pkg.commitAsync()
+    assert.equal(response!.status, 1)
+
+    const contents = await fs.get('package.json')
+    assert.isUndefined(JSON.parse(contents).devDependencies)
+  }).timeout(0)
+
+  test('do not continue commit when one of the asynchronous install fails', async (assert) => {
+    await fs.add('package.json', JSON.stringify({ name: 'foo' }))
+    const pkg = new PackageFile(fs.basePath)
+
+    pkg.install('sdasdjksadjkasdkja')
+    pkg.install('lodash', undefined, false)
+
+    const response = await pkg.commitAsync()
+    assert.equal(response!.status, 1)
+
+    const contents = await fs.get('package.json')
+    assert.isUndefined(JSON.parse(contents).devDependencies)
+    assert.isUndefined(JSON.parse(contents).dependencies)
   }).timeout(0)
 })
