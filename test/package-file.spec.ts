@@ -146,7 +146,8 @@ test.group('Package file', (group) => {
     await fs.add('package.json', JSON.stringify({ name: 'foo' }))
     const pkg = new PackageFile(fs.basePath)
     pkg.install('lodash', '1.0.0')
-    pkg.commit()
+    const response = pkg.commit()
+    assert.isUndefined(response)
 
     const contents = await fs.get('package.json')
     assert.equal(JSON.parse(contents).devDependencies.lodash, '^1.0.0')
@@ -168,5 +169,32 @@ test.group('Package file', (group) => {
       list: ['mrm-core'],
       versions: {},
     })
+  }).timeout(0)
+
+  test('return install errors from commit action', async (assert) => {
+    await fs.add('package.json', JSON.stringify({ name: 'foo' }))
+    const pkg = new PackageFile(fs.basePath)
+    pkg.install('sdasdjksadjkasdkja')
+
+    const response = pkg.commit()
+    assert.equal(response!.status, 1)
+
+    const contents = await fs.get('package.json')
+    assert.isUndefined(JSON.parse(contents).devDependencies)
+  }).timeout(0)
+
+  test('do not continue commit when one of the install command fails', async (assert) => {
+    await fs.add('package.json', JSON.stringify({ name: 'foo' }))
+    const pkg = new PackageFile(fs.basePath)
+
+    pkg.install('sdasdjksadjkasdkja')
+    pkg.install('lodash', undefined, false)
+
+    const response = pkg.commit()
+    assert.equal(response!.status, 1)
+
+    const contents = await fs.get('package.json')
+    assert.isUndefined(JSON.parse(contents).devDependencies)
+    assert.isUndefined(JSON.parse(contents).dependencies)
   }).timeout(0)
 })

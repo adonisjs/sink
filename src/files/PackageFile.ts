@@ -7,7 +7,7 @@
  * file that was distributed with this source code.
 */
 
-import { execFileSync } from 'child_process'
+import { spawnSync, SpawnSyncReturns } from 'child_process'
 import { packageJson, install, uninstall } from 'mrm-core'
 import { BaseFile } from '../base/BaseFile'
 
@@ -31,13 +31,116 @@ export class PackageFile extends BaseFile {
    */
   protected $uninstall: { dependency: string, dev: boolean }[] = []
 
+  /**
+   * Explicitly force to use yarn instead of npm
+   */
   private _useYarn: boolean | null = null
 
-  constructor (basePath: string) {
+  constructor (
+    basePath: string,
+    private _installerOutput: 'pipe' | 'ignore' | 'inherit' = 'pipe',
+  ) {
     super(basePath)
     this.$cdIn()
     this.filePointer = packageJson()
     this.$cdOut()
+  }
+
+  /**
+   * Executes the install script
+   */
+  private _executeInstall (list: string[], options: Parameters<typeof install>[1] = {}) {
+    if (!list.length) {
+      return
+    }
+
+    if (this._useYarn !== null) {
+      options.yarn = this._useYarn
+    }
+
+    return install(list, options, (command: string, args: string[]) => {
+      return spawnSync(command, args, {
+        stdio: this._installerOutput,
+      })
+    }) as SpawnSyncReturns<Buffer>
+  }
+
+  /**
+   * Execute uninstall script
+   */
+  private _executeUninstall (list: string[], options: Parameters<typeof uninstall>[1] = {}) {
+    if (!list.length) {
+      return
+    }
+
+    if (this._useYarn !== null) {
+      options.yarn = this._useYarn
+    }
+
+    return uninstall(list, options, (command: string, args: string[]) => {
+      return spawnSync(command, args, {
+        stdio: this._installerOutput,
+      })
+    }) as SpawnSyncReturns<Buffer>
+  }
+
+  /**
+   * Install and uninstall packages defined in actions
+   */
+  private _install () {
+    /**
+     * Install development dependencies
+     */
+    const dev = this.getDependencies(true)
+    let response = this._executeInstall(dev.list, { versions: dev.versions, dev: true })
+    if (response && response.status === 1) {
+      return response
+    }
+
+    /**
+     * Install production dependencies
+     */
+    const prod = this.getDependencies(false)
+    response = this._executeInstall(prod.list, { versions: prod.versions, dev: false })
+    if (response && response.status === 1) {
+      return response
+    }
+
+    /**
+     * Uninstall production dependencies
+     */
+    const prodRemove = this.$uninstall.filter(({ dev }) => !dev).map(({ dependency }) => dependency)
+    response = this._executeUninstall(prodRemove, { dev: false })
+    if (response && response.status === 1) {
+      return response
+    }
+
+    /**
+     * Uninstall development dependencies
+     */
+    const devRemove = this.$uninstall.filter(({ dev }) => dev).map(({ dependency }) => dependency)
+    response = this._executeUninstall(devRemove, { dev: true })
+    if (response && response.status === 1) {
+      return response
+    }
+  }
+
+  /**
+   * Performing uninstalling as a rollback step. Which means, this method
+   * will remove packages marked for installation.
+   */
+  private _uninstall () {
+    /**
+     * Remove prod dependencies
+     */
+    const prod = this.getDependencies(false)
+    this._executeUninstall(prod.list, { dev: false })
+
+    /**
+     * Remove dev dependencies
+     */
+    const dev = this.getDependencies(true)
+    this._executeUninstall(dev.list, { dev: true })
   }
 
   /**
@@ -165,36 +268,6 @@ export class PackageFile extends BaseFile {
   }
 
   /**
-   * Executes the install script
-   */
-  private _executeInstall (list: string[], options: Parameters<typeof install>[1] = {}) {
-    if (!list.length) {
-      return
-    }
-
-    if (this._useYarn !== null) {
-      options.yarn = this._useYarn
-    }
-
-    install(list, options, execFileSync)
-  }
-
-  /**
-   * Execute uninstall script
-   */
-  private _executeUninstall (list: string[], options: Parameters<typeof uninstall>[1] = {}) {
-    if (!list.length) {
-      return
-    }
-
-    if (this._useYarn !== null) {
-      options.yarn = this._useYarn
-    }
-
-    uninstall(list, options, execFileSync)
-  }
-
-  /**
    * Commit mutations
    */
   public commit () {
@@ -212,6 +285,9 @@ export class PackageFile extends BaseFile {
       return
     }
 
+    /**
+     * Executing all actions
+     */
     actions.forEach(({ action, body }) => {
       if (['set', 'unset'].indexOf(action) > -1) {
         this.filePointer[action](body.key, body.value)
@@ -225,35 +301,25 @@ export class PackageFile extends BaseFile {
     })
 
     /**
-     * Save the file to the disk
+     * Save the file to the disk before starting install process.
      */
     this.filePointer.save()
 
     /**
-     * Install development dependencies
+     * Install/uninstall dependencies
      */
-    const dev = this.getDependencies(true)
-    this._executeInstall(dev.list, { versions: dev.versions, dev: true })
+    const response = this._install()
 
     /**
-     * Install production dependencies
+     * cd out to process.cwd()
      */
-    const prod = this.getDependencies(false)
-    this._executeInstall(prod.list, { versions: prod.versions, dev: false })
-
-    /**
-     * Uninstall production dependencies
-     */
-    const prodRemove = this.$uninstall.filter(({ dev }) => !dev).map(({ dependency }) => dependency)
-    this._executeUninstall(prodRemove, { dev: false })
-
-    /**
-     * Uninstall development dependencies
-     */
-    const devRemove = this.$uninstall.filter(({ dev }) => dev).map(({ dependency }) => dependency)
-    this._executeUninstall(devRemove, { dev: true })
-
     this.$cdOut()
+
+    /**
+     * Return response, which can be used to know if the commit passed
+     * or failed.
+     */
+    return response
   }
 
   /**
@@ -263,6 +329,9 @@ export class PackageFile extends BaseFile {
     this.$cdIn()
     const actions = this.$getCommitActions()
 
+    /**
+     * Executing actions in reverse.
+     */
     actions.forEach(({ action, body }) => {
       if (action === 'set') {
         this.filePointer.unset(body.key)
@@ -286,17 +355,19 @@ export class PackageFile extends BaseFile {
     this.filePointer.save()
 
     /**
-     * Remove prod dependencies
+     * Uninstalling installed packages
      */
-    const prod = this.getDependencies(false)
-    this._executeUninstall(prod.list, { dev: false })
+    const response = this._uninstall()
 
     /**
-     * Remove dev dependencies
+     * Cd out to process.cwd()
      */
-    const dev = this.getDependencies(true)
-    this._executeUninstall(dev.list, { dev: true })
-
     this.$cdOut()
+
+    /**
+     * Return response, which can be used to know if the commit passed
+     * or failed.
+     */
+    return response
   }
 }
