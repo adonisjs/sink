@@ -11,6 +11,8 @@ import { spawnSync, SpawnSyncReturns } from 'child_process'
 import { packageJson, install, uninstall } from 'mrm-core'
 import { BaseFile } from '../base/BaseFile'
 
+type InstallerNotifier = (list: string[], dev: boolean) => void
+
 /**
  * Exposes the API to work with `package.json` file. The file is
  * same as a standard JSON file, but with some special methods
@@ -36,6 +38,16 @@ export class PackageFile extends BaseFile {
    */
   private _useYarn: boolean | null = null
 
+  /**
+   * Method invoked before installing dependencies
+   */
+  private _beforeInstall?: InstallerNotifier
+
+  /**
+   * Method invoked before uninstalling dependencies
+   */
+  private _beforeUnInstall?: InstallerNotifier
+
   constructor (
     basePath: string,
     private _installerOutput: 'pipe' | 'ignore' | 'inherit' = 'pipe',
@@ -58,6 +70,10 @@ export class PackageFile extends BaseFile {
       options.yarn = this._useYarn
     }
 
+    if (typeof (this._beforeInstall) === 'function') {
+      this._beforeInstall(list, options.dev!)
+    }
+
     return install(list, options, (command: string, args: string[]) => {
       return spawnSync(command, args, {
         stdio: this._installerOutput,
@@ -75,6 +91,10 @@ export class PackageFile extends BaseFile {
 
     if (this._useYarn !== null) {
       options.yarn = this._useYarn
+    }
+
+    if (typeof (this._beforeUnInstall) === 'function') {
+      this._beforeUnInstall(list, options.dev!)
     }
 
     return uninstall(list, options, (command: string, args: string[]) => {
@@ -265,6 +285,22 @@ export class PackageFile extends BaseFile {
 
       return result
     }, dependencies)
+  }
+
+  /**
+   * Define a function to be called before installing dependencies
+   */
+  public beforeInstall (callback: InstallerNotifier): this {
+    this._beforeInstall = callback
+    return this
+  }
+
+  /**
+   * Define a function to be called before uninstalling dependencies
+   */
+  public beforeUnInstall (callback: InstallerNotifier): this {
+    this._beforeUnInstall = callback
+    return this
   }
 
   /**

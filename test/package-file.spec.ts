@@ -197,4 +197,32 @@ test.group('Package file', (group) => {
     assert.isUndefined(JSON.parse(contents).devDependencies)
     assert.isUndefined(JSON.parse(contents).dependencies)
   }).timeout(0)
+
+  test('execute callback before installing packages', async (assert) => {
+    assert.plan(2)
+    await fs.add('package.json', JSON.stringify({ name: 'foo' }))
+    const pkg = new PackageFile(fs.basePath)
+
+    pkg.install('lodash')
+    pkg.beforeInstall((list, dev) => {
+      assert.deepEqual(list, ['lodash'])
+      assert.isTrue(dev)
+    })
+
+    pkg.commit()
+  }).timeout(0)
+
+  test('execute callback before uninstalling packages', async (assert) => {
+    assert.plan(2)
+    await fs.add('package.json', JSON.stringify({ name: 'foo' }))
+    const pkg = new PackageFile(fs.basePath)
+
+    pkg.install('lodash')
+    pkg.beforeUnInstall((list, dev) => {
+      assert.deepEqual(list, ['lodash'])
+      assert.isTrue(dev)
+    })
+
+    pkg.rollback()
+  }).timeout(0)
 })
