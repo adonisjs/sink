@@ -8,6 +8,7 @@
 */
 
 import * as pkg from './package.json'
+import * as kleur from 'kleur'
 import './src/disableLogger'
 
 export const sinkVersion = pkg.version
@@ -23,3 +24,4 @@ export { TemplateFile } from './src/formats/TemplateFile'
 export { KeyValueFile } from './src/base/KeyValueFile'
 export { BaseFile } from './src/base/BaseFile'
 export { isEmptyDir } from './src/isEmptyDir'
+export { kleur }
