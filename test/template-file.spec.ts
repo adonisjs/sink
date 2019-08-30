@@ -7,7 +7,7 @@
  * file that was distributed with this source code.
 */
 
-import * as test from 'japa'
+import test from 'japa'
 import { join } from 'path'
 import { Filesystem } from '@adonisjs/dev-utils'
 import { TemplateFile } from '../src/formats/TemplateFile'

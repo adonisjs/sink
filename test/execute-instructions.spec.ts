@@ -8,9 +8,10 @@
 */
 
 import { join } from 'path'
-import * as test from 'japa'
+import test from 'japa'
 import { Filesystem } from '@adonisjs/dev-utils'
 import { Application } from '@poppinss/application'
+import { Ioc } from '@adonisjs/fold'
 
 import { executeInstructions } from '../src/executeInstructions'
 
@@ -38,10 +39,7 @@ test.group('AdonisRc file', (group) => {
       version: '1.0.0',
     }))
 
-    const application = new Application(fs.basePath, {
-      singleton () {},
-    }, {}, {})
-
+    const application = new Application(fs.basePath, new Ioc(), {}, {})
     const completed = await executeInstructions('@fake/app', fs.basePath, application)
     assert.isTrue(completed)
   })
@@ -64,9 +62,7 @@ test.group('AdonisRc file', (group) => {
       },
     }))
 
-    const application = new Application(fs.basePath, {
-      singleton () {},
-    }, {}, {})
+    const application = new Application(fs.basePath, new Ioc(), {}, {})
 
     try {
       await executeInstructions('@fake/app', fs.basePath, application)
@@ -94,9 +90,7 @@ test.group('AdonisRc file', (group) => {
       },
     }))
 
-    const application = new Application(fs.basePath, {
-      singleton () {},
-    }, {}, {})
+    const application = new Application(fs.basePath, new Ioc(), {}, {})
 
     const completed = await executeInstructions('@fake/app', fs.basePath, application)
     assert.isTrue(completed)
@@ -123,9 +117,7 @@ test.group('AdonisRc file', (group) => {
       },
     }))
 
-    const application = new Application(fs.basePath, {
-      singleton () {},
-    }, {}, {})
+    const application = new Application(fs.basePath, new Ioc(), {}, {})
 
     const completed = await executeInstructions('@fake/app', fs.basePath, application)
     assert.isTrue(completed)

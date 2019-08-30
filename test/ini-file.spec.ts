@@ -8,8 +8,8 @@
 */
 
 import { join } from 'path'
-import * as test from 'japa'
-import * as ini from 'ini'
+import test from 'japa'
+import ini from 'ini'
 import { Filesystem } from '@adonisjs/dev-utils'
 
 import { IniFile } from '../src/formats/IniFile'
@@ -66,7 +66,10 @@ test.group('Ini file', (group) => {
   })
 
   test('merge to custom section in ini file', async (assert) => {
-    await fs.add('foo.ini', ini.encode({ appName: 'hello-world', version: '1.0' }, { section: 'foo' }))
+    await fs.add('foo.ini', ini.encode(
+      { appName: 'hello-world', version: '1.0' },
+      { section: 'foo', whitespace: false },
+    ))
 
     const file = new IniFile(fs.basePath, 'foo.ini')
     file.merge('foo', { appName: 'hello-universe' })

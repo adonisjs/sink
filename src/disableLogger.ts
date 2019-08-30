@@ -7,7 +7,7 @@
 * file that was distributed with this source code.
 */
 
-import * as log from 'mrm-core/src/util/log'
+import log from 'mrm-core/src/util/log'
 
 /**
  * Overwriting mrm logger to have support for custom log messages

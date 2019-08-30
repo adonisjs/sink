@@ -7,7 +7,7 @@
  * file that was distributed with this source code.
 */
 
-import * as test from 'japa'
+import test from 'japa'
 import { JsonFile } from '../src/formats/JsonFile'
 import { Filesystem } from '@adonisjs/dev-utils'
 import { join } from 'path'
