@@ -79,7 +79,7 @@ test.group('Copy templates', (group) => {
      */
     await fs.fsExtra.outputFile(join(fs.basePath, 'templates/config/app.txt'), `
       const bar = 'bar'
-      export default bar`, { overwrite: true })
+      export default bar`)
 
     copyTemplates(fs.basePath, application, join(fs.basePath, 'templates/config'), {
       config: ['app.txt'],
