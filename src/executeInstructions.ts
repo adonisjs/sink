@@ -64,5 +64,13 @@ export async function executeInstructions (
     console.log(`  update  ${sink.kleur.green('.env')}`)
   }
 
+  /**
+   * Render markdown file when `instructionsMd` property is defined in
+   * package.json file
+   */
+  if (pkg.adonisjs.instructionsMd) {
+    await sink.renderMarkdown(join(dirname(packagePath), pkg.adonisjs.instructionsMd), packageName)
+  }
+
   return true
 }
