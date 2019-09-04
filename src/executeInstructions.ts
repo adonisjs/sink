@@ -50,7 +50,7 @@ export async function executeInstructions (
    * Copy templates when defined in package.json file
    */
   if (pkg.adonisjs.templates) {
-    const templatesRoot = join(dirname(packagePath), pkg.adonisjs.basePath || './build/templates')
+    const templatesRoot = join(dirname(packagePath), pkg.adonisjs.templates.basePath || './build/templates')
     sink.copyTemplates(projectRoot, application, templatesRoot, pkg.adonisjs.templates)
   }
 
@@ -58,7 +58,7 @@ export async function executeInstructions (
    * Set env variables when defined in package.json file
    */
   if (pkg.adonisjs.env) {
-    const env = new sink.EnvFile('.env')
+    const env = new sink.EnvFile(projectRoot)
     Object.keys(pkg.adonisjs.env).forEach((key) => env.set(key, pkg.adonisjs.env[key]))
     env.commit()
     console.log(`  update  ${sink.kleur.green('.env')}`)

@@ -122,4 +122,85 @@ test.group('AdonisRc file', (group) => {
     const completed = await executeInstructions('@fake/app', fs.basePath, application)
     assert.isTrue(completed)
   })
+
+  test('execute instructions set env variables in .env file', async (assert) => {
+    await fs.add('package.json', JSON.stringify({
+      name: 'my-app',
+      dependencies: {
+        '@fake/app': '^1.0.0',
+      },
+    }))
+
+    await fs.add('node_modules/@fake/app/package.json', JSON.stringify({
+      name: '@fake/app',
+      version: '1.0.0',
+      adonisjs: {
+        env: {
+          PORT: '3333',
+        },
+      },
+    }))
+
+    const application = new Application(fs.basePath, new Ioc(), {}, {})
+    const completed = await executeInstructions('@fake/app', fs.basePath, application)
+    assert.isTrue(completed)
+
+    const envContents = await fs.get('.env')
+    assert.deepEqual(envContents.trim(), 'PORT=3333')
+  })
+
+  test.skipInCI('execute instructions open instructions md file', async (assert) => {
+    await fs.add('package.json', JSON.stringify({
+      name: 'my-app',
+      dependencies: {
+        '@fake/app': '^1.0.0',
+      },
+    }))
+
+    await fs.add('node_modules/@fake/app/foo.md', 'Hello')
+
+    await fs.add('node_modules/@fake/app/package.json', JSON.stringify({
+      name: '@fake/app',
+      version: '1.0.0',
+      adonisjs: {
+        instructionsMd: 'foo.md',
+      },
+    }))
+
+    const application = new Application(fs.basePath, new Ioc(), {}, {})
+    const completed = await executeInstructions('@fake/app', fs.basePath, application)
+    assert.isTrue(completed)
+  })
+
+  test('execute instructions copy templates', async (assert) => {
+    await fs.add('package.json', JSON.stringify({
+      name: 'my-app',
+      dependencies: {
+        '@fake/app': '^1.0.0',
+      },
+    }))
+
+    await fs.add('node_modules/@fake/app/config/app.txt', 'export const config = { app: true }')
+
+    await fs.add('node_modules/@fake/app/package.json', JSON.stringify({
+      name: '@fake/app',
+      version: '1.0.0',
+      adonisjs: {
+        templates: {
+          basePath: './config',
+          config: ['app.txt'],
+        },
+      },
+    }))
+
+    const application = new Application(fs.basePath, new Ioc(), {
+      directories: new Map([['config', 'config']]),
+    }, {})
+
+    const completed = await executeInstructions('@fake/app', fs.basePath, application)
+    assert.isTrue(completed)
+
+    const configContents = await fs.get('config/app.ts')
+    assert.deepEqual(configContents.trim(), 'export const config = { app: true }')
+  })
 })
