@@ -30,14 +30,15 @@ test.group('Copy templates', (group) => {
       const foo = 'foo'
       export default foo`)
 
-    const application = new Application(fs.basePath, new Ioc(), {}, {})
+    const application = new Application(fs.basePath, new Ioc(), {
+      directories: new Map([['config', 'config']]),
+    }, {})
 
-    copyTemplates(fs.basePath, application, {
-      basePath: join(fs.basePath, 'templates/config'),
+    copyTemplates(fs.basePath, application, join(fs.basePath, 'templates/config'), {
       config: ['app.txt'],
     })
 
-    const contents = await fs.get('app.ts')
+    const contents = await fs.get('config/app.ts')
     assert.equal(contents, `
       const foo = 'foo'
       export default foo\n`)
@@ -48,16 +49,19 @@ test.group('Copy templates', (group) => {
       const foo = 'foo'
       export default foo`)
 
-    const application = new Application(fs.basePath, new Ioc(), {}, {})
+      const application = new Application(fs.basePath, new Ioc(), {
+        directories: new Map([['config', 'config']]),
+      }, {})
 
-    copyTemplates(fs.basePath, application, {
-      basePath: join(fs.basePath, 'templates/config'),
+    copyTemplates(fs.basePath, application, join(fs.basePath, 'templates/config'), {
       foo: ['app.txt'],
     })
   })
 
   test('do not overwrite contents when file already exists', async (assert) => {
-    const application = new Application(fs.basePath, new Ioc(), {}, {})
+    const application = new Application(fs.basePath, new Ioc(), {
+      directories: new Map([['config', 'config']]),
+    }, {})
 
     /**
      * Round 1
@@ -66,8 +70,7 @@ test.group('Copy templates', (group) => {
       const foo = 'foo'
       export default foo`)
 
-    copyTemplates(fs.basePath, application, {
-      basePath: join(fs.basePath, 'templates/config'),
+    copyTemplates(fs.basePath, application, join(fs.basePath, 'templates/config'), {
       config: ['app.txt'],
     })
 
@@ -78,15 +81,14 @@ test.group('Copy templates', (group) => {
       const bar = 'bar'
       export default bar`, { overwrite: true })
 
-    copyTemplates(fs.basePath, application, {
-      basePath: join(fs.basePath, 'templates/config'),
+    copyTemplates(fs.basePath, application, join(fs.basePath, 'templates/config'), {
       config: ['app.txt'],
     })
 
     /**
      * Must be same as 1
      */
-    const contents = await fs.get('app.ts')
+    const contents = await fs.get('config/app.ts')
     assert.equal(contents, `
       const foo = 'foo'
       export default foo\n`)

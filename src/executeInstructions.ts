@@ -7,7 +7,7 @@
  * file that was distributed with this source code.
 */
 
-import { normalize } from 'path'
+import { normalize, join, dirname } from 'path'
 import { ApplicationContract } from '@poppinss/application'
 import { esmRequire } from '@poppinss/utils'
 import * as sink from '../exports'
@@ -26,38 +26,32 @@ export async function executeInstructions (
   const pkg = require(packagePath)
 
   /**
-   * Return early when there is no `adonisjs` or `adonisjs.instructions`
-   * field
+   * Return early when there is no `adonisjs` block in package.json file
    */
-  if (!pkg.adonisjs || !pkg.adonisjs.instructions) {
+  if (!pkg.adonisjs) {
     return true
   }
 
   /**
-   * Normalizing path
+   * Execute instructions when they exists in the package.json file
    */
-  const normalizedPath = normalize(`${packageName}/${pkg.adonisjs.instructions}`)
+  if (pkg.adonisjs.instructions) {
+    const normalizedPath = normalize(`${packageName}/${pkg.adonisjs.instructions}`)
+    const instructionsPath = require.resolve(normalizedPath, { paths: [projectRoot] })
 
-  /**
-   * Resolving instructions path from the project root
-   */
-  const instructionsPath = require.resolve(normalizedPath, { paths: [projectRoot] })
-
-  /**
-   * Requiring instructions
-   */
-  const instructions = esmRequire(instructionsPath)
-
-  /**
-   * Executing instructions
-   */
-  await instructions(projectRoot, application, sink)
+    /**
+     * Requiring and executing instructions file
+     */
+    const instructions = esmRequire(instructionsPath)
+    await instructions(projectRoot, application, sink)
+  }
 
   /**
    * Copy templates when defined in package.json file
    */
   if (pkg.adonisjs.templates) {
-    sink.copyTemplates(projectRoot, application, pkg.adonisjs.templates)
+    const templatesRoot = join(dirname(packagePath), pkg.adonisjs.basePath || './build/templates')
+    sink.copyTemplates(projectRoot, application, templatesRoot, pkg.adonisjs.templates)
   }
 
   /**

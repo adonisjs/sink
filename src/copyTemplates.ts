@@ -7,7 +7,7 @@
  * file that was distributed with this source code.
 */
 
-import { extname, normalize } from 'path'
+import { extname, join, normalize } from 'path'
 import { ApplicationContract } from '@poppinss/application'
 import { kleur, TemplateFile } from '../exports'
 
@@ -17,23 +17,28 @@ import { kleur, TemplateFile } from '../exports'
 export function copyTemplates (
   projectRoot: string,
   application: ApplicationContract,
+  templatesBasePath: string,
   templates: { [key: string]: (string | string[]) },
 ) {
-  let basePath: string = 'build/templates'
-
   Object.keys(templates).forEach((templateFor) => {
     /**
-     * Pick basePath from the templates object
+     * Ignore the `basePath` key used for resolving the basePath of
+     * templates
      */
     if (templateFor === 'basePath') {
-      basePath = templates[templateFor] as string
       return
     }
 
     /**
+     * The directory configured inside `.adonisrc.json` file for the
+     * given template type
+     */
+    const configuredDirectory = application.directoriesMap.get(templateFor)
+
+    /**
      * Warn when template for unknown directory type is defined
      */
-    if (!application.directoriesMap.has(templateFor)) {
+    if (!configuredDirectory) {
       console.log(kleur.yellow(`Unknown directory type ${kleur.underline(templateFor)}`))
       return
     }
@@ -46,8 +51,10 @@ export function copyTemplates (
      * Loop and copy each template to the source
      */
     templatesToCopy.forEach((sourceFile) => {
-      const destinationPath = sourceFile.replace(extname(sourceFile), '.ts')
-      const sourcePath = normalize(`${basePath}/${sourceFile}`)
+      const sourcePath = join(templatesBasePath, sourceFile)
+
+      const destinationFile = sourceFile.replace(extname(sourceFile), '.ts')
+      const destinationPath = normalize(`${configuredDirectory}/${destinationFile}`)
 
       const template = new TemplateFile(projectRoot, destinationPath, sourcePath)
 
