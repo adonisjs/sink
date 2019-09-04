@@ -52,5 +52,23 @@ export async function executeInstructions (
    * Executing instructions
    */
   await instructions(projectRoot, application, sink)
+
+  /**
+   * Copy templates when defined in package.json file
+   */
+  if (pkg.adonisjs.templates) {
+    sink.copyTemplates(projectRoot, application, pkg.adonisjs.templates)
+  }
+
+  /**
+   * Set env variables when defined in package.json file
+   */
+  if (pkg.adonisjs.env) {
+    const env = new sink.EnvFile('.env')
+    Object.keys(pkg.adonisjs.env).forEach((key) => env.set(key, pkg.adonisjs.env[key]))
+    env.commit()
+    console.log(`  update  ${sink.kleur.green('.env')}`)
+  }
+
   return true
 }
