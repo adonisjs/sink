@@ -48,7 +48,7 @@ test.group('Json file', (group) => {
     const file = new JsonFile(fs.basePath, 'foo.json')
     file.delete()
 
-    const hasFile = await fs.fsExtra.exists('foo.json')
+    const hasFile = await fs.fsExtra.pathExists('foo.json')
     assert.isFalse(hasFile)
   })
 

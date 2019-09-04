@@ -17,7 +17,7 @@ import { executeInstructions } from '../src/executeInstructions'
 
 const fs = new Filesystem(join(__dirname, '__app'))
 
-test.group('AdonisRc file', (group) => {
+test.group('Execute instructions', (group) => {
   group.afterEach(async () => {
     await fs.cleanup()
   })

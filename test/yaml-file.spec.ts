@@ -50,7 +50,7 @@ test.group('Yaml file', (group) => {
     const file = new YamlFile(fs.basePath, 'foo.yml')
     file.delete()
 
-    const hasFile = await fs.fsExtra.exists('foo.yml')
+    const hasFile = await fs.fsExtra.pathExists('foo.yml')
     assert.isFalse(hasFile)
   })
 

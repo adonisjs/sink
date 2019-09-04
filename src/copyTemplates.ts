@@ -7,9 +7,11 @@
  * file that was distributed with this source code.
 */
 
+import kleur from 'kleur'
 import { extname, join, normalize } from 'path'
 import { ApplicationContract } from '@poppinss/application'
-import { kleur, TemplateFile } from '../exports'
+
+import { TemplateFile } from './formats/TemplateFile'
 
 /**
  * Copy multiple templates to the user project.

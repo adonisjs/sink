@@ -88,7 +88,7 @@ test.group('Lines file', (group) => {
     file.delete()
     file.rollback()
 
-    const hasFile = await fs.fsExtra.exists('foo.txt')
+    const hasFile = await fs.fsExtra.pathExists('foo.txt')
     assert.isFalse(hasFile)
   })
 })

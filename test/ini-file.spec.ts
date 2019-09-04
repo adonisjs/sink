@@ -104,7 +104,7 @@ test.group('Ini file', (group) => {
     const file = new IniFile(fs.basePath, 'foo.ini')
     file.delete()
 
-    const hasFile = await fs.fsExtra.exists('foo.ini')
+    const hasFile = await fs.fsExtra.pathExists('foo.ini')
     assert.isFalse(hasFile)
   })
 

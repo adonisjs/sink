@@ -51,6 +51,7 @@ export async function executeInstructions (
    */
   if (pkg.adonisjs.templates) {
     const templatesRoot = join(dirname(packagePath), pkg.adonisjs.templates.basePath || './build/templates')
+    console.log(sink)
     sink.copyTemplates(projectRoot, application, templatesRoot, pkg.adonisjs.templates)
   }
 

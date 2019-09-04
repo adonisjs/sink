@@ -63,7 +63,7 @@ test.group('Template file', (group) => {
     const file = new TemplateFile(fs.basePath, 'foo.txt', join(fs.basePath, 'template.txt'))
     file.apply().rollback()
 
-    const hasFile = await fs.fsExtra.exists(join(fs.basePath, 'foo.txt'))
+    const hasFile = await fs.fsExtra.pathExists(join(fs.basePath, 'foo.txt'))
     assert.isFalse(hasFile)
   })
 
@@ -75,7 +75,7 @@ test.group('Template file', (group) => {
     file.removeOnRollback = false
     file.apply().rollback()
 
-    const hasFile = await fs.fsExtra.exists(join(fs.basePath, 'foo.txt'))
+    const hasFile = await fs.fsExtra.pathExists(join(fs.basePath, 'foo.txt'))
     assert.isTrue(hasFile)
   })
 })
