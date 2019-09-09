@@ -9,9 +9,11 @@
 
 import kleur from 'kleur'
 import { extname, join, normalize } from 'path'
-import { ApplicationContract } from '@poppinss/application'
+import { ApplicationContract } from '@ioc:Adonis/Core/Application'
 
 import { TemplateFile } from './formats/TemplateFile'
+
+type TemplateNode = { src: string, dest: string } | string
 
 /**
  * Copy multiple templates to the user project.
@@ -20,7 +22,7 @@ export function copyTemplates (
   projectRoot: string,
   application: ApplicationContract,
   templatesBasePath: string,
-  templates: { [key: string]: (string | string[]) },
+  templates: { [key: string]: TemplateNode | TemplateNode[] },
 ) {
   Object.keys(templates).forEach((templateFor) => {
     /**
@@ -46,18 +48,21 @@ export function copyTemplates (
     }
 
     const templatesToCopy = Array.isArray(templates[templateFor])
-      ? templates[templateFor] as string[]
-      : [templates[templateFor]] as string[]
+      ? templates[templateFor] as TemplateNode[]
+      : [templates[templateFor]] as TemplateNode[]
 
     /**
      * Loop and copy each template to the source
      */
-    templatesToCopy.forEach((sourceFile) => {
-      const sourcePath = join(templatesBasePath, sourceFile)
+    templatesToCopy.forEach((templateToCopy) => {
+      const src = typeof (templateToCopy) === 'string' ? templateToCopy : templateToCopy.src
+      const dest = typeof (templateToCopy) === 'string' ? templateToCopy : templateToCopy.dest
+      if (!src || !dest) {
+        throw new Error('src and dest are required when copying templates')
+      }
 
-      const destinationFile = sourceFile.replace(extname(sourceFile), '.ts')
-      const destinationPath = normalize(`${configuredDirectory}/${destinationFile}`)
-
+      const sourcePath = join(templatesBasePath, src)
+      const destinationPath = normalize(`${configuredDirectory}/${dest.replace(extname(dest), '.ts')}`)
       const template = new TemplateFile(projectRoot, destinationPath, sourcePath)
 
       /**

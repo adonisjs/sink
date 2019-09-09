@@ -7,10 +7,9 @@
  * file that was distributed with this source code.
 */
 
-import { normalize, join, dirname } from 'path'
-import { ApplicationContract } from '@poppinss/application'
 import { esmRequire } from '@poppinss/utils'
-import * as sink from '../exports'
+import { normalize, join, dirname } from 'path'
+import { ApplicationContract } from '@ioc:Adonis/Core/Application'
 
 /**
  * Executes the instructions file of a given AdonisJs package. It will look for
@@ -22,6 +21,7 @@ export async function executeInstructions (
   projectRoot: string,
   application: ApplicationContract,
 ): Promise<boolean> {
+  const sink = await import('../index')
   const packagePath = require.resolve(`${packageName}/package.json`, { paths: [projectRoot] })
   const pkg = require(packagePath)
 

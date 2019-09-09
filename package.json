@@ -6,9 +6,7 @@
   "files": [
     "src",
     "index.d.ts",
-    "index.js",
-    "exports.d.ts",
-    "exports.js"
+    "index.js"
   ],
   "scripts": {
     "mrm": "mrm --preset=@adonisjs/mrm-preset",

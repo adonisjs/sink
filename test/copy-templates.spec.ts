@@ -11,7 +11,7 @@ import test from 'japa'
 import { join } from 'path'
 import { Ioc } from '@adonisjs/fold'
 import { Filesystem } from '@adonisjs/dev-utils'
-import { Application } from '@poppinss/application'
+import { Application } from '@adonisjs/application/build/standalone'
 import { copyTemplates } from '../src/copyTemplates'
 
 const fs = new Filesystem(join(__dirname, '__app'))
@@ -89,6 +89,25 @@ test.group('Copy templates', (group) => {
      * Must be same as 1
      */
     const contents = await fs.get('config/app.ts')
+    assert.equal(contents, `
+      const foo = 'foo'
+      export default foo\n`)
+  })
+
+  test('copy templates with custom destination path', async (assert) => {
+    await fs.add('templates/config/app.txt', `
+      const foo = 'foo'
+      export default foo`)
+
+    const application = new Application(fs.basePath, new Ioc(), {
+      directories: new Map([['config', 'config']]),
+    }, {})
+
+    copyTemplates(fs.basePath, application, join(fs.basePath, 'templates/config'), {
+      config: [{ src: 'app.txt', dest: 'foo.app' }],
+    })
+
+    const contents = await fs.get('config/foo.ts')
     assert.equal(contents, `
       const foo = 'foo'
       export default foo\n`)

@@ -7,11 +7,11 @@
  * file that was distributed with this source code.
 */
 
-import { join } from 'path'
 import test from 'japa'
-import { Filesystem } from '@adonisjs/dev-utils'
-import { Application } from '@poppinss/application'
+import { join } from 'path'
 import { Ioc } from '@adonisjs/fold'
+import { Filesystem } from '@adonisjs/dev-utils'
+import { Application } from '@adonisjs/application/build/standalone'
 
 import { executeInstructions } from '../src/executeInstructions'
 
