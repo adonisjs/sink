@@ -282,71 +282,112 @@ test.group('AdonisRc file', (group) => {
     })
   })
 
-  test('add file to copyToBuild array', async (assert) => {
+  test('add file to metaFiles array', async (assert) => {
     const rcfile = new RcFile(fs.basePath)
-    rcfile.addCopyToBuildFile('.env')
+    rcfile.addMetaFile('.env')
     rcfile.commit()
 
     const contents = await fs.get('.adonisrc.json')
     assert.deepEqual(JSON.parse(contents), {
-      copyToBuild: ['.env'],
+      metaFiles: ['.env'],
     })
   })
 
-  test('add multiple files to copyToBuild array', async (assert) => {
+  test('add multiple files to metaFiles array', async (assert) => {
     const rcfile = new RcFile(fs.basePath)
-    rcfile.addCopyToBuildFile('.env')
-    rcfile.addCopyToBuildFile('.gitignore')
+    rcfile.addMetaFile('.env')
+    rcfile.addMetaFile('.gitignore')
     rcfile.commit()
 
     const contents = await fs.get('.adonisrc.json')
     assert.deepEqual(JSON.parse(contents), {
-      copyToBuild: ['.env', '.gitignore'],
+      metaFiles: ['.env', '.gitignore'],
     })
   })
 
-  test('update file inside copyToBuild array', async (assert) => {
+  test('update file inside metaFiles array', async (assert) => {
     await fs.add('.adonisrc.json', JSON.stringify({
-      copyToBuild: ['.env'],
+      metaFiles: ['.env'],
     }))
 
     const rcfile = new RcFile(fs.basePath)
-    rcfile.addCopyToBuildFile('.env')
+    rcfile.addMetaFile('.env')
     rcfile.commit()
 
     const contents = await fs.get('.adonisrc.json')
     assert.deepEqual(JSON.parse(contents), {
-      copyToBuild: ['.env'],
+      metaFiles: ['.env'],
     })
   })
 
-  test('update file inside copyToBuild array by adding new file', async (assert) => {
+  test('update file inside metaFiles array by adding new file', async (assert) => {
     await fs.add('.adonisrc.json', JSON.stringify({
-      copyToBuild: ['.env'],
+      metaFiles: ['.env'],
     }))
 
     const rcfile = new RcFile(fs.basePath)
-    rcfile.addCopyToBuildFile('.adonisrc.json')
+    rcfile.addMetaFile('.adonisrc.json')
     rcfile.commit()
 
     const contents = await fs.get('.adonisrc.json')
     assert.deepEqual(JSON.parse(contents), {
-      copyToBuild: ['.env', '.adonisrc.json'],
+      metaFiles: ['.env', '.adonisrc.json'],
     })
   })
 
-  test('remove file from copyToBuild array on rollback', async (assert) => {
+  test('remove file from metaFiles array on rollback', async (assert) => {
     await fs.add('.adonisrc.json', JSON.stringify({
-      copyToBuild: ['.env', '.adonisrc.json'],
+      metaFiles: ['.env', '.adonisrc.json'],
     }))
 
     const rcfile = new RcFile(fs.basePath)
-    rcfile.addCopyToBuildFile('.adonisrc.json')
+    rcfile.addMetaFile('.adonisrc.json')
     rcfile.rollback()
 
     const contents = await fs.get('.adonisrc.json')
     assert.deepEqual(JSON.parse(contents), {
-      copyToBuild: ['.env'],
+      metaFiles: ['.env'],
+    })
+  })
+
+  test('add meta file with explicit reloadServer property', async (assert) => {
+    const rcfile = new RcFile(fs.basePath)
+    rcfile.addMetaFile('.adonisrc.json', false)
+    rcfile.commit()
+
+    const contents = await fs.get('.adonisrc.json')
+    assert.deepEqual(JSON.parse(contents), {
+      metaFiles: [{ pattern: '.adonisrc.json', reloadServer: false }],
+    })
+  })
+
+  test('set reloadServer property to false', async (assert) => {
+    await fs.add('.adonisrc.json', JSON.stringify({
+      metaFiles: ['.adonisrc.json'],
+    }))
+
+    const rcfile = new RcFile(fs.basePath)
+    rcfile.addMetaFile('.adonisrc.json', false)
+    rcfile.commit()
+
+    const contents = await fs.get('.adonisrc.json')
+    assert.deepEqual(JSON.parse(contents), {
+      metaFiles: [{ pattern: '.adonisrc.json', reloadServer: false }],
+    })
+  })
+
+  test('set reloadServer property to true', async (assert) => {
+    await fs.add('.adonisrc.json', JSON.stringify({
+      metaFiles: [{ pattern: '.adonisrc.json', reloadServer: false }],
+    }))
+
+    const rcfile = new RcFile(fs.basePath)
+    rcfile.addMetaFile('.adonisrc.json')
+    rcfile.commit()
+
+    const contents = await fs.get('.adonisrc.json')
+    assert.deepEqual(JSON.parse(contents), {
+      metaFiles: ['.adonisrc.json'],
     })
   })
 })

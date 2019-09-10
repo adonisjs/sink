@@ -23,12 +23,12 @@ export class RcFile extends JsonFile {
    * Storing a local copy of copyToBuild for concatenating
    * new entries.
    */
-  private _copyToBuild: any[] = []
+  private _metaFiles: any[] = []
 
   constructor (basePath: string) {
     super(basePath, '.adonisrc.json')
     this._preloads = this.get('preloads', [])
-    this._copyToBuild = this.get('copyToBuild', [])
+    this._metaFiles = this.get('metaFiles', [])
   }
 
   /**
@@ -44,9 +44,9 @@ export class RcFile extends JsonFile {
         return true
       }
 
-      if (body.key.startsWith('copyToBuild')) {
+      if (body.key.startsWith('metaFiles')) {
         const index = body.key.split('[')[1].replace(/\]/g, '')
-        this.get('copyToBuild', []).splice(index, 1)
+        this.get('metaFiles', []).splice(index, 1)
         return true
       }
     }
@@ -113,11 +113,21 @@ export class RcFile extends JsonFile {
   /**
    * Add custom file to `copyToBuild` array.
    */
-  public addCopyToBuildFile (filePath: string) {
-    let entryIndex = this._copyToBuild.findIndex((file) => file === filePath)
-    entryIndex = entryIndex === -1 ? this._copyToBuild.length : entryIndex
+  public addMetaFile (filePath: string, reloadServer?: boolean) {
+    let entryIndex = this._metaFiles.findIndex((file) => {
+      if (file.pattern) {
+        return file.pattern === filePath
+      }
+      return file === filePath
+    })
+    entryIndex = entryIndex === -1 ? this._metaFiles.length : entryIndex
 
-    this._copyToBuild[entryIndex] = filePath
-    this.set(`copyToBuild[${entryIndex}]`, filePath)
+    const entry = reloadServer === false ? {
+      pattern: filePath,
+      reloadServer: false,
+    } : filePath
+
+    this._metaFiles[entryIndex] = entry
+    this.set(`metaFiles[${entryIndex}]`, entry)
   }
 }
