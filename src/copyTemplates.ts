@@ -56,13 +56,19 @@ export function copyTemplates (
      */
     templatesToCopy.forEach((templateToCopy) => {
       const src = typeof (templateToCopy) === 'string' ? templateToCopy : templateToCopy.src
-      const dest = typeof (templateToCopy) === 'string' ? templateToCopy : templateToCopy.dest
+      let dest = typeof (templateToCopy) === 'string' ? templateToCopy : templateToCopy.dest
+
       if (!src || !dest) {
         throw new Error('src and dest are required when copying templates')
       }
 
       const sourcePath = join(templatesBasePath, src)
-      const destinationPath = normalize(`${configuredDirectory}/${dest.replace(extname(dest), '.ts')}`)
+
+      /**
+       * Normalizing destination extension
+       */
+      dest = dest.replace(new RegExp(`${extname(dest)}$`), '.ts')
+      const destinationPath = normalize(`${configuredDirectory}/${dest}`)
       const template = new TemplateFile(projectRoot, destinationPath, sourcePath)
 
       /**

@@ -112,4 +112,23 @@ test.group('Copy templates', (group) => {
       const foo = 'foo'
       export default foo\n`)
   })
+
+  test('define custom destination paths without extension', async (assert) => {
+    await fs.add('templates/config/app.txt', `
+      const foo = 'foo'
+      export default foo`)
+
+    const application = new Application(fs.basePath, new Ioc(), {
+      directories: new Map([['config', 'config']]),
+    }, {})
+
+    copyTemplates(fs.basePath, application, join(fs.basePath, 'templates/config'), {
+      config: [{ src: 'app.txt', dest: 'foo' }],
+    })
+
+    const contents = await fs.get('config/foo.ts')
+    assert.equal(contents, `
+      const foo = 'foo'
+      export default foo\n`)
+  })
 })
