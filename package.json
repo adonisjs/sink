@@ -89,12 +89,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/adonisjs/adonis-sink.git"
+    "url": "git+https://github.com/adonisjs/sink.git"
   },
   "bugs": {
-    "url": "https://github.com/adonisjs/adonis-sink/issues"
+    "url": "https://github.com/adonisjs/sink/issues"
   },
-  "homepage": "https://github.com/adonisjs/adonis-sink#readme",
+  "homepage": "https://github.com/adonisjs/sink#readme",
   "publishConfig": {
     "access": "public",
     "tag": "next"

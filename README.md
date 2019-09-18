@@ -44,8 +44,8 @@ In both the places, you will get the `basePath` of the application from AdonisJs
 ## Maintainers
 [Harminder virk](https://github.com/thetutlage)
 
-[circleci-image]: https://img.shields.io/circleci/project/github/adonisjs/adonis-sink/master.svg?style=for-the-badge&logo=circleci
-[circleci-url]: https://circleci.com/gh/adonisjs/adonis-sink "circleci"
+[circleci-image]: https://img.shields.io/circleci/project/github/adonisjs/sink/master.svg?style=for-the-badge&logo=circleci
+[circleci-url]: https://circleci.com/gh/adonisjs/sink "circleci"
 
 [npm-image]: https://img.shields.io/npm/v/@adonisjs/sink.svg?style=for-the-badge&logo=npm
 [npm-url]: https://npmjs.org/package/@adonisjs/sink "npm"
