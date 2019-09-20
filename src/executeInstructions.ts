@@ -69,7 +69,7 @@ export async function executeInstructions (
    */
   if (pkg.adonisjs.types) {
     const tsConfig = new sink.JsonFile(projectRoot, 'tsconfig.json')
-    const types = tsConfig.get('compilerOptions.types')
+    const types = tsConfig.get('compilerOptions.types') || []
 
     if (!types.find((type: string) => type.includes(pkg.adonisjs.types))) {
       types.push(pkg.adonisjs.types)
