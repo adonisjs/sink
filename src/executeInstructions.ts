@@ -7,10 +7,12 @@
  * file that was distributed with this source code.
 */
 
-import fancyLogs from '@poppinss/fancy-logs'
+import { Logger } from '@poppinss/fancy-logs'
 import { esmRequire } from '@poppinss/utils'
 import { normalize, join, dirname } from 'path'
 import { ApplicationContract } from '@ioc:Adonis/Core/Application'
+
+const logger = new Logger({ color: true, icon: false, underline: false })
 
 /**
  * Executes the instructions file of a given AdonisJs package. It will look for
@@ -62,7 +64,7 @@ export async function executeInstructions (
     const env = new sink.EnvFile(projectRoot)
     Object.keys(pkg.adonisjs.env).forEach((key) => env.set(key, pkg.adonisjs.env[key]))
     env.commit()
-    fancyLogs.update({ message: '.env', icon: false })
+    logger.update('.env')
   }
 
   /**
@@ -76,7 +78,7 @@ export async function executeInstructions (
       types.push(pkg.adonisjs.types)
       tsConfig.set('compilerOptions.types', types)
       tsConfig.commit()
-      fancyLogs.update({ message: 'tsconfig.json', icon: false })
+      logger.update('tsconfig')
     }
   }
 

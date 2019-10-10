@@ -7,14 +7,17 @@
  * file that was distributed with this source code.
 */
 
-import { underline } from 'kleur'
-import fancyLogs from '@poppinss/fancy-logs'
+import { Logger } from '@poppinss/fancy-logs'
 import { extname, join, normalize } from 'path'
 import { ApplicationContract } from '@ioc:Adonis/Core/Application'
+import { Colors } from '@poppinss/colors'
 
 import { TemplateFile } from './formats/TemplateFile'
 
 type TemplateNode = { src: string, dest: string } | string
+
+const logger = new Logger({ color: true, icon: false, underline: false })
+const colors = new Colors()
 
 /**
  * Copy multiple templates to the user project.
@@ -44,7 +47,10 @@ export function copyTemplates (
      * Warn when template for unknown directory type is defined
      */
     if (!configuredDirectory) {
-      fancyLogs.error({ message: `Unknown directory type ${underline(templateFor)}`, icon: false })
+      logger.error({
+        message: `Unknown directory type ${colors.underline(templateFor)}`,
+        icon: true,
+      })
       return
     }
 
@@ -76,12 +82,12 @@ export function copyTemplates (
        * Skip when file already exists
        */
       if (template.exists()) {
-        fancyLogs.info({ message: `skip ${destinationPath}`, icon: false })
+        logger.skip(destinationPath)
         return
       }
 
       template.apply({}).commit()
-      fancyLogs.create({ message: destinationPath, icon: false })
+      logger.create(destinationPath)
     })
   })
 }
