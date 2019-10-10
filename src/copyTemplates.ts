@@ -7,7 +7,8 @@
  * file that was distributed with this source code.
 */
 
-import kleur from 'kleur'
+import { underline } from 'kleur'
+import fancyLogs from '@poppinss/fancy-logs'
 import { extname, join, normalize } from 'path'
 import { ApplicationContract } from '@ioc:Adonis/Core/Application'
 
@@ -43,7 +44,7 @@ export function copyTemplates (
      * Warn when template for unknown directory type is defined
      */
     if (!configuredDirectory) {
-      console.log(kleur.yellow(`Unknown directory type ${kleur.underline(templateFor)}`))
+      fancyLogs.error({ message: `Unknown directory type ${underline(templateFor)}`, icon: false })
       return
     }
 
@@ -75,12 +76,12 @@ export function copyTemplates (
        * Skip when file already exists
        */
       if (template.exists()) {
-        console.log(`  skip    ${kleur.yellow(destinationPath)}`)
+        fancyLogs.info({ message: `skip ${destinationPath}`, icon: false })
         return
       }
 
       template.apply({}).commit()
-      console.log(`  create  ${kleur.green(destinationPath)}`)
+      fancyLogs.create({ message: destinationPath, icon: false })
     })
   })
 }
