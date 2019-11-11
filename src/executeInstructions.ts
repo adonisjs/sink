@@ -7,12 +7,11 @@
  * file that was distributed with this source code.
 */
 
-import { Logger } from '@poppinss/fancy-logs'
 import { esmRequire } from '@poppinss/utils'
 import { normalize, join, dirname } from 'path'
 import { ApplicationContract } from '@ioc:Adonis/Core/Application'
 
-const logger = new Logger({ color: true, icon: false, underline: false })
+import { logger } from './logger'
 
 /**
  * Executes the instructions file of a given AdonisJs package. It will look for

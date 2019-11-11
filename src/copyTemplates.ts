@@ -7,16 +7,15 @@
  * file that was distributed with this source code.
 */
 
-import { Logger } from '@poppinss/fancy-logs'
+import { Colors } from '@poppinss/colors'
 import { extname, join, normalize } from 'path'
 import { ApplicationContract } from '@ioc:Adonis/Core/Application'
-import { Colors } from '@poppinss/colors'
 
 import { TemplateFile } from './formats/TemplateFile'
+import { logger } from './logger'
 
 type TemplateNode = { src: string, dest: string } | string
 
-const logger = new Logger({ color: true, icon: false, underline: false })
 const colors = new Colors()
 
 /**

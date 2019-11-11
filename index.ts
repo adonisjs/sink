@@ -36,6 +36,7 @@ export const sinkVersion = pkg.version
 
 export { kleur }
 export { getPrompt }
+export { logger } from './src/logger'
 export { RcFile } from './src/files/RcFile'
 export { isEmptyDir } from './src/isEmptyDir'
 export { EnvFile } from './src/files/EnvFile'
