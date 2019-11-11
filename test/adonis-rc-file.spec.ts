@@ -165,7 +165,7 @@ test.group('AdonisRc file', (group) => {
           file: 'start/routes',
         },
       ],
-    }))
+    }, null, 2))
 
     const rcfile = new RcFile(fs.basePath)
     rcfile.setPreload('start/kernel', ['web'], false)
@@ -199,7 +199,7 @@ test.group('AdonisRc file', (group) => {
       autoloads: {
         App: './app',
       },
-    }))
+    }, null, 2))
 
     const rcfile = new RcFile(fs.basePath)
     rcfile.setAutoload('App', 'app')
@@ -218,7 +218,7 @@ test.group('AdonisRc file', (group) => {
       autoloads: {
         App: './app',
       },
-    }))
+    }, null, 2))
 
     const rcfile = new RcFile(fs.basePath)
     rcfile.setAutoload('App', 'app')
@@ -248,7 +248,7 @@ test.group('AdonisRc file', (group) => {
       directories: {
         config: 'config',
       },
-    }))
+    }, null, 2))
 
     const rcfile = new RcFile(fs.basePath)
     rcfile.setDirectory('config', 'config')
@@ -268,7 +268,7 @@ test.group('AdonisRc file', (group) => {
         config: 'config',
         database: 'database',
       },
-    }))
+    }, null, 2))
 
     const rcfile = new RcFile(fs.basePath)
     rcfile.setDirectory('config', 'config')
@@ -308,7 +308,7 @@ test.group('AdonisRc file', (group) => {
   test('update file inside metaFiles array', async (assert) => {
     await fs.add('.adonisrc.json', JSON.stringify({
       metaFiles: ['.env'],
-    }))
+    }, null, 2))
 
     const rcfile = new RcFile(fs.basePath)
     rcfile.addMetaFile('.env')
@@ -323,7 +323,7 @@ test.group('AdonisRc file', (group) => {
   test('update file inside metaFiles array by adding new file', async (assert) => {
     await fs.add('.adonisrc.json', JSON.stringify({
       metaFiles: ['.env'],
-    }))
+    }, null, 2))
 
     const rcfile = new RcFile(fs.basePath)
     rcfile.addMetaFile('.adonisrc.json')
@@ -338,7 +338,7 @@ test.group('AdonisRc file', (group) => {
   test('remove file from metaFiles array on rollback', async (assert) => {
     await fs.add('.adonisrc.json', JSON.stringify({
       metaFiles: ['.env', '.adonisrc.json'],
-    }))
+    }, null, 2))
 
     const rcfile = new RcFile(fs.basePath)
     rcfile.addMetaFile('.adonisrc.json')
@@ -364,7 +364,7 @@ test.group('AdonisRc file', (group) => {
   test('set reloadServer property to false', async (assert) => {
     await fs.add('.adonisrc.json', JSON.stringify({
       metaFiles: ['.adonisrc.json'],
-    }))
+    }, null, 2))
 
     const rcfile = new RcFile(fs.basePath)
     rcfile.addMetaFile('.adonisrc.json', false)
@@ -379,7 +379,7 @@ test.group('AdonisRc file', (group) => {
   test('set reloadServer property to true', async (assert) => {
     await fs.add('.adonisrc.json', JSON.stringify({
       metaFiles: [{ pattern: '.adonisrc.json', reloadServer: false }],
-    }))
+    }, null, 2))
 
     const rcfile = new RcFile(fs.basePath)
     rcfile.addMetaFile('.adonisrc.json')
@@ -388,6 +388,74 @@ test.group('AdonisRc file', (group) => {
     const contents = await fs.get('.adonisrc.json')
     assert.deepEqual(JSON.parse(contents), {
       metaFiles: ['.adonisrc.json'],
+    })
+  })
+
+  test('add command apth to commands array', async (assert) => {
+    const rcfile = new RcFile(fs.basePath)
+    rcfile.addCommand('./commands/Foo')
+    rcfile.commit()
+
+    const contents = await fs.get('.adonisrc.json')
+    assert.deepEqual(JSON.parse(contents), {
+      commands: ['./commands/Foo'],
+    })
+  })
+
+  test('add multiple command paths to commands array', async (assert) => {
+    const rcfile = new RcFile(fs.basePath)
+    rcfile.addCommand('./commands/Foo')
+    rcfile.addCommand('./commands/Bar')
+    rcfile.commit()
+
+    const contents = await fs.get('.adonisrc.json')
+    assert.deepEqual(JSON.parse(contents), {
+      commands: ['./commands/Foo', './commands/Bar'],
+    })
+  })
+
+  test('update command path inside commands array', async (assert) => {
+    await fs.add('.adonisrc.json', JSON.stringify({
+      commands: ['./commands/Foo'],
+    }, null, 2))
+
+    const rcfile = new RcFile(fs.basePath)
+    rcfile.addCommand('./commands/Foo')
+    rcfile.commit()
+
+    const contents = await fs.get('.adonisrc.json')
+    assert.deepEqual(JSON.parse(contents), {
+      commands: ['./commands/Foo'],
+    })
+  })
+
+  test('update command path inside commands array by adding new command', async (assert) => {
+    await fs.add('.adonisrc.json', JSON.stringify({
+      commands: ['./commands/Foo'],
+    }, null, 2))
+
+    const rcfile = new RcFile(fs.basePath)
+    rcfile.addCommand('./commands/Bar')
+    rcfile.commit()
+
+    const contents = await fs.get('.adonisrc.json')
+    assert.deepEqual(JSON.parse(contents), {
+      commands: ['./commands/Foo', './commands/Bar'],
+    })
+  })
+
+  test('remove commands path from commands array on rollback', async (assert) => {
+    await fs.add('.adonisrc.json', JSON.stringify({
+      commands: ['./commands/Foo'],
+    }, null, 2))
+
+    const rcfile = new RcFile(fs.basePath)
+    rcfile.addCommand('./commands/Bar')
+    rcfile.rollback()
+
+    const contents = await fs.get('.adonisrc.json')
+    assert.deepEqual(JSON.parse(contents), {
+      commands: ['./commands/Foo'],
     })
   })
 })

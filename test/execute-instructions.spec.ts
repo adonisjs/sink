@@ -203,4 +203,42 @@ test.group('Execute instructions', (group) => {
     const configContents = await fs.get('config/app.ts')
     assert.deepEqual(configContents.trim(), 'export const config = { app: true }')
   })
+
+  test('define commands inside .adonisrc.json file', async (assert) => {
+    await fs.add('node_modules/@fake/app/package.json', JSON.stringify({
+      name: '@fake/app',
+      version: '1.0.0',
+      adonisjs: {
+        commands: ['./commands/Make'],
+      },
+    }))
+
+    const application = new Application(fs.basePath, new Ioc(), {}, {})
+    const completed = await executeInstructions('@fake/app', fs.basePath, application)
+    assert.isTrue(completed)
+
+    assert.deepEqual(require(join(fs.basePath, '.adonisrc.json')), {
+      commands: ['./commands/Make'],
+    })
+  })
+
+  test('define types inside tsconfig.json file', async (assert) => {
+    await fs.add('node_modules/@fake/app/package.json', JSON.stringify({
+      name: '@fake/app',
+      version: '1.0.0',
+      adonisjs: {
+        types: '@adonisjs/core',
+      },
+    }))
+
+    const application = new Application(fs.basePath, new Ioc(), {}, {})
+    const completed = await executeInstructions('@fake/app', fs.basePath, application)
+    assert.isTrue(completed)
+
+    assert.deepEqual(require(join(fs.basePath, 'tsconfig.json')), {
+      compilerOptions: {
+        types: ['@adonisjs/core'],
+      },
+    })
+  })
 })

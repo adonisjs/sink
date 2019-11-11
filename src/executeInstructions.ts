@@ -82,6 +82,19 @@ export async function executeInstructions (
   }
 
   /**
+   * Add commands to `.adonisrc.json` file
+   */
+  if (Array.isArray(pkg.adonisjs.commands)) {
+    const adonisRcFile = new sink.RcFile(projectRoot)
+    pkg.adonisjs.commands.forEach((command) => {
+      adonisRcFile.addCommand(command)
+    })
+
+    adonisRcFile.commit()
+    logger.update('.adonisrc.json')
+  }
+
+  /**
    * Render markdown file when `instructionsMd` property is defined in
    * package.json file
    */
