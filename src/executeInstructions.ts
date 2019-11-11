@@ -78,7 +78,7 @@ export async function executeInstructions (
       types.push(pkg.adonisjs.types)
       tsConfig.set('compilerOptions.types', types)
       tsConfig.commit()
-      logger.update('tsconfig')
+      logger.update('tsconfig.json')
     }
   }
 
