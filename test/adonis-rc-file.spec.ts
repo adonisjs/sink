@@ -61,9 +61,7 @@ test.group('AdonisRc file', (group) => {
 
     const contents = await fs.get('.adonisrc.json')
     assert.deepEqual(JSON.parse(contents), {
-      preloads: [{
-        file: 'start/routes',
-      }],
+      preloads: ['start/routes'],
     })
   })
 
@@ -75,14 +73,7 @@ test.group('AdonisRc file', (group) => {
 
     const contents = await fs.get('.adonisrc.json')
     assert.deepEqual(JSON.parse(contents), {
-      preloads: [
-        {
-          file: 'start/routes',
-        },
-        {
-          file: 'start/kernel',
-        },
-      ],
+      preloads: ['start/routes', 'start/kernel'],
     })
   })
 
@@ -99,14 +90,7 @@ test.group('AdonisRc file', (group) => {
 
     const contents = await fs.get('.adonisrc.json')
     assert.deepEqual(JSON.parse(contents), {
-      preloads: [
-        {
-          file: 'start/kernel',
-        },
-        {
-          file: 'start/routes',
-        },
-      ],
+      preloads: [{ file: 'start/kernel' }, 'start/routes'],
     })
   })
 
@@ -124,11 +108,7 @@ test.group('AdonisRc file', (group) => {
 
     const contents = await fs.get('.adonisrc.json')
     assert.deepEqual(JSON.parse(contents), {
-      preloads: [
-        {
-          file: 'start/kernel',
-        },
-      ],
+      preloads: ['start/kernel'],
     })
   })
 

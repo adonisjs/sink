@@ -84,7 +84,7 @@ export class RcFile extends JsonFile {
     let preloadIndex = this._preloads.findIndex((preload) => preload.file === filePath)
     preloadIndex = preloadIndex === -1 ? this._preloads.length : preloadIndex
 
-    const preloadEntry: any = {
+    let preloadEntry: any = {
       file: filePath,
     }
 
@@ -100,6 +100,14 @@ export class RcFile extends JsonFile {
      */
     if (optional !== undefined) {
       preloadEntry.optional = optional
+    }
+
+    /**
+     * Set preload entry as string, when it doesn't have explicit environment
+     * and optional fields.
+     */
+    if (preloadEntry.optional === undefined && preloadEntry.environment === undefined) {
+      preloadEntry = preloadEntry.file
     }
 
     this._preloads[preloadIndex] = preloadEntry
