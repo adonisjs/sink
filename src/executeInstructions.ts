@@ -95,6 +95,32 @@ export async function executeInstructions (
   }
 
   /**
+   * Add providers to `.adonisrc.json` file
+   */
+  if (Array.isArray(pkg.adonisjs.providers)) {
+    const adonisRcFile = new sink.RcFile(projectRoot)
+    pkg.adonisjs.providers.forEach((provider) => {
+      adonisRcFile.addProvider(provider)
+    })
+
+    adonisRcFile.commit()
+    logger.update('.adonisrc.json')
+  }
+
+  /**
+   * Add ace providers to `.adonisrc.json` file
+   */
+  if (Array.isArray(pkg.adonisjs.aceProviders)) {
+    const adonisRcFile = new sink.RcFile(projectRoot)
+    pkg.adonisjs.aceProviders.forEach((provider) => {
+      adonisRcFile.addAceProvider(provider)
+    })
+
+    adonisRcFile.commit()
+    logger.update('.adonisrc.json')
+  }
+
+  /**
    * Render markdown file when `instructionsMd` property is defined in
    * package.json file
    */
