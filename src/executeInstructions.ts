@@ -7,7 +7,7 @@
  * file that was distributed with this source code.
 */
 
-import { esmRequire } from '@poppinss/utils'
+import { esmRequire, resolveFrom } from '@poppinss/utils'
 import { normalize, join, dirname } from 'path'
 import { ApplicationContract } from '@ioc:Adonis/Core/Application'
 
@@ -24,7 +24,7 @@ export async function executeInstructions (
   application: ApplicationContract,
 ): Promise<boolean> {
   const sink = await import('../index')
-  const packagePath = require.resolve(`${packageName}/package.json`, { paths: [projectRoot] })
+  const packagePath = resolveFrom(projectRoot, `${packageName}/package.json`)
   const pkg = require(packagePath)
 
   /**
@@ -39,7 +39,7 @@ export async function executeInstructions (
    */
   if (pkg.adonisjs.instructions) {
     const normalizedPath = normalize(`${packageName}/${pkg.adonisjs.instructions}`)
-    const instructionsPath = require.resolve(normalizedPath, { paths: [projectRoot] })
+    const instructionsPath = resolveFrom(projectRoot, normalizedPath)
 
     /**
      * Requiring and executing instructions file
