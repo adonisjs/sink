@@ -31,11 +31,25 @@ export class RcFile extends JsonFile {
    */
   private _commands: any[] = []
 
+  /**
+   * Storing a local copy of providers for concatenating
+   * new entries.
+   */
+  private _providers: any[] = []
+
+  /**
+   * Storing a local copy of aceProviders for concatenating
+   * new entries.
+   */
+  private _aceProviders: any[] = []
+
   constructor (basePath: string) {
     super(basePath, '.adonisrc.json')
     this._preloads = this.get('preloads', [])
     this._metaFiles = this.get('metaFiles', [])
     this._commands = this.get('commands', [])
+    this._providers = this.get('providers', [])
+    this._aceProviders = this.get('aceProviders', [])
   }
 
   /**
@@ -45,23 +59,35 @@ export class RcFile extends JsonFile {
    */
   public onset (lifecycle: string, body: any) {
     if (lifecycle === 'rollback') {
+      let key: string | null = null
+
       if (body.key.startsWith('preloads')) {
-        const index = body.key.split('[')[1].replace(/\]/g, '')
-        this.get('preloads', []).splice(index, 1)
-        return true
+        key = 'preloads'
       }
 
       if (body.key.startsWith('metaFiles')) {
-        const index = body.key.split('[')[1].replace(/\]/g, '')
-        this.get('metaFiles', []).splice(index, 1)
-        return true
+        key = 'metaFiles'
       }
 
       if (body.key.startsWith('commands')) {
-        const index = body.key.split('[')[1].replace(/\]/g, '')
-        this.get('commands', []).splice(index, 1)
-        return true
+        key = 'commands'
       }
+
+      if (body.key.startsWith('providers')) {
+        key = 'providers'
+      }
+
+      if (body.key.startsWith('aceProviders')) {
+        key = 'aceProviders'
+      }
+
+      if (!key) {
+        return
+      }
+
+      const index = body.key.split('[')[1].replace(/\]/g, '')
+      this.get(key, []).splice(index, 1)
+      return true
     }
   }
 
@@ -81,7 +107,14 @@ export class RcFile extends JsonFile {
     environment?: ('console' | 'test' | 'web')[],
     optional?: boolean,
   ): this {
-    let preloadIndex = this._preloads.findIndex((preload) => preload.file === filePath)
+    let preloadIndex = this._preloads.findIndex((preload) => {
+      if (preload.file) {
+        return preload.file === filePath
+      }
+
+      return preload === filePath
+    })
+
     preloadIndex = preloadIndex === -1 ? this._preloads.length : preloadIndex
 
     let preloadEntry: any = {
@@ -141,6 +174,7 @@ export class RcFile extends JsonFile {
       }
       return file === filePath
     })
+
     entryIndex = entryIndex === -1 ? this._metaFiles.length : entryIndex
 
     const entry = reloadServer === false ? {
@@ -163,5 +197,33 @@ export class RcFile extends JsonFile {
 
     this._commands[entryIndex] = commandPath
     this.set(`commands[${entryIndex}]`, commandPath)
+  }
+
+  /**
+   * Add new providers to the providers array
+   */
+  public addProvider (provider: string) {
+    let entryIndex = this._providers.findIndex((command) => {
+      return command === provider
+    })
+
+    entryIndex = entryIndex === -1 ? this._providers.length : entryIndex
+
+    this._providers[entryIndex] = provider
+    this.set(`providers[${entryIndex}]`, provider)
+  }
+
+  /**
+   * Add new providers to the ace providers array
+   */
+  public addAceProvider (provider: string) {
+    let entryIndex = this._aceProviders.findIndex((command) => {
+      return command === provider
+    })
+
+    entryIndex = entryIndex === -1 ? this._aceProviders.length : entryIndex
+
+    this._aceProviders[entryIndex] = provider
+    this.set(`aceProviders[${entryIndex}]`, provider)
   }
 }

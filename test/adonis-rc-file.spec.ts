@@ -438,4 +438,140 @@ test.group('AdonisRc file', (group) => {
       commands: ['./commands/Foo'],
     })
   })
+
+  test('add provider to providers array', async (assert) => {
+    const rcfile = new RcFile(fs.basePath)
+    rcfile.addProvider('./providers/App')
+    rcfile.commit()
+
+    const contents = await fs.get('.adonisrc.json')
+    assert.deepEqual(JSON.parse(contents), {
+      providers: ['./providers/App'],
+    })
+  })
+
+  test('add multiple providers to providers array', async (assert) => {
+    const rcfile = new RcFile(fs.basePath)
+    rcfile.addProvider('@adonisjs/core')
+    rcfile.addProvider('@adonisjs/fold')
+    rcfile.commit()
+
+    const contents = await fs.get('.adonisrc.json')
+    assert.deepEqual(JSON.parse(contents), {
+      providers: ['@adonisjs/core', '@adonisjs/fold'],
+    })
+  })
+
+  test('update provider path inside providers array', async (assert) => {
+    await fs.add('.adonisrc.json', JSON.stringify({
+      providers: ['@adonisjs/core', '@adonisjs/fold'],
+    }, null, 2))
+
+    const rcfile = new RcFile(fs.basePath)
+    rcfile.addProvider('@adonisjs/core')
+    rcfile.commit()
+
+    const contents = await fs.get('.adonisrc.json')
+    assert.deepEqual(JSON.parse(contents), {
+      providers: ['@adonisjs/core', '@adonisjs/fold'],
+    })
+  })
+
+  test('update provider path inside providers array by adding new provider', async (assert) => {
+    await fs.add('.adonisrc.json', JSON.stringify({
+      providers: ['@adonisjs/core'],
+    }, null, 2))
+
+    const rcfile = new RcFile(fs.basePath)
+    rcfile.addProvider('@adonisjs/fold')
+    rcfile.commit()
+
+    const contents = await fs.get('.adonisrc.json')
+    assert.deepEqual(JSON.parse(contents), {
+      providers: ['@adonisjs/core', '@adonisjs/fold'],
+    })
+  })
+
+  test('remove provider path from providers array on rollback', async (assert) => {
+    await fs.add('.adonisrc.json', JSON.stringify({
+      providers: ['@adonisjs/core'],
+    }, null, 2))
+
+    const rcfile = new RcFile(fs.basePath)
+    rcfile.addProvider('@adonisjs/fold')
+    rcfile.rollback()
+
+    const contents = await fs.get('.adonisrc.json')
+    assert.deepEqual(JSON.parse(contents), {
+      providers: ['@adonisjs/core'],
+    })
+  })
+
+  test('add provider to ace providers array', async (assert) => {
+    const rcfile = new RcFile(fs.basePath)
+    rcfile.addAceProvider('./providers/App')
+    rcfile.commit()
+
+    const contents = await fs.get('.adonisrc.json')
+    assert.deepEqual(JSON.parse(contents), {
+      aceProviders: ['./providers/App'],
+    })
+  })
+
+  test('add multiple providers to ace providers array', async (assert) => {
+    const rcfile = new RcFile(fs.basePath)
+    rcfile.addAceProvider('@adonisjs/core')
+    rcfile.addAceProvider('@adonisjs/fold')
+    rcfile.commit()
+
+    const contents = await fs.get('.adonisrc.json')
+    assert.deepEqual(JSON.parse(contents), {
+      aceProviders: ['@adonisjs/core', '@adonisjs/fold'],
+    })
+  })
+
+  test('update provider path inside ace providers array', async (assert) => {
+    await fs.add('.adonisrc.json', JSON.stringify({
+      aceProviders: ['@adonisjs/core', '@adonisjs/fold'],
+    }, null, 2))
+
+    const rcfile = new RcFile(fs.basePath)
+    rcfile.addAceProvider('@adonisjs/core')
+    rcfile.commit()
+
+    const contents = await fs.get('.adonisrc.json')
+    assert.deepEqual(JSON.parse(contents), {
+      aceProviders: ['@adonisjs/core', '@adonisjs/fold'],
+    })
+  })
+
+  test('update provider path inside ace providers array by adding new provider', async (assert) => {
+    await fs.add('.adonisrc.json', JSON.stringify({
+      aceProviders: ['@adonisjs/core'],
+    }, null, 2))
+
+    const rcfile = new RcFile(fs.basePath)
+    rcfile.addAceProvider('@adonisjs/fold')
+    rcfile.commit()
+
+    const contents = await fs.get('.adonisrc.json')
+    assert.deepEqual(JSON.parse(contents), {
+      aceProviders: ['@adonisjs/core', '@adonisjs/fold'],
+    })
+  })
+
+  test('remove provider path from ace providers array on rollback', async (assert) => {
+    await fs.add('.adonisrc.json', JSON.stringify({
+      aceProviders: ['@adonisjs/core'],
+    }, null, 2))
+
+    const rcfile = new RcFile(fs.basePath)
+    rcfile.addAceProvider('@adonisjs/fold')
+    rcfile.rollback()
+
+    const contents = await fs.get('.adonisrc.json')
+    assert.deepEqual(JSON.parse(contents), {
+      aceProviders: ['@adonisjs/core'],
+    })
+  })
 })
