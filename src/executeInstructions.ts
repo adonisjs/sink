@@ -34,6 +34,8 @@ export async function executeInstructions (
     return true
   }
 
+  logger.pauseLogger()
+
   /**
    * Execute instructions when they exists in the package.json file
    */
@@ -127,6 +129,18 @@ export async function executeInstructions (
   if (pkg.adonisjs.instructionsMd) {
     await sink.renderMarkdown(join(dirname(packagePath), pkg.adonisjs.instructionsMd), packageName)
   }
+
+  /**
+   * Filtering duplicate messages before logging them
+   */
+  const processedMessages: Set<string | Error> = new Set()
+  logger.resumeLogger((message) => {
+    if (processedMessages.has(message.message)) {
+      return false
+    }
+    processedMessages.add(message.message)
+    return true
+  })
 
   return true
 }
