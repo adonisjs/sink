@@ -11,8 +11,8 @@ import { Colors } from '@poppinss/colors'
 import { extname, join, normalize } from 'path'
 import { ApplicationContract } from '@ioc:Adonis/Core/Application'
 
-import { TemplateFile } from './formats/TemplateFile'
 import { logger } from './logger'
+import { TemplateFile } from './formats/TemplateFile'
 
 type TemplateNode = { src: string, dest: string } | string
 
@@ -62,18 +62,15 @@ export function copyTemplates (
      */
     templatesToCopy.forEach((templateToCopy) => {
       const src = typeof (templateToCopy) === 'string' ? templateToCopy : templateToCopy.src
-      let dest = typeof (templateToCopy) === 'string' ? templateToCopy : templateToCopy.dest
+      let dest = typeof (templateToCopy) === 'string'
+        ? templateToCopy.replace(new RegExp(`${extname(templateToCopy)}$`), '.ts')
+        : extname(templateToCopy.dest) === '' ? `${templateToCopy.dest}.ts` : templateToCopy.dest
 
       if (!src || !dest) {
         throw new Error('src and dest are required when copying templates')
       }
 
       const sourcePath = join(templatesBasePath, src)
-
-      /**
-       * Normalizing destination extension
-       */
-      dest = dest.replace(new RegExp(`${extname(dest)}$`), '.ts')
       const destinationPath = normalize(`${configuredDirectory}/${dest}`)
       const template = new TemplateFile(projectRoot, destinationPath, sourcePath)
 

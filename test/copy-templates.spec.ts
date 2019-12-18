@@ -104,7 +104,7 @@ test.group('Copy templates', (group) => {
     }, {})
 
     copyTemplates(fs.basePath, application, join(fs.basePath, 'templates/config'), {
-      config: [{ src: 'app.txt', dest: 'foo.app' }],
+      config: [{ src: 'app.txt', dest: 'foo.ts' }],
     })
 
     const contents = await fs.get('config/foo.ts')
