@@ -29,8 +29,8 @@ export class LinesFile extends BaseFile {
   /**
    * Add one or more new lines
    */
-  public add (lines: string | string[]): this {
-    this.$addAction('add', { lines })
+  public add (line: string | string[]): this {
+    this.$addAction('add', { line })
     return this
   }
 
@@ -45,8 +45,8 @@ export class LinesFile extends BaseFile {
   /**
    * Remove lines matching the give text
    */
-  public remove (lines: string | string[]): this {
-    this.$addAction('remove', { lines })
+  public remove (line: string | string[]): this {
+    this.$addAction('remove', { line })
     return this
   }
 
@@ -61,7 +61,7 @@ export class LinesFile extends BaseFile {
   /**
    * Get contents for the file
    */
-	public get (): string[] {
+  public get (): string[] {
     return this.filePointer.get()
   }
 
@@ -102,7 +102,7 @@ export class LinesFile extends BaseFile {
       }
 
       if (action === 'add') {
-        this.filePointer.add(body.lines)
+        this.filePointer.add(body.line)
         return
       }
 
@@ -116,7 +116,7 @@ export class LinesFile extends BaseFile {
       }
 
       if (action === 'remove') {
-        this.filePointer.remove(body.lines)
+        this.filePointer.remove(body.line)
       }
     })
 
@@ -144,7 +144,7 @@ export class LinesFile extends BaseFile {
       }
 
       if (action === 'add') {
-        this.filePointer.remove(body.lines)
+        this.filePointer.remove(body.line)
         return
       }
 
@@ -155,7 +155,7 @@ export class LinesFile extends BaseFile {
       }
 
       if (action === 'remove') {
-        this.filePointer.add(body.lines)
+        this.filePointer.add(body.line)
       }
     })
 

@@ -28,7 +28,7 @@ test.group('Render markdown', (group) => {
    * test that everything is working fine without manual verification
    */
   test.skipInCI('render markdown file by opening it on', async () => {
-    await fs.add('foo.md', `## Hello world`)
+    await fs.add('foo.md', '## Hello world')
     await renderMarkdown(join(fs.basePath, 'foo.md'), '@adonisjs/core')
   })
 })

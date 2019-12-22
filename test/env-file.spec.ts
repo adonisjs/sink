@@ -48,8 +48,8 @@ test.group('EnvFile', (group) => {
   })
 
   test('update existing key value', async (assert) => {
-    await fs.add('.env', `APP_KEY=foo-bar`)
-    await fs.add('.env.example', `APP_KEY=`)
+    await fs.add('.env', 'APP_KEY=foo-bar')
+    await fs.add('.env.example', 'APP_KEY=')
 
     const envFile = new EnvFile(fs.basePath)
     envFile.set('APP_KEY', 'bar')
@@ -63,8 +63,8 @@ test.group('EnvFile', (group) => {
   })
 
   test('remove existing key', async (assert) => {
-    await fs.add('.env', `APP_KEY=foo-bar`)
-    await fs.add('.env.example', `APP_KEY=`)
+    await fs.add('.env', 'APP_KEY=foo-bar')
+    await fs.add('.env.example', 'APP_KEY=')
 
     const envFile = new EnvFile(fs.basePath)
     envFile.unset('APP_KEY')
@@ -78,8 +78,8 @@ test.group('EnvFile', (group) => {
   })
 
   test('remove line to rollback', async (assert) => {
-    await fs.add('.env', `APP_KEY=foo-bar`)
-    await fs.add('.env.example', `APP_KEY=`)
+    await fs.add('.env', 'APP_KEY=foo-bar')
+    await fs.add('.env.example', 'APP_KEY=')
 
     const envFile = new EnvFile(fs.basePath)
     envFile.set('APP_KEY', 'foo-bar')

@@ -47,11 +47,12 @@ test.group('Copy templates', (group) => {
   test('ignore templates for unknown directories', async () => {
     await fs.add('templates/config/app.txt', `
       const foo = 'foo'
-      export default foo`)
+      export default foo
+    `)
 
-      const application = new Application(fs.basePath, new Ioc(), {
-        directories: new Map([['config', 'config']]),
-      }, {})
+    const application = new Application(fs.basePath, new Ioc(), {
+      directories: new Map([['config', 'config']]),
+    }, {})
 
     copyTemplates(fs.basePath, application, join(fs.basePath, 'templates/config'), {
       foo: ['app.txt'],

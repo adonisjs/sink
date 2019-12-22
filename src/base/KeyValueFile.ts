@@ -49,8 +49,8 @@ export abstract class KeyValueFile extends BaseFile {
   /**
    * Returns value for a given key from the file
    */
-	public get (): any
-	public get (address: string | string[], defaultValue?: any): any
+  public get (): any
+  public get (address: string | string[], defaultValue?: any): any
   public get (address?: string | string[], defaultValue?: any): any {
     return address ? this.filePointer.get(address, defaultValue) : this.filePointer.get()
   }
