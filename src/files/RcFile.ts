@@ -17,39 +17,39 @@ export class RcFile extends JsonFile {
    * Storing a local copy of preloads for concatenating
    * new entries.
    */
-  private _preloads: any[] = []
+  private preloads: any[] = []
 
   /**
    * Storing a local copy of metaFiles for concatenating
    * new entries.
    */
-  private _metaFiles: any[] = []
+  private metaFiles: any[] = []
 
   /**
    * Storing a local copy of commands for concatenating
    * new entries.
    */
-  private _commands: any[] = []
+  private commands: any[] = []
 
   /**
    * Storing a local copy of providers for concatenating
    * new entries.
    */
-  private _providers: any[] = []
+  private providers: any[] = []
 
   /**
    * Storing a local copy of aceProviders for concatenating
    * new entries.
    */
-  private _aceProviders: any[] = []
+  private aceProviders: any[] = []
 
   constructor (basePath: string) {
     super(basePath, '.adonisrc.json')
-    this._preloads = this.get('preloads', [])
-    this._metaFiles = this.get('metaFiles', [])
-    this._commands = this.get('commands', [])
-    this._providers = this.get('providers', [])
-    this._aceProviders = this.get('aceProviders', [])
+    this.preloads = this.get('preloads', [])
+    this.metaFiles = this.get('metaFiles', [])
+    this.commands = this.get('commands', [])
+    this.providers = this.get('providers', [])
+    this.aceProviders = this.get('aceProviders', [])
   }
 
   /**
@@ -107,7 +107,7 @@ export class RcFile extends JsonFile {
     environment?: ('console' | 'test' | 'web')[],
     optional?: boolean,
   ): this {
-    let preloadIndex = this._preloads.findIndex((preload) => {
+    let preloadIndex = this.preloads.findIndex((preload) => {
       if (preload.file) {
         return preload.file === filePath
       }
@@ -115,8 +115,7 @@ export class RcFile extends JsonFile {
       return preload === filePath
     })
 
-    preloadIndex = preloadIndex === -1 ? this._preloads.length : preloadIndex
-
+    preloadIndex = preloadIndex === -1 ? this.preloads.length : preloadIndex
     let preloadEntry: any = {
       file: filePath,
     }
@@ -143,7 +142,7 @@ export class RcFile extends JsonFile {
       preloadEntry = preloadEntry.file
     }
 
-    this._preloads[preloadIndex] = preloadEntry
+    this.preloads[preloadIndex] = preloadEntry
     this.set(`preloads[${preloadIndex}]`, preloadEntry)
     return this
   }
@@ -168,21 +167,21 @@ export class RcFile extends JsonFile {
    * Add custom file to `metaFiles` array.
    */
   public addMetaFile (filePath: string, reloadServer?: boolean) {
-    let entryIndex = this._metaFiles.findIndex((file) => {
+    let entryIndex = this.metaFiles.findIndex((file) => {
       if (file.pattern) {
         return file.pattern === filePath
       }
       return file === filePath
     })
 
-    entryIndex = entryIndex === -1 ? this._metaFiles.length : entryIndex
+    entryIndex = entryIndex === -1 ? this.metaFiles.length : entryIndex
 
     const entry = reloadServer === false ? {
       pattern: filePath,
       reloadServer: false,
     } : filePath
 
-    this._metaFiles[entryIndex] = entry
+    this.metaFiles[entryIndex] = entry
     this.set(`metaFiles[${entryIndex}]`, entry)
   }
 
@@ -190,12 +189,12 @@ export class RcFile extends JsonFile {
    * Add new commands to the commands array
    */
   public addCommand (commandPath: string) {
-    let entryIndex = this._commands.findIndex((command) => {
+    let entryIndex = this.commands.findIndex((command) => {
       return command === commandPath
     })
-    entryIndex = entryIndex === -1 ? this._commands.length : entryIndex
+    entryIndex = entryIndex === -1 ? this.commands.length : entryIndex
 
-    this._commands[entryIndex] = commandPath
+    this.commands[entryIndex] = commandPath
     this.set(`commands[${entryIndex}]`, commandPath)
   }
 
@@ -203,13 +202,13 @@ export class RcFile extends JsonFile {
    * Add new providers to the providers array
    */
   public addProvider (provider: string) {
-    let entryIndex = this._providers.findIndex((command) => {
+    let entryIndex = this.providers.findIndex((command) => {
       return command === provider
     })
 
-    entryIndex = entryIndex === -1 ? this._providers.length : entryIndex
+    entryIndex = entryIndex === -1 ? this.providers.length : entryIndex
 
-    this._providers[entryIndex] = provider
+    this.providers[entryIndex] = provider
     this.set(`providers[${entryIndex}]`, provider)
   }
 
@@ -217,13 +216,13 @@ export class RcFile extends JsonFile {
    * Add new providers to the ace providers array
    */
   public addAceProvider (provider: string) {
-    let entryIndex = this._aceProviders.findIndex((command) => {
+    let entryIndex = this.aceProviders.findIndex((command) => {
       return command === provider
     })
 
-    entryIndex = entryIndex === -1 ? this._aceProviders.length : entryIndex
+    entryIndex = entryIndex === -1 ? this.aceProviders.length : entryIndex
 
-    this._aceProviders[entryIndex] = provider
+    this.aceProviders[entryIndex] = provider
     this.set(`aceProviders[${entryIndex}]`, provider)
   }
 }

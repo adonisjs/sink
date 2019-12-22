@@ -41,19 +41,19 @@ export class PackageFile extends BaseFile {
   /**
    * Explicitly force to use yarn instead of npm
    */
-  private _useYarn: boolean | null = null
+  private useYarn: boolean | null = null
 
   /**
    * Method invoked before installing dependencies
    */
-  private _beforeInstall?: InstallerNotifier
+  private beforeInstallHooks?: InstallerNotifier
 
   /**
    * Method invoked before uninstalling dependencies
    */
-  private _beforeUninstall?: InstallerNotifier
+  private beforeUninstallHooks?: InstallerNotifier
 
-  constructor (basePath: string, private _installerOutput: StdioOptions = 'pipe') {
+  constructor (basePath: string, private installerOutput: StdioOptions = 'pipe') {
     super(basePath)
     this.$cdIn()
     this.filePointer = packageJson()
@@ -63,56 +63,54 @@ export class PackageFile extends BaseFile {
   /**
    * Run hooks for action or uninstall action
    */
-  private _runHooks (action: InstallerFns, list: string[], dev: boolean) {
-    if (action === 'install' && typeof (this._beforeInstall) === 'function') {
-      this._beforeInstall(list, dev)
-    } else if (action === 'uninstall' && typeof (this._beforeUninstall) === 'function') {
-      this._beforeUninstall(list, dev)
+  private runHooks (action: InstallerFns, list: string[], dev: boolean) {
+    if (action === 'install' && typeof (this.beforeInstallHooks) === 'function') {
+      this.beforeInstallHooks(list, dev)
+    } else if (action === 'uninstall' && typeof (this.beforeUninstallHooks) === 'function') {
+      this.beforeUninstallHooks(list, dev)
     }
   }
 
   /**
    * Sets installation client
    */
-  private _setClient (options: NpmOptions) {
-    if (this._useYarn !== null) {
-      options.yarn = this._useYarn
+  private setClient (options: NpmOptions) {
+    if (this.useYarn !== null) {
+      options.yarn = this.useYarn
     }
   }
 
   /**
    * Executes the installer `install` or `uninstall` action. Use
-   * `this._installerFnAsync` for async version
+   * `this.installerFnAsync` for async version
    */
-  private _installerFn (action: InstallerFns, list: string[], options: NpmOptions) {
+  private installerFn (action: InstallerFns, list: string[], options: NpmOptions) {
     if (!list.length) {
       return
     }
 
-    this._setClient(options)
-    this._runHooks(action, list, options.dev!)
+    this.setClient(options)
+    this.runHooks(action, list, options.dev!)
 
     const fn = action === 'install' ? install : uninstall
     return fn(list, options, (command: string, args: string[]) => {
-      return spawnSync(command, args, {
-        stdio: this._installerOutput,
-      })
+      return spawnSync(command, args, { stdio: this.installerOutput })
     }) as SpawnSyncReturns<Buffer>
   }
 
   /**
    * Executes the installer `install` or `uninstall` action. Use
-   * `this._installerFn` for sync version
+   * `this.installerFn` for sync version
    */
-  private _installerFnAsync (action: InstallerFns, list: string[], options: NpmOptions) {
+  private installerFnAsync (action: InstallerFns, list: string[], options: NpmOptions) {
     return new Promise<undefined | SpawnSyncReturns<Buffer>>((resolve) => {
       if (!list.length) {
         resolve()
         return
       }
 
-      this._setClient(options)
-      this._runHooks(action, list, options.dev!)
+      this.setClient(options)
+      this.runHooks(action, list, options.dev!)
 
       let response: SpawnSyncReturns<Buffer>
 
@@ -149,18 +147,18 @@ export class PackageFile extends BaseFile {
    * Install and uninstall packages defined via `this.install`
    * and `this.uninstall`
    */
-  private _commitDependencies (installs: Dependencies[], uninstalls: Dependencies[]) {
+  private commitDependencies (installs: Dependencies[], uninstalls: Dependencies[]) {
     let response: SpawnSyncReturns<Buffer> | undefined
 
     for (let { list, versions, dev } of installs) {
-      response = this._installerFn('install', list, { versions, dev })
+      response = this.installerFn('install', list, { versions, dev })
       if (response && response.status === 1) {
         return response
       }
     }
 
     for (let { list, dev } of uninstalls) {
-      response = this._installerFn('uninstall', list, { dev })
+      response = this.installerFn('uninstall', list, { dev })
       if (response && response.status === 1) {
         return response
       }
@@ -171,11 +169,11 @@ export class PackageFile extends BaseFile {
    * Performing uninstalling as a rollback step. Which means, this method
    * will remove packages marked for installation.
    */
-  private _rollbackDependencies (installs: Dependencies[]) {
+  private rollbackDependencies (installs: Dependencies[]) {
     let response: SpawnSyncReturns<Buffer> | undefined
 
     for (let { list, dev } of installs) {
-      response = this._installerFn('uninstall', list, { dev })
+      response = this.installerFn('uninstall', list, { dev })
       if (response && response.status === 1) {
         return response
       }
@@ -183,20 +181,20 @@ export class PackageFile extends BaseFile {
   }
 
   /**
-   * Same as `_commitInstalls` but async
+   * Same as `commitInstalls` but async
    */
-  private async _commitDependenciesAsync (installs: Dependencies[], uninstalls: Dependencies[]) {
+  private async commitDependenciesAsync (installs: Dependencies[], uninstalls: Dependencies[]) {
     let response: SpawnSyncReturns<Buffer> | undefined
 
     for (let { list, versions, dev } of installs) {
-      response = await this._installerFnAsync('install', list, { versions, dev })
+      response = await this.installerFnAsync('install', list, { versions, dev })
       if (response && response.status === 1) {
         return response
       }
     }
 
     for (let { list, dev } of uninstalls) {
-      response = await this._installerFnAsync('uninstall', list, { dev })
+      response = await this.installerFnAsync('uninstall', list, { dev })
       if (response && response.status === 1) {
         return response
       }
@@ -204,13 +202,13 @@ export class PackageFile extends BaseFile {
   }
 
   /**
-   * Same as `_rollbackInstalls` but async.
+   * Same as `rollbackInstalls` but async.
    */
-  private async _rollbackDependenciesAsync (installs: Dependencies[]) {
+  private async rollbackDependenciesAsync (installs: Dependencies[]) {
     let response: SpawnSyncReturns<Buffer> | undefined
 
     for (let { list, dev } of installs) {
-      response = await this._installerFnAsync('uninstall', list, { dev })
+      response = await this.installerFnAsync('uninstall', list, { dev })
       if (response && response.status === 1) {
         return response
       }
@@ -220,7 +218,7 @@ export class PackageFile extends BaseFile {
   /**
    * Commits actions defined on the given file
    */
-  private _commitActions (): boolean {
+  private commitActions (): boolean {
     const actions = this.$getCommitActions()
     const deleteFile = actions.find(({ action }) => action === 'delete')
 
@@ -259,7 +257,7 @@ export class PackageFile extends BaseFile {
   /**
    * Rollsback actions defined on the package file
    */
-  private _rollbackActions () {
+  private rollbackActions () {
     const actions = this.$getCommitActions()
 
     /**
@@ -301,7 +299,7 @@ export class PackageFile extends BaseFile {
    * Enable/disable use of yarn
    */
   public yarn (useYarn: boolean): this {
-    this._useYarn = useYarn
+    this.useYarn = useYarn
     return this
   }
 
@@ -435,7 +433,7 @@ export class PackageFile extends BaseFile {
    * Define a function to be called before installing dependencies
    */
   public beforeInstall (callback: InstallerNotifier): this {
-    this._beforeInstall = callback
+    this.beforeInstallHooks = callback
     return this
   }
 
@@ -443,7 +441,7 @@ export class PackageFile extends BaseFile {
    * Define a function to be called before uninstalling dependencies
    */
   public beforeUninstall (callback: InstallerNotifier): this {
-    this._beforeUninstall = callback
+    this.beforeUninstallHooks = callback
     return this
   }
 
@@ -453,7 +451,7 @@ export class PackageFile extends BaseFile {
   public commit () {
     this.$cdIn()
 
-    const success = this._commitActions()
+    const success = this.commitActions()
     if (!success) {
       return
     }
@@ -461,7 +459,7 @@ export class PackageFile extends BaseFile {
     /**
      * Install/uninstall dependencies
      */
-    const response = this._commitDependencies(
+    const response = this.commitDependencies(
       [this.getInstalls(true), this.getInstalls(false)],
       [this.getUninstalls(true), this.getUninstalls(false)],
     )
@@ -477,7 +475,7 @@ export class PackageFile extends BaseFile {
   public async commitAsync () {
     this.$cdIn()
 
-    const success = this._commitActions()
+    const success = this.commitActions()
     if (!success) {
       return
     }
@@ -485,7 +483,7 @@ export class PackageFile extends BaseFile {
     /**
      * Install/uninstall dependencies
      */
-    const response = await this._commitDependenciesAsync(
+    const response = await this.commitDependenciesAsync(
       [this.getInstalls(true), this.getInstalls(false)],
       [this.getUninstalls(true), this.getUninstalls(false)],
     )
@@ -500,7 +498,7 @@ export class PackageFile extends BaseFile {
   public rollback () {
     this.$cdIn()
 
-    const success = this._rollbackActions()
+    const success = this.rollbackActions()
     if (!success) {
       return
     }
@@ -508,7 +506,7 @@ export class PackageFile extends BaseFile {
     /**
      * Uninstalling installed packages
      */
-    const response = this._rollbackDependencies([
+    const response = this.rollbackDependencies([
       this.getInstalls(true),
       this.getInstalls(false),
     ])
@@ -524,7 +522,7 @@ export class PackageFile extends BaseFile {
   public async rollbackAsync () {
     this.$cdIn()
 
-    const success = this._rollbackActions()
+    const success = this.rollbackActions()
     if (!success) {
       return
     }
@@ -532,7 +530,7 @@ export class PackageFile extends BaseFile {
     /**
      * Uninstalling installed packages
      */
-    const response = await this._rollbackDependenciesAsync([
+    const response = await this.rollbackDependenciesAsync([
       this.getInstalls(true),
       this.getInstalls(false),
     ])

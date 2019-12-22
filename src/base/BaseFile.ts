@@ -14,8 +14,8 @@
 export abstract class BaseFile {
   protected abstract $actions: { action: string, body?: any }[] = []
 
-  private _currentDir: string
-  constructor (private _basePath: string) {
+  private currentDir: string
+  constructor (private basePath: string) {
   }
 
   /**
@@ -46,14 +46,14 @@ export abstract class BaseFile {
    * `cd` to the application base path
    */
   protected $cdIn () {
-    this._currentDir = process.cwd()
-    process.chdir(this._basePath)
+    this.currentDir = process.cwd()
+    process.chdir(this.basePath)
   }
 
   /**
    * `cd` out from the application base path
    */
   protected $cdOut () {
-    process.chdir(this._currentDir)
+    process.chdir(this.currentDir)
   }
 }
