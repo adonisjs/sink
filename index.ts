@@ -35,6 +35,7 @@ function getPrompt (): PromptContract {
 export const sinkVersion = pkg.version
 
 export { kleur }
+export { kleur as colors }
 export { getPrompt }
 export { logger } from './src/logger'
 export { RcFile } from './src/files/RcFile'
