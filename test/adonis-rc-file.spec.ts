@@ -163,12 +163,12 @@ test.group('AdonisRc file', (group) => {
 
   test('set autoload path', async (assert) => {
     const rcfile = new RcFile(fs.basePath)
-    rcfile.setAutoload('App', 'app')
+    rcfile.setAlias('App', 'app')
     rcfile.commit()
 
     const contents = await fs.get('.adonisrc.json')
     assert.deepEqual(JSON.parse(contents), {
-      autoloads: {
+      aliases: {
         App: 'app',
       },
     })
@@ -176,18 +176,18 @@ test.group('AdonisRc file', (group) => {
 
   test('update existing autoload path', async (assert) => {
     await fs.add('.adonisrc.json', JSON.stringify({
-      autoloads: {
+      aliases: {
         App: './app',
       },
     }, null, 2))
 
     const rcfile = new RcFile(fs.basePath)
-    rcfile.setAutoload('App', 'app')
+    rcfile.setAlias('App', 'app')
     rcfile.commit()
 
     const contents = await fs.get('.adonisrc.json')
     assert.deepEqual(JSON.parse(contents), {
-      autoloads: {
+      aliases: {
         App: 'app',
       },
     })
@@ -195,18 +195,18 @@ test.group('AdonisRc file', (group) => {
 
   test('remove existing autoload path on rollback', async (assert) => {
     await fs.add('.adonisrc.json', JSON.stringify({
-      autoloads: {
+      aliases: {
         App: './app',
       },
     }, null, 2))
 
     const rcfile = new RcFile(fs.basePath)
-    rcfile.setAutoload('App', 'app')
+    rcfile.setAlias('App', 'app')
     rcfile.rollback()
 
     const contents = await fs.get('.adonisrc.json')
     assert.deepEqual(JSON.parse(contents), {
-      autoloads: {},
+      aliases: {},
     })
   })
 

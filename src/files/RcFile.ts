@@ -148,10 +148,10 @@ export class RcFile extends JsonFile {
   }
 
   /**
-   * Set custom autoload path
+   * Set IoC container aliases
    */
-  public setAutoload (namespace: string, autoloadPath: string): this {
-    this.set(`autoloads.${namespace}`, autoloadPath)
+  public setAlias (namespace: string, autoloadPath: string): this {
+    this.set(`aliases.${namespace}`, autoloadPath)
     return this
   }
 
