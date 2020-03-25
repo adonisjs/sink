@@ -12,11 +12,32 @@ import { extname, join, normalize } from 'path'
 import { ApplicationContract } from '@ioc:Adonis/Core/Application'
 
 import { logger } from './logger'
+import { DotTemplate } from './formats/DotTemplate'
 import { TemplateFile } from './formats/TemplateFile'
 
-type TemplateNode = { src: string, dest: string } | string
+type TemplateNode = {
+  src: string,
+  dest: string,
+  dotSyntax?: boolean,
+  data?: any,
+} | string
 
 const colors = new Colors()
+
+/**
+ * Normalizes the template node
+ */
+function normalizeTemplateNode (templateNode: TemplateNode) {
+  templateNode = typeof (templateNode) === 'string' ? {
+    src: templateNode,
+    dest: templateNode.replace(new RegExp(`${extname(templateNode)}$`), ''),
+    dotSyntax: false,
+    data: {},
+  } : templateNode
+
+  templateNode.dest = extname(templateNode.dest) === '' ? `${templateNode.dest}.ts` : templateNode.dest
+  return templateNode
+}
 
 /**
  * Copy multiple templates to the user project.
@@ -57,22 +78,17 @@ export function copyTemplates (
       ? templates[templateFor] as TemplateNode[]
       : [templates[templateFor]] as TemplateNode[]
 
-    /**
-     * Loop and copy each template to the source
-     */
-    templatesToCopy.forEach((templateToCopy) => {
-      const src = typeof (templateToCopy) === 'string' ? templateToCopy : templateToCopy.src
-      let dest = typeof (templateToCopy) === 'string'
-        ? templateToCopy.replace(new RegExp(`${extname(templateToCopy)}$`), '.ts')
-        : extname(templateToCopy.dest) === '' ? `${templateToCopy.dest}.ts` : templateToCopy.dest
-
+    templatesToCopy.map(normalizeTemplateNode).forEach(({ src, dest, dotSyntax, data }) => {
       if (!src || !dest) {
         throw new Error('src and dest are required when copying templates')
       }
 
       const sourcePath = join(templatesBasePath, src)
       const destinationPath = normalize(`${configuredDirectory}/${dest}`)
-      const template = new TemplateFile(projectRoot, destinationPath, sourcePath)
+
+      const template = dotSyntax
+        ? new DotTemplate(projectRoot, destinationPath, sourcePath)
+        : new TemplateFile(projectRoot, destinationPath, sourcePath)
 
       /**
        * Skip when file already exists
@@ -82,7 +98,7 @@ export function copyTemplates (
         return
       }
 
-      template.apply({}).commit()
+      template.apply(data || {}).commit()
       logger.create(destinationPath)
     })
   })

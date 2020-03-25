@@ -132,4 +132,23 @@ test.group('Copy templates', (group) => {
       const foo = 'foo'
       export default foo\n`)
   })
+
+  test('copy templates use dot templates', async (assert) => {
+    await fs.add('templates/config/app.txt', `
+      const foo = {{= it.name}}
+      export default foo`)
+
+    const application = new Application(fs.basePath, new Ioc(), {
+      directories: new Map([['config', 'config']]),
+    }, {})
+
+    copyTemplates(fs.basePath, application, join(fs.basePath, 'templates/config'), {
+      config: [{ src: 'app.txt', dest: 'foo.ts', dotSyntax: true, data: { name: '\'bar\'' } }],
+    })
+
+    const contents = await fs.get('config/foo.ts')
+    assert.equal(contents, `
+      const foo = 'bar'
+      export default foo\n`)
+  })
 })
