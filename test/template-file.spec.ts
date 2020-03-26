@@ -33,31 +33,6 @@ test.group('Template file', (group) => {
     assert.equal(contents.trim(), 'hello world')
   })
 
-  test('subsitute data', async (assert) => {
-    await fs.add('template.txt', 'hello {{= it.name}}')
-
-    const file = new TemplateFile(fs.basePath, 'foo.txt', join(fs.basePath, 'template.txt'))
-    file.apply({ name: 'virk' }).commit()
-
-    const contents = await fs.get('foo.txt')
-    assert.equal(contents.trim(), 'hello virk')
-  })
-
-  test('write conditionals', async (assert) => {
-    await fs.add('template.txt', `
-    {{? it.username }}
-      Hello {{= it.username }}
-    {{??}}
-      Hello guest
-    {{?}}`)
-
-    const file = new TemplateFile(fs.basePath, 'foo.txt', join(fs.basePath, 'template.txt'))
-    file.apply({ username: 'virk' }).commit()
-
-    const contents = await fs.get('foo.txt')
-    assert.equal(contents.trim(), 'Hello virk')
-  })
-
   test('do not modify template file when it already exists', async (assert) => {
     await fs.add('template.txt', 'hello world')
     await fs.add('foo.txt', 'hi world')
