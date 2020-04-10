@@ -7,7 +7,7 @@
  * file that was distributed with this source code.
 */
 
-import { JsonFile } from '../formats/Json'
+import { JsonFile } from '../Formats/Json'
 
 /**
  * Exposes API to mutate the contents of `.adonisrc.json` file.

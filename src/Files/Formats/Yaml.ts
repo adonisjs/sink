@@ -8,7 +8,7 @@
 */
 
 import { yaml } from 'mrm-core'
-import { KeyValuePair } from '../base/KeyValuePair'
+import { KeyValuePair } from '../Base/KeyValuePair'
 
 /**
  * Exposes the API to work with Yaml files.
