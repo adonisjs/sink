@@ -62,7 +62,7 @@ export class MarkdownRenderer {
   public async renderInBrowser () {
     try {
       const contents = await readFile(this.mdFileAbsPath, 'utf-8')
-      const html = this.generateHtml(marked(contents.trim()))
+      const html = this.generateHtml(marked.setOptions({ renderer: new marked.Renderer() })(contents.trim()))
       await this.openContentsInBrowser(html)
     } catch (error) {
     }
