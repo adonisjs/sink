@@ -7,12 +7,12 @@
  * file that was distributed with this source code.
 */
 
-import { JsonFile } from '../formats/JsonFile'
+import { JsonFile } from '../formats/Json'
 
 /**
  * Exposes API to mutate the contents of `.adonisrc.json` file.
  */
-export class RcFile extends JsonFile {
+export class AdonisRcFile extends JsonFile {
   /**
    * Storing a local copy of preloads for concatenating
    * new entries.

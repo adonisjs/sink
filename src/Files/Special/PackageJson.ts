@@ -9,7 +9,7 @@
 
 import { spawnSync, SpawnSyncReturns, StdioOptions, spawn } from 'child_process'
 import { packageJson, install, uninstall } from 'mrm-core'
-import { BaseFile } from '../base/BaseFile'
+import { File } from '../Base/File'
 
 type InstallerFns = 'install' | 'uninstall'
 type InstallerNotifier = (list: string[], dev: boolean) => void
@@ -20,7 +20,7 @@ type Dependencies = { list: string[], versions?: any, dev: boolean }
  * same as a standard JSON file, but with some special methods
  * related to package file itself.
  */
-export class PackageFile extends BaseFile {
+export class PackageJsonFile extends File {
   public filePointer: ReturnType<typeof packageJson>
 
   /**

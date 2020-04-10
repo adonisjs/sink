@@ -8,9 +8,10 @@
 */
 
 import test from 'japa'
-import { LinesFile } from '../src/formats/LinesFile'
-import { Filesystem } from '@adonisjs/dev-utils'
 import { join } from 'path'
+import { Filesystem } from '@adonisjs/dev-utils'
+
+import { NewLineFile } from '../src/Files/Formats/NewLine'
 
 const fs = new Filesystem(join(__dirname, '__app'))
 
@@ -24,7 +25,7 @@ test.group('Lines file', (group) => {
   })
 
   test('create text file', async (assert) => {
-    const file = new LinesFile(fs.basePath, 'foo.txt')
+    const file = new NewLineFile(fs.basePath, 'foo.txt')
     file.add('hello-world')
     file.commit()
 
@@ -34,7 +35,7 @@ test.group('Lines file', (group) => {
 
   test('append lines to text file', async (assert) => {
     await fs.add('foo.txt', 'hello-world')
-    const file = new LinesFile(fs.basePath, 'foo.txt')
+    const file = new NewLineFile(fs.basePath, 'foo.txt')
     file.add('hi-world')
     file.commit()
 
@@ -44,7 +45,7 @@ test.group('Lines file', (group) => {
 
   test('do not append lines with same text', async (assert) => {
     await fs.add('foo.txt', 'hello-world')
-    const file = new LinesFile(fs.basePath, 'foo.txt')
+    const file = new NewLineFile(fs.basePath, 'foo.txt')
     file.add('hello-world')
     file.commit()
 
@@ -54,7 +55,7 @@ test.group('Lines file', (group) => {
 
   test('remove lines', async (assert) => {
     await fs.add('foo.txt', 'hello-world')
-    const file = new LinesFile(fs.basePath, 'foo.txt')
+    const file = new NewLineFile(fs.basePath, 'foo.txt')
     file.remove('hello-world')
     file.commit()
 
@@ -64,7 +65,7 @@ test.group('Lines file', (group) => {
 
   test('remove lines on rollback', async (assert) => {
     await fs.add('foo.txt', 'hello-world')
-    const file = new LinesFile(fs.basePath, 'foo.txt')
+    const file = new NewLineFile(fs.basePath, 'foo.txt')
     file.add('hello-world')
     file.rollback()
 
@@ -74,7 +75,7 @@ test.group('Lines file', (group) => {
 
   test('add lines on rollback', async (assert) => {
     await fs.add('foo.txt', '')
-    const file = new LinesFile(fs.basePath, 'foo.txt')
+    const file = new NewLineFile(fs.basePath, 'foo.txt')
     file.remove('hello-world')
     file.rollback()
 
@@ -84,7 +85,7 @@ test.group('Lines file', (group) => {
 
   test('delete file', async (assert) => {
     await fs.add('foo.txt', '')
-    const file = new LinesFile(fs.basePath, 'foo.txt')
+    const file = new NewLineFile(fs.basePath, 'foo.txt')
     file.delete()
     file.rollback()
 

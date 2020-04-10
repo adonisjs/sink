@@ -10,7 +10,7 @@
 import test from 'japa'
 import { join } from 'path'
 import { Filesystem } from '@adonisjs/dev-utils'
-import { TemplateFile } from '../src/formats/TemplateFile'
+import { TemplateLiteralFile } from '../src/Files/Formats/TemplateLiteral'
 
 const fs = new Filesystem(join(__dirname, '__app'))
 
@@ -26,7 +26,7 @@ test.group('Template file', (group) => {
   test('create template file', async (assert) => {
     await fs.add('template.txt', 'hello world')
 
-    const file = new TemplateFile(fs.basePath, 'foo.txt', join(fs.basePath, 'template.txt'))
+    const file = new TemplateLiteralFile(fs.basePath, 'foo.txt', join(fs.basePath, 'template.txt'))
     file.apply().commit()
 
     const contents = await fs.get('foo.txt')
@@ -37,7 +37,7 @@ test.group('Template file', (group) => {
     await fs.add('template.txt', 'hello world')
     await fs.add('foo.txt', 'hi world')
 
-    const file = new TemplateFile(fs.basePath, 'foo.txt', join(fs.basePath, 'template.txt'))
+    const file = new TemplateLiteralFile(fs.basePath, 'foo.txt', join(fs.basePath, 'template.txt'))
     file.apply().commit()
 
     const contents = await fs.get('foo.txt')
@@ -48,7 +48,7 @@ test.group('Template file', (group) => {
     await fs.add('template.txt', 'hello world')
     await fs.add('foo.txt', 'hi world')
 
-    const file = new TemplateFile(fs.basePath, 'foo.txt', join(fs.basePath, 'template.txt'))
+    const file = new TemplateLiteralFile(fs.basePath, 'foo.txt', join(fs.basePath, 'template.txt'))
     file.overwrite = true
     file.apply().commit()
 
@@ -60,7 +60,7 @@ test.group('Template file', (group) => {
     await fs.add('template.txt', 'hello world')
     await fs.add('foo.txt', 'hi world')
 
-    const file = new TemplateFile(fs.basePath, 'foo.txt', join(fs.basePath, 'template.txt'))
+    const file = new TemplateLiteralFile(fs.basePath, 'foo.txt', join(fs.basePath, 'template.txt'))
     file.apply().rollback()
 
     const hasFile = await fs.fsExtra.pathExists(join(fs.basePath, 'foo.txt'))
@@ -71,7 +71,7 @@ test.group('Template file', (group) => {
     await fs.add('template.txt', 'hello world')
     await fs.add('foo.txt', 'hi world')
 
-    const file = new TemplateFile(fs.basePath, 'foo.txt', join(fs.basePath, 'template.txt'))
+    const file = new TemplateLiteralFile(fs.basePath, 'foo.txt', join(fs.basePath, 'template.txt'))
     file.removeOnRollback = false
     file.apply().rollback()
 

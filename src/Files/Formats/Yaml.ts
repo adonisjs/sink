@@ -8,7 +8,7 @@
 */
 
 import { yaml } from 'mrm-core'
-import { KeyValueFile } from '../base/KeyValueFile'
+import { KeyValuePair } from '../base/KeyValuePair'
 
 /**
  * Exposes the API to work with Yaml files.
@@ -21,7 +21,7 @@ import { KeyValueFile } from '../base/KeyValueFile'
  * yaml.commit()
  * ```
  */
-export class YamlFile extends KeyValueFile {
+export class YamlFile extends KeyValuePair {
   public filePointer: ReturnType<typeof yaml>
 
   constructor (basePath: string, filename: string) {

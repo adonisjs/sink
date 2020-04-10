@@ -12,7 +12,7 @@ import test from 'japa'
 import Yaml from 'yaml'
 import { Filesystem } from '@adonisjs/dev-utils'
 
-import { YamlFile } from '../src/formats/YamlFile'
+import { YamlFile } from '../src/Files/Formats/Yaml'
 
 const fs = new Filesystem(join(__dirname, '__app'))
 

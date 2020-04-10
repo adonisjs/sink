@@ -8,7 +8,7 @@
 */
 
 import test from 'japa'
-import { PackageFile } from '../src/files/PackageFile'
+import { PackageJsonFile } from '../src/Files/Special/PackageJson'
 import { Filesystem } from '@adonisjs/dev-utils'
 import { join } from 'path'
 
@@ -24,7 +24,7 @@ test.group('Package file', (group) => {
   })
 
   test('create package file when missing', async (assert) => {
-    const pkg = new PackageFile(fs.basePath)
+    const pkg = new PackageJsonFile(fs.basePath)
     pkg.set('name', 'foo-app')
     pkg.commit()
 
@@ -35,7 +35,7 @@ test.group('Package file', (group) => {
   test('unset existing values when down is called', async (assert) => {
     await fs.add('package.json', JSON.stringify({ name: 'foo' }))
 
-    const pkg = new PackageFile(fs.basePath)
+    const pkg = new PackageJsonFile(fs.basePath)
     pkg.set('name', 'foo-app')
     pkg.rollback()
 
@@ -44,7 +44,7 @@ test.group('Package file', (group) => {
   })
 
   test('add script', async (assert) => {
-    const pkg = new PackageFile(fs.basePath)
+    const pkg = new PackageJsonFile(fs.basePath)
     pkg.setScript('test', 'japa')
     pkg.commit()
 
@@ -54,7 +54,7 @@ test.group('Package file', (group) => {
 
   test('remove added script on down', async (assert) => {
     await fs.add('package.json', JSON.stringify({ scripts: { test: 'japa' } }))
-    const pkg = new PackageFile(fs.basePath)
+    const pkg = new PackageJsonFile(fs.basePath)
     pkg.setScript('test', 'japa')
     pkg.rollback()
 
@@ -64,7 +64,7 @@ test.group('Package file', (group) => {
 
   test('append script', async (assert) => {
     await fs.add('package.json', JSON.stringify({ scripts: { test: 'japa' } }))
-    const pkg = new PackageFile(fs.basePath)
+    const pkg = new PackageJsonFile(fs.basePath)
     pkg.appendScript('test', 'tsc')
     pkg.commit()
 
@@ -74,7 +74,7 @@ test.group('Package file', (group) => {
 
   test('remove appended script on rollback', async (assert) => {
     await fs.add('package.json', JSON.stringify({ scripts: { test: 'japa && tsc' } }))
-    const pkg = new PackageFile(fs.basePath)
+    const pkg = new PackageJsonFile(fs.basePath)
     pkg.appendScript('test', 'tsc')
     pkg.rollback()
 
@@ -84,7 +84,7 @@ test.group('Package file', (group) => {
 
   test('prepend script', async (assert) => {
     await fs.add('package.json', JSON.stringify({ scripts: { test: 'japa' } }))
-    const pkg = new PackageFile(fs.basePath)
+    const pkg = new PackageJsonFile(fs.basePath)
     pkg.prependScript('test', 'tsc')
     pkg.commit()
 
@@ -94,7 +94,7 @@ test.group('Package file', (group) => {
 
   test('remove appended script on rollback', async (assert) => {
     await fs.add('package.json', JSON.stringify({ scripts: { test: 'tsc && japa' } }))
-    const pkg = new PackageFile(fs.basePath)
+    const pkg = new PackageJsonFile(fs.basePath)
     pkg.prependScript('test', 'tsc')
     pkg.rollback()
 
@@ -104,7 +104,7 @@ test.group('Package file', (group) => {
 
   test('install dev dependency', async (assert) => {
     await fs.add('package.json', JSON.stringify({ name: 'foo' }))
-    const pkg = new PackageFile(fs.basePath)
+    const pkg = new PackageJsonFile(fs.basePath)
     pkg.install('lodash')
     pkg.commit()
 
@@ -114,7 +114,7 @@ test.group('Package file', (group) => {
 
   test('uninstall dev dependency on rollback', async (assert) => {
     await fs.add('package.json', JSON.stringify({ name: 'foo', devDependencies: { lodash: '*' } }))
-    const pkg = new PackageFile(fs.basePath)
+    const pkg = new PackageJsonFile(fs.basePath)
     pkg.install('lodash')
     pkg.rollback()
 
@@ -124,7 +124,7 @@ test.group('Package file', (group) => {
 
   test('uninstall dependency', async (assert) => {
     await fs.add('package.json', JSON.stringify({ name: 'foo', devDependencies: { lodash: '*' } }))
-    const pkg = new PackageFile(fs.basePath)
+    const pkg = new PackageJsonFile(fs.basePath)
     pkg.uninstall('lodash')
     pkg.commit()
 
@@ -134,7 +134,7 @@ test.group('Package file', (group) => {
 
   test('do not install removed dependency on rollback', async (assert) => {
     await fs.add('package.json', JSON.stringify({ name: 'foo', devDependencies: { lodash: '*' } }))
-    const pkg = new PackageFile(fs.basePath)
+    const pkg = new PackageJsonFile(fs.basePath)
     pkg.uninstall('lodash')
     pkg.rollback()
 
@@ -144,7 +144,7 @@ test.group('Package file', (group) => {
 
   test('install given version of a package', async (assert) => {
     await fs.add('package.json', JSON.stringify({ name: 'foo' }))
-    const pkg = new PackageFile(fs.basePath)
+    const pkg = new PackageJsonFile(fs.basePath)
     pkg.install('lodash', '1.0.0')
     const response = pkg.commit()
     assert.isUndefined(response)
@@ -155,7 +155,7 @@ test.group('Package file', (group) => {
 
   test('get list of dev & production installs', async (assert) => {
     await fs.add('package.json', JSON.stringify({ name: 'foo' }))
-    const pkg = new PackageFile(fs.basePath)
+    const pkg = new PackageJsonFile(fs.basePath)
 
     pkg.install('lodash', '1.0.0', false)
     pkg.install('@adonisjs/core', 'latest', false)
@@ -176,7 +176,7 @@ test.group('Package file', (group) => {
 
   test('get list of dev & production uninstalls', async (assert) => {
     await fs.add('package.json', JSON.stringify({ name: 'foo' }))
-    const pkg = new PackageFile(fs.basePath)
+    const pkg = new PackageJsonFile(fs.basePath)
     pkg.uninstall('lodash', false)
     pkg.uninstall('mrm-core')
 
@@ -193,7 +193,7 @@ test.group('Package file', (group) => {
 
   test('return install errors from commit action', async (assert) => {
     await fs.add('package.json', JSON.stringify({ name: 'foo' }))
-    const pkg = new PackageFile(fs.basePath)
+    const pkg = new PackageJsonFile(fs.basePath)
     pkg.install('sdasdjksadjkasdkja')
 
     const response = pkg.commit()
@@ -205,7 +205,7 @@ test.group('Package file', (group) => {
 
   test('do not continue commit when one of the install command fails', async (assert) => {
     await fs.add('package.json', JSON.stringify({ name: 'foo' }))
-    const pkg = new PackageFile(fs.basePath)
+    const pkg = new PackageJsonFile(fs.basePath)
 
     pkg.install('sdasdjksadjkasdkja')
     pkg.install('lodash', undefined, false)
@@ -221,7 +221,7 @@ test.group('Package file', (group) => {
   test('execute callback before installing packages', async (assert) => {
     assert.plan(2)
     await fs.add('package.json', JSON.stringify({ name: 'foo' }))
-    const pkg = new PackageFile(fs.basePath)
+    const pkg = new PackageJsonFile(fs.basePath)
 
     pkg.install('lodash')
     pkg.beforeInstall((list, dev) => {
@@ -235,7 +235,7 @@ test.group('Package file', (group) => {
   test('execute callback before uninstalling packages', async (assert) => {
     assert.plan(2)
     await fs.add('package.json', JSON.stringify({ name: 'foo' }))
-    const pkg = new PackageFile(fs.basePath)
+    const pkg = new PackageJsonFile(fs.basePath)
 
     pkg.install('lodash')
     pkg.beforeUninstall((list, dev) => {
@@ -248,7 +248,7 @@ test.group('Package file', (group) => {
 
   test('install given version of a package asynchronously', async (assert) => {
     await fs.add('package.json', JSON.stringify({ name: 'foo' }))
-    const pkg = new PackageFile(fs.basePath)
+    const pkg = new PackageJsonFile(fs.basePath)
     pkg.install('lodash', '1.0.0')
     const response = await pkg.commitAsync()
     assert.isUndefined(response)
@@ -259,7 +259,7 @@ test.group('Package file', (group) => {
 
   test('return install errors from asynchronous commit action', async (assert) => {
     await fs.add('package.json', JSON.stringify({ name: 'foo' }))
-    const pkg = new PackageFile(fs.basePath)
+    const pkg = new PackageJsonFile(fs.basePath)
     pkg.install('sdasdjksadjkasdkja')
 
     const response = await pkg.commitAsync()
@@ -271,7 +271,7 @@ test.group('Package file', (group) => {
 
   test('do not continue commit when one of the asynchronous install fails', async (assert) => {
     await fs.add('package.json', JSON.stringify({ name: 'foo' }))
-    const pkg = new PackageFile(fs.basePath)
+    const pkg = new PackageJsonFile(fs.basePath)
 
     pkg.install('sdasdjksadjkasdkja')
     pkg.install('lodash', undefined, false)

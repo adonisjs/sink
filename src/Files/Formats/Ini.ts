@@ -8,7 +8,7 @@
 */
 
 import { ini } from 'mrm-core'
-import { KeyValueFile } from '../base/KeyValueFile'
+import { KeyValuePair } from '../Base/KeyValuePair'
 
 /**
  * Ini file to work with files like `.editorconfig`.
@@ -21,7 +21,7 @@ import { KeyValueFile } from '../base/KeyValueFile'
  * ini.commit()
  * ```
  */
-export class IniFile extends KeyValueFile {
+export class IniFile extends KeyValuePair {
   public filePointer: ReturnType<typeof ini>
 
   constructor (basePath: string, filename: string) {

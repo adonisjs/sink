@@ -13,7 +13,7 @@ import { Ioc } from '@adonisjs/fold'
 import { Filesystem } from '@adonisjs/dev-utils'
 import { Application } from '@adonisjs/application/build/standalone'
 
-import { executeInstructions } from '../src/executeInstructions'
+import { Instructions } from '../src/Tasks/Instructions'
 
 const fs = new Filesystem(join(__dirname, '__app'))
 
@@ -40,11 +40,11 @@ test.group('Execute instructions', (group) => {
     }))
 
     const application = new Application(fs.basePath, new Ioc(), {}, {})
-    const completed = await executeInstructions('@fake/app', fs.basePath, application)
+    const completed = await new Instructions('@fake/app', fs.basePath, application).execute()
     assert.isTrue(completed)
   })
 
-  test('raise error when defined and instructions file is missing', async (assert) => {
+  test('raise error when instructions file is missing', async (assert) => {
     assert.plan(1)
 
     await fs.add('package.json', JSON.stringify({
@@ -65,7 +65,7 @@ test.group('Execute instructions', (group) => {
     const application = new Application(fs.basePath, new Ioc(), {}, {})
 
     try {
-      await executeInstructions('@fake/app', fs.basePath, application)
+      await new Instructions('@fake/app', fs.basePath, application).execute()
     } catch ({ message }) {
       assert.match(message, /Cannot find module/)
     }
@@ -92,7 +92,7 @@ test.group('Execute instructions', (group) => {
 
     const application = new Application(fs.basePath, new Ioc(), {}, {})
 
-    const completed = await executeInstructions('@fake/app', fs.basePath, application)
+    const completed = await new Instructions('@fake/app', fs.basePath, application).execute()
     assert.isTrue(completed)
   })
 
@@ -119,7 +119,7 @@ test.group('Execute instructions', (group) => {
 
     const application = new Application(fs.basePath, new Ioc(), {}, {})
 
-    const completed = await executeInstructions('@fake/app', fs.basePath, application)
+    const completed = await new Instructions('@fake/app', fs.basePath, application).execute()
     assert.isTrue(completed)
   })
 
@@ -142,7 +142,7 @@ test.group('Execute instructions', (group) => {
     }))
 
     const application = new Application(fs.basePath, new Ioc(), {}, {})
-    const completed = await executeInstructions('@fake/app', fs.basePath, application)
+    const completed = await new Instructions('@fake/app', fs.basePath, application).execute()
     assert.isTrue(completed)
 
     const envContents = await fs.get('.env')
@@ -168,7 +168,35 @@ test.group('Execute instructions', (group) => {
     }))
 
     const application = new Application(fs.basePath, new Ioc(), {}, {})
-    const completed = await executeInstructions('@fake/app', fs.basePath, application)
+    const completed = await new Instructions('@fake/app', fs.basePath, application, true)
+      .setDisplay('browser')
+      .execute()
+    assert.isTrue(completed)
+  })
+
+  test.skipInCI('execute instructions display instructions md in browser', async (assert) => {
+    await fs.add('package.json', JSON.stringify({
+      name: 'my-app',
+      dependencies: {
+        '@fake/app': '^1.0.0',
+      },
+    }))
+
+    await fs.add('node_modules/@fake/app/foo.md', '# Hello world')
+
+    await fs.add('node_modules/@fake/app/package.json', JSON.stringify({
+      name: '@fake/app',
+      version: '1.0.0',
+      adonisjs: {
+        instructionsMd: 'foo.md',
+      },
+    }))
+
+    const application = new Application(fs.basePath, new Ioc(), {}, {})
+    const completed = await new Instructions('@fake/app', fs.basePath, application, true)
+      .setDisplay('terminal')
+      .execute()
+
     assert.isTrue(completed)
   })
 
@@ -197,7 +225,7 @@ test.group('Execute instructions', (group) => {
       directories: new Map([['config', 'config']]),
     }, {})
 
-    const completed = await executeInstructions('@fake/app', fs.basePath, application)
+    const completed = await new Instructions('@fake/app', fs.basePath, application).execute()
     assert.isTrue(completed)
 
     const configContents = await fs.get('config/app.ts')
@@ -214,7 +242,7 @@ test.group('Execute instructions', (group) => {
     }))
 
     const application = new Application(fs.basePath, new Ioc(), {}, {})
-    const completed = await executeInstructions('@fake/app', fs.basePath, application)
+    const completed = await new Instructions('@fake/app', fs.basePath, application).execute()
     assert.isTrue(completed)
 
     const rcContents = await fs.fsExtra.readJSON(join(fs.basePath, '.adonisrc.json'))
@@ -233,7 +261,7 @@ test.group('Execute instructions', (group) => {
     }))
 
     const application = new Application(fs.basePath, new Ioc(), {}, {})
-    const completed = await executeInstructions('@fake/app', fs.basePath, application)
+    const completed = await new Instructions('@fake/app', fs.basePath, application).execute()
     assert.isTrue(completed)
 
     const tsContents = await fs.fsExtra.readJSON(join(fs.basePath, 'tsconfig.json'))
@@ -254,7 +282,7 @@ test.group('Execute instructions', (group) => {
     }))
 
     const application = new Application(fs.basePath, new Ioc(), {}, {})
-    const completed = await executeInstructions('@fake/app', fs.basePath, application)
+    const completed = await new Instructions('@fake/app', fs.basePath, application).execute()
     assert.isTrue(completed)
 
     const rcContents = await fs.fsExtra.readJSON(join(fs.basePath, '.adonisrc.json'))

@@ -8,7 +8,7 @@
 */
 
 import test from 'japa'
-import { isEmptyDir } from '../src/isEmptyDir'
+import { isEmptyDir } from '../src/Utils/isEmptyDir'
 import { Filesystem } from '@adonisjs/dev-utils'
 import { join } from 'path'
 

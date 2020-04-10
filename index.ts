@@ -35,22 +35,10 @@ function getPrompt (): PromptContract {
 export const sinkVersion = pkg.version
 
 export { kleur }
-export { kleur as colors }
 export { getPrompt }
+export { kleur as colors }
+
 export { logger } from './src/logger'
-export { RcFile } from './src/files/RcFile'
-export { isEmptyDir } from './src/isEmptyDir'
-export { EnvFile } from './src/files/EnvFile'
-export { BaseFile } from './src/base/BaseFile'
-export { IniFile } from './src/formats/IniFile'
-export { YamlFile } from './src/formats/YamlFile'
-export { JsonFile } from './src/formats/JsonFile'
-export { LinesFile } from './src/formats/LinesFile'
-export { copyTemplates } from './src/copyTemplates'
-export { PackageFile } from './src/files/PackageFile'
-export { renderMarkdown } from './src/renderMarkdown'
-export { KeyValueFile } from './src/base/KeyValueFile'
-export { TemplateFile } from './src/formats/TemplateFile'
-export { copyFiles, deleteFiles, makeDirs } from 'mrm-core'
-export { executeInstructions } from './src/executeInstructions'
-export { MustacheTemplate } from './src/formats/MustacheTemplate'
+export * as files from './src/Files'
+export * as tasks from './src/Tasks'
+export * as utils from './src/Utils'

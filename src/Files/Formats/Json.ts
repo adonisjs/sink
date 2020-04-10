@@ -8,7 +8,7 @@
 */
 
 import { json } from 'mrm-core'
-import { KeyValueFile } from '../base/KeyValueFile'
+import { KeyValuePair } from '../Base/KeyValuePair'
 
 /**
  * Exposes the API to work with JSON files.
@@ -20,7 +20,7 @@ import { KeyValueFile } from '../base/KeyValueFile'
  * json.commit()
  * ```
  */
-export class JsonFile extends KeyValueFile {
+export class JsonFile extends KeyValuePair {
   public filePointer: ReturnType<typeof json>
 
   constructor (basePath: string, filename: string) {

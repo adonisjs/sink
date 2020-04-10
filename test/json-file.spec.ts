@@ -8,9 +8,10 @@
 */
 
 import test from 'japa'
-import { JsonFile } from '../src/formats/JsonFile'
-import { Filesystem } from '@adonisjs/dev-utils'
 import { join } from 'path'
+import { Filesystem } from '@adonisjs/dev-utils'
+
+import { JsonFile } from '../src/Files/Formats/Json'
 
 const fs = new Filesystem(join(__dirname, '__app'))
 

@@ -8,7 +8,7 @@
 */
 
 import test from 'japa'
-import { EnvFile } from '../src/files/EnvFile'
+import { EnvFile } from '../src/Files/Special/Env'
 import { Filesystem } from '@adonisjs/dev-utils'
 import { join } from 'path'
 

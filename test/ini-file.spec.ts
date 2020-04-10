@@ -12,7 +12,7 @@ import test from 'japa'
 import ini from 'ini'
 import { Filesystem } from '@adonisjs/dev-utils'
 
-import { IniFile } from '../src/formats/IniFile'
+import { IniFile } from '../src/Files/Formats/Ini'
 
 const fs = new Filesystem(join(__dirname, '__app'))
 

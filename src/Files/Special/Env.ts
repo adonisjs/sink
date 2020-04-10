@@ -7,15 +7,15 @@
  * file that was distributed with this source code.
 */
 
-import { LinesFile } from '../formats/LinesFile'
+import { NewLineFile } from '../Formats/NewLine'
 
 /**
  * Exposes the API to run mutations on `.env` file. The same variables
  * will be added to `.env.example` with empty contents.
  */
 export class EnvFile {
-  private envContents = new LinesFile(this.basePath, '.env')
-  private exampleEnvContents = new LinesFile(this.basePath, '.env.example')
+  private envContents = new NewLineFile(this.basePath, '.env')
+  private exampleEnvContents = new NewLineFile(this.basePath, '.env.example')
 
   constructor (private basePath: string) {
   }

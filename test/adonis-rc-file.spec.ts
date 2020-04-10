@@ -8,9 +8,10 @@
 */
 
 import test from 'japa'
-import { RcFile } from '../src/files/RcFile'
-import { Filesystem } from '@adonisjs/dev-utils'
 import { join } from 'path'
+import { Filesystem } from '@adonisjs/dev-utils'
+
+import { AdonisRcFile } from '../src/Files/Special/AdonisRc'
 
 const fs = new Filesystem(join(__dirname, '__app'))
 
@@ -24,7 +25,7 @@ test.group('AdonisRc file', (group) => {
   })
 
   test('create adonisrc file when missing', async (assert) => {
-    const rcfile = new RcFile(fs.basePath)
+    const rcfile = new AdonisRcFile(fs.basePath)
     rcfile.set('name', 'foo-app')
     rcfile.commit()
 
@@ -33,7 +34,7 @@ test.group('AdonisRc file', (group) => {
   })
 
   test('set exception handler', async (assert) => {
-    const rcfile = new RcFile(fs.basePath)
+    const rcfile = new AdonisRcFile(fs.basePath)
     rcfile.setExceptionHandler('App/Exceptions/Handler')
     rcfile.commit()
 
@@ -46,7 +47,7 @@ test.group('AdonisRc file', (group) => {
       exceptionHandlerNamespace: 'App/Exceptions/Handler',
     }))
 
-    const rcfile = new RcFile(fs.basePath)
+    const rcfile = new AdonisRcFile(fs.basePath)
     rcfile.setExceptionHandler('App/Exceptions/Handler')
     rcfile.rollback()
 
@@ -55,7 +56,7 @@ test.group('AdonisRc file', (group) => {
   })
 
   test('set preloads', async (assert) => {
-    const rcfile = new RcFile(fs.basePath)
+    const rcfile = new AdonisRcFile(fs.basePath)
     rcfile.setPreload('start/routes')
     rcfile.commit()
 
@@ -66,7 +67,7 @@ test.group('AdonisRc file', (group) => {
   })
 
   test('set mulitple preloads', async (assert) => {
-    const rcfile = new RcFile(fs.basePath)
+    const rcfile = new AdonisRcFile(fs.basePath)
     rcfile.setPreload('start/routes')
     rcfile.setPreload('start/kernel')
     rcfile.commit()
@@ -84,7 +85,7 @@ test.group('AdonisRc file', (group) => {
       }],
     }))
 
-    const rcfile = new RcFile(fs.basePath)
+    const rcfile = new AdonisRcFile(fs.basePath)
     rcfile.setPreload('start/routes')
     rcfile.commit()
 
@@ -102,7 +103,7 @@ test.group('AdonisRc file', (group) => {
       }],
     }))
 
-    const rcfile = new RcFile(fs.basePath)
+    const rcfile = new AdonisRcFile(fs.basePath)
     rcfile.setPreload('start/kernel')
     rcfile.commit()
 
@@ -119,7 +120,7 @@ test.group('AdonisRc file', (group) => {
       }],
     }))
 
-    const rcfile = new RcFile(fs.basePath)
+    const rcfile = new AdonisRcFile(fs.basePath)
     rcfile.setPreload('start/kernel', ['web'], false)
     rcfile.commit()
 
@@ -147,7 +148,7 @@ test.group('AdonisRc file', (group) => {
       ],
     }, null, 2))
 
-    const rcfile = new RcFile(fs.basePath)
+    const rcfile = new AdonisRcFile(fs.basePath)
     rcfile.setPreload('start/kernel', ['web'], false)
     rcfile.rollback()
 
@@ -162,7 +163,7 @@ test.group('AdonisRc file', (group) => {
   })
 
   test('set autoload path', async (assert) => {
-    const rcfile = new RcFile(fs.basePath)
+    const rcfile = new AdonisRcFile(fs.basePath)
     rcfile.setAlias('App', 'app')
     rcfile.commit()
 
@@ -181,7 +182,7 @@ test.group('AdonisRc file', (group) => {
       },
     }, null, 2))
 
-    const rcfile = new RcFile(fs.basePath)
+    const rcfile = new AdonisRcFile(fs.basePath)
     rcfile.setAlias('App', 'app')
     rcfile.commit()
 
@@ -200,7 +201,7 @@ test.group('AdonisRc file', (group) => {
       },
     }, null, 2))
 
-    const rcfile = new RcFile(fs.basePath)
+    const rcfile = new AdonisRcFile(fs.basePath)
     rcfile.setAlias('App', 'app')
     rcfile.rollback()
 
@@ -211,7 +212,7 @@ test.group('AdonisRc file', (group) => {
   })
 
   test('set custom directory', async (assert) => {
-    const rcfile = new RcFile(fs.basePath)
+    const rcfile = new AdonisRcFile(fs.basePath)
     rcfile.setDirectory('config', 'config')
     rcfile.commit()
 
@@ -230,7 +231,7 @@ test.group('AdonisRc file', (group) => {
       },
     }, null, 2))
 
-    const rcfile = new RcFile(fs.basePath)
+    const rcfile = new AdonisRcFile(fs.basePath)
     rcfile.setDirectory('config', 'config')
     rcfile.commit()
 
@@ -250,7 +251,7 @@ test.group('AdonisRc file', (group) => {
       },
     }, null, 2))
 
-    const rcfile = new RcFile(fs.basePath)
+    const rcfile = new AdonisRcFile(fs.basePath)
     rcfile.setDirectory('config', 'config')
     rcfile.rollback()
 
@@ -263,7 +264,7 @@ test.group('AdonisRc file', (group) => {
   })
 
   test('add file to metaFiles array', async (assert) => {
-    const rcfile = new RcFile(fs.basePath)
+    const rcfile = new AdonisRcFile(fs.basePath)
     rcfile.addMetaFile('.env')
     rcfile.commit()
 
@@ -274,7 +275,7 @@ test.group('AdonisRc file', (group) => {
   })
 
   test('add multiple files to metaFiles array', async (assert) => {
-    const rcfile = new RcFile(fs.basePath)
+    const rcfile = new AdonisRcFile(fs.basePath)
     rcfile.addMetaFile('.env')
     rcfile.addMetaFile('.gitignore')
     rcfile.commit()
@@ -290,7 +291,7 @@ test.group('AdonisRc file', (group) => {
       metaFiles: ['.env'],
     }, null, 2))
 
-    const rcfile = new RcFile(fs.basePath)
+    const rcfile = new AdonisRcFile(fs.basePath)
     rcfile.addMetaFile('.env')
     rcfile.commit()
 
@@ -305,7 +306,7 @@ test.group('AdonisRc file', (group) => {
       metaFiles: ['.env'],
     }, null, 2))
 
-    const rcfile = new RcFile(fs.basePath)
+    const rcfile = new AdonisRcFile(fs.basePath)
     rcfile.addMetaFile('.adonisrc.json')
     rcfile.commit()
 
@@ -320,7 +321,7 @@ test.group('AdonisRc file', (group) => {
       metaFiles: ['.env', '.adonisrc.json'],
     }, null, 2))
 
-    const rcfile = new RcFile(fs.basePath)
+    const rcfile = new AdonisRcFile(fs.basePath)
     rcfile.addMetaFile('.adonisrc.json')
     rcfile.rollback()
 
@@ -331,7 +332,7 @@ test.group('AdonisRc file', (group) => {
   })
 
   test('add meta file with explicit reloadServer property', async (assert) => {
-    const rcfile = new RcFile(fs.basePath)
+    const rcfile = new AdonisRcFile(fs.basePath)
     rcfile.addMetaFile('.adonisrc.json', false)
     rcfile.commit()
 
@@ -346,7 +347,7 @@ test.group('AdonisRc file', (group) => {
       metaFiles: ['.adonisrc.json'],
     }, null, 2))
 
-    const rcfile = new RcFile(fs.basePath)
+    const rcfile = new AdonisRcFile(fs.basePath)
     rcfile.addMetaFile('.adonisrc.json', false)
     rcfile.commit()
 
@@ -361,7 +362,7 @@ test.group('AdonisRc file', (group) => {
       metaFiles: [{ pattern: '.adonisrc.json', reloadServer: false }],
     }, null, 2))
 
-    const rcfile = new RcFile(fs.basePath)
+    const rcfile = new AdonisRcFile(fs.basePath)
     rcfile.addMetaFile('.adonisrc.json')
     rcfile.commit()
 
@@ -372,7 +373,7 @@ test.group('AdonisRc file', (group) => {
   })
 
   test('add command apth to commands array', async (assert) => {
-    const rcfile = new RcFile(fs.basePath)
+    const rcfile = new AdonisRcFile(fs.basePath)
     rcfile.addCommand('./commands/Foo')
     rcfile.commit()
 
@@ -383,7 +384,7 @@ test.group('AdonisRc file', (group) => {
   })
 
   test('add multiple command paths to commands array', async (assert) => {
-    const rcfile = new RcFile(fs.basePath)
+    const rcfile = new AdonisRcFile(fs.basePath)
     rcfile.addCommand('./commands/Foo')
     rcfile.addCommand('./commands/Bar')
     rcfile.commit()
@@ -399,7 +400,7 @@ test.group('AdonisRc file', (group) => {
       commands: ['./commands/Foo'],
     }, null, 2))
 
-    const rcfile = new RcFile(fs.basePath)
+    const rcfile = new AdonisRcFile(fs.basePath)
     rcfile.addCommand('./commands/Foo')
     rcfile.commit()
 
@@ -414,7 +415,7 @@ test.group('AdonisRc file', (group) => {
       commands: ['./commands/Foo'],
     }, null, 2))
 
-    const rcfile = new RcFile(fs.basePath)
+    const rcfile = new AdonisRcFile(fs.basePath)
     rcfile.addCommand('./commands/Bar')
     rcfile.commit()
 
@@ -429,7 +430,7 @@ test.group('AdonisRc file', (group) => {
       commands: ['./commands/Foo'],
     }, null, 2))
 
-    const rcfile = new RcFile(fs.basePath)
+    const rcfile = new AdonisRcFile(fs.basePath)
     rcfile.addCommand('./commands/Bar')
     rcfile.rollback()
 
@@ -440,7 +441,7 @@ test.group('AdonisRc file', (group) => {
   })
 
   test('add provider to providers array', async (assert) => {
-    const rcfile = new RcFile(fs.basePath)
+    const rcfile = new AdonisRcFile(fs.basePath)
     rcfile.addProvider('./providers/App')
     rcfile.commit()
 
@@ -451,7 +452,7 @@ test.group('AdonisRc file', (group) => {
   })
 
   test('add multiple providers to providers array', async (assert) => {
-    const rcfile = new RcFile(fs.basePath)
+    const rcfile = new AdonisRcFile(fs.basePath)
     rcfile.addProvider('@adonisjs/core')
     rcfile.addProvider('@adonisjs/fold')
     rcfile.commit()
@@ -467,7 +468,7 @@ test.group('AdonisRc file', (group) => {
       providers: ['@adonisjs/core', '@adonisjs/fold'],
     }, null, 2))
 
-    const rcfile = new RcFile(fs.basePath)
+    const rcfile = new AdonisRcFile(fs.basePath)
     rcfile.addProvider('@adonisjs/core')
     rcfile.commit()
 
@@ -482,7 +483,7 @@ test.group('AdonisRc file', (group) => {
       providers: ['@adonisjs/core'],
     }, null, 2))
 
-    const rcfile = new RcFile(fs.basePath)
+    const rcfile = new AdonisRcFile(fs.basePath)
     rcfile.addProvider('@adonisjs/fold')
     rcfile.commit()
 
@@ -497,7 +498,7 @@ test.group('AdonisRc file', (group) => {
       providers: ['@adonisjs/core'],
     }, null, 2))
 
-    const rcfile = new RcFile(fs.basePath)
+    const rcfile = new AdonisRcFile(fs.basePath)
     rcfile.addProvider('@adonisjs/fold')
     rcfile.rollback()
 
@@ -508,7 +509,7 @@ test.group('AdonisRc file', (group) => {
   })
 
   test('add provider to ace providers array', async (assert) => {
-    const rcfile = new RcFile(fs.basePath)
+    const rcfile = new AdonisRcFile(fs.basePath)
     rcfile.addAceProvider('./providers/App')
     rcfile.commit()
 
@@ -519,7 +520,7 @@ test.group('AdonisRc file', (group) => {
   })
 
   test('add multiple providers to ace providers array', async (assert) => {
-    const rcfile = new RcFile(fs.basePath)
+    const rcfile = new AdonisRcFile(fs.basePath)
     rcfile.addAceProvider('@adonisjs/core')
     rcfile.addAceProvider('@adonisjs/fold')
     rcfile.commit()
@@ -535,7 +536,7 @@ test.group('AdonisRc file', (group) => {
       aceProviders: ['@adonisjs/core', '@adonisjs/fold'],
     }, null, 2))
 
-    const rcfile = new RcFile(fs.basePath)
+    const rcfile = new AdonisRcFile(fs.basePath)
     rcfile.addAceProvider('@adonisjs/core')
     rcfile.commit()
 
@@ -550,7 +551,7 @@ test.group('AdonisRc file', (group) => {
       aceProviders: ['@adonisjs/core'],
     }, null, 2))
 
-    const rcfile = new RcFile(fs.basePath)
+    const rcfile = new AdonisRcFile(fs.basePath)
     rcfile.addAceProvider('@adonisjs/fold')
     rcfile.commit()
 
@@ -565,7 +566,7 @@ test.group('AdonisRc file', (group) => {
       aceProviders: ['@adonisjs/core'],
     }, null, 2))
 
-    const rcfile = new RcFile(fs.basePath)
+    const rcfile = new AdonisRcFile(fs.basePath)
     rcfile.addAceProvider('@adonisjs/fold')
     rcfile.rollback()
 

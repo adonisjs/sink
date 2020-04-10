@@ -7,39 +7,51 @@
  * file that was distributed with this source code.
 */
 
-import { json, yaml, ini } from 'mrm-core'
-import { BaseFile } from './BaseFile'
+import { lines } from 'mrm-core'
+import { File } from '../Base/File'
 
 /**
- * Exposes the API to work with key/value pair files like `ini`, `yaml`
- * and `json`.
+ * Base class to work with raw text new line files. For example `.env`
+ * file or `.gitignore`
  */
-export abstract class KeyValueFile extends BaseFile {
+export class NewLineFile extends File {
+  public filePointer: ReturnType<typeof lines>
   protected actions = []
-  public abstract filePointer: ReturnType<typeof json> | ReturnType<typeof yaml> | ReturnType<typeof ini>
 
-  constructor (basePath: string) {
+  constructor (basePath: string, filename: string) {
     super(basePath)
+
+    this.cdIn()
+    this.filePointer = lines(filename)
+    this.cdOut()
   }
 
   /**
-   * Set key/value pair
+   * Add one or more new lines
    */
-  public set (key: string, value: any): this {
-    this.addAction('set', { key, value })
+  public add (line: string | string[]): this {
+    this.addAction('add', { line })
     return this
   }
 
   /**
-   * Unset key/value pair
+   * Update existing text with new text
    */
-  public unset (key: string): this {
-    this.addAction('unset', { key })
+  public update (oldText: string, newText: string): this {
+    this.addAction('update', { oldText, newText })
     return this
   }
 
   /**
-   * Remove file
+   * Remove lines matching the give text
+   */
+  public remove (line: string | string[]): this {
+    this.addAction('remove', { line })
+    return this
+  }
+
+  /**
+   * Delete file
    */
   public delete () {
     this.addAction('delete')
@@ -47,12 +59,10 @@ export abstract class KeyValueFile extends BaseFile {
   }
 
   /**
-   * Returns value for a given key from the file
+   * Get contents for the file
    */
-  public get (): any
-  public get (address: string | string[], defaultValue?: any): any
-  public get (address?: string | string[], defaultValue?: any): any {
-    return address ? this.filePointer.get(address, defaultValue) : this.filePointer.get()
+  public get (): string[] {
+    return this.filePointer.get()
   }
 
   /**
@@ -91,13 +101,22 @@ export abstract class KeyValueFile extends BaseFile {
         }
       }
 
-      if (action === 'set') {
-        this.filePointer.set(body.key, body.value)
+      if (action === 'add') {
+        this.filePointer.add(body.line)
         return
       }
 
-      if (action === 'unset') {
-        this.filePointer.unset(body.key)
+      /**
+       * On update we remove the old line and add the new one
+       */
+      if (action === 'update') {
+        this.filePointer.remove(body.oldText)
+        this.filePointer.add(body.newText)
+        return
+      }
+
+      if (action === 'remove') {
+        this.filePointer.remove(body.line)
       }
     })
 
@@ -124,9 +143,19 @@ export abstract class KeyValueFile extends BaseFile {
         }
       }
 
-      if (action === 'set') {
-        this.filePointer.unset(body.key)
+      if (action === 'add') {
+        this.filePointer.remove(body.line)
         return
+      }
+
+      if (action === 'update') {
+        this.filePointer.remove(body.newText)
+        this.filePointer.add(body.oldText)
+        return
+      }
+
+      if (action === 'remove') {
+        this.filePointer.add(body.line)
       }
     })
 

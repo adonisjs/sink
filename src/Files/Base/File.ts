@@ -11,9 +11,13 @@
  * Base file exposes the API to add action and `cd` in/out from
  * the application base directory.
  */
-export abstract class BaseFile {
+export abstract class File {
   protected abstract actions: { action: string, body?: any }[] = []
 
+  /**
+   * The user current working directory reference. This is maintained, since
+   * we virtually cd into the `basePath`.
+   */
   private currentDir: string
   constructor (private basePath: string) {
   }

@@ -7,24 +7,43 @@
  * file that was distributed with this source code.
 */
 
-import { template } from 'mrm-core'
-import { BaseFile } from '../base/BaseFile'
+import mustache from 'mustache'
+import { file } from 'mrm-core'
+import { readFileSync } from 'fs'
+import { File } from '../Base/File'
 
 /**
  * Exposes the API to generate source files from template files.
  */
-export class TemplateFile extends BaseFile {
+export class MustacheFile extends File {
+  private templateData: any = {}
   protected actions = []
-  public filePointer: ReturnType<typeof template>
+
+  public filePointer: ReturnType<typeof file>
   public removeOnRollback = true
   public overwrite = false
 
-  constructor (basePath: string, filename: string, templatePath: string) {
+  constructor (basePath: string, filename: string, private templatePath: string) {
     super(basePath)
 
     this.cdIn()
-    this.filePointer = template(filename, templatePath)
+    this.filePointer = file(filename)
     this.cdOut()
+  }
+
+  /**
+   * Returns the contents of the template file
+   */
+  private readTemplate () {
+    try {
+      return readFileSync(this.templatePath, 'utf8')
+    } catch (err) {
+      if (err.code === 'ENOENT') {
+        throw Error(`Template file not found: ${this.templatePath}`)
+      } else {
+        throw err
+      }
+    }
   }
 
   /**
@@ -45,7 +64,7 @@ export class TemplateFile extends BaseFile {
    * Apply contents to the template to evaluate it's output
    */
   public apply (contents?: any) {
-    this.filePointer.apply(contents)
+    this.templateData = contents || {}
     return this
   }
 
@@ -64,8 +83,13 @@ export class TemplateFile extends BaseFile {
       return
     }
 
-    this.filePointer.save()
-    this.cdOut()
+    try {
+      this.filePointer.save(mustache.render(this.readTemplate(), this.templateData))
+      this.cdOut()
+    } catch (error) {
+      this.cdOut()
+      throw error
+    }
   }
 
   /**
