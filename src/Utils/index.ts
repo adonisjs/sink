@@ -8,3 +8,4 @@
 */
 
 export { isEmptyDir } from './isEmptyDir'
+export { copyFiles } from './copyFiles'
