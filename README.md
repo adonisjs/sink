@@ -5,7 +5,7 @@
 <br />
 
 <div align="center">
-  <h3>Codemods for AdonisJS project files</h3>
+  <h3>Code mods for AdonisJS project files</h3>
   <p>AdonisJS sink is a swiss knife for managing project files by <strong>applying minimal changes</strong>, <strong>inferring formatting from EditorConfig file</strong> and comes with specialized tasks for different file formats and file types.</p>
 </div>
 
