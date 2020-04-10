@@ -8,9 +8,10 @@
 */
 
 import test from 'japa'
+import endent from 'endent'
 import { join } from 'path'
 import { Filesystem } from '@adonisjs/dev-utils'
-import { DotTemplate } from '../src/formats/DotTemplate'
+import { MustacheTemplate } from '../src/formats/MustacheTemplate'
 
 const fs = new Filesystem(join(__dirname, '__app'))
 
@@ -26,7 +27,7 @@ test.group('DotTemplate file', (group) => {
   test('create template file', async (assert) => {
     await fs.add('template.txt', 'hello world')
 
-    const file = new DotTemplate(fs.basePath, 'foo.txt', join(fs.basePath, 'template.txt'))
+    const file = new MustacheTemplate(fs.basePath, 'foo.txt', join(fs.basePath, 'template.txt'))
     file.apply().commit()
 
     const contents = await fs.get('foo.txt')
@@ -34,9 +35,9 @@ test.group('DotTemplate file', (group) => {
   })
 
   test('subsitute data', async (assert) => {
-    await fs.add('template.txt', 'hello {{= it.name}}')
+    await fs.add('template.txt', 'hello {{ name }}')
 
-    const file = new DotTemplate(fs.basePath, 'foo.txt', join(fs.basePath, 'template.txt'))
+    const file = new MustacheTemplate(fs.basePath, 'foo.txt', join(fs.basePath, 'template.txt'))
     file.apply({ name: 'virk' }).commit()
 
     const contents = await fs.get('foo.txt')
@@ -45,13 +46,14 @@ test.group('DotTemplate file', (group) => {
 
   test('write conditionals', async (assert) => {
     await fs.add('template.txt', `
-    {{? it.username }}
-      Hello {{= it.username }}
-    {{??}}
+    {{#username}}
+      Hello {{ username }}
+    {{/username}}
+    {{^username}}
       Hello guest
-    {{?}}`)
+    {{/username}}`)
 
-    const file = new DotTemplate(fs.basePath, 'foo.txt', join(fs.basePath, 'template.txt'))
+    const file = new MustacheTemplate(fs.basePath, 'foo.txt', join(fs.basePath, 'template.txt'))
     file.apply({ username: 'virk' }).commit()
 
     const contents = await fs.get('foo.txt')
@@ -62,7 +64,7 @@ test.group('DotTemplate file', (group) => {
     await fs.add('template.txt', 'hello world')
     await fs.add('foo.txt', 'hi world')
 
-    const file = new DotTemplate(fs.basePath, 'foo.txt', join(fs.basePath, 'template.txt'))
+    const file = new MustacheTemplate(fs.basePath, 'foo.txt', join(fs.basePath, 'template.txt'))
     file.apply().commit()
 
     const contents = await fs.get('foo.txt')
@@ -73,7 +75,7 @@ test.group('DotTemplate file', (group) => {
     await fs.add('template.txt', 'hello world')
     await fs.add('foo.txt', 'hi world')
 
-    const file = new DotTemplate(fs.basePath, 'foo.txt', join(fs.basePath, 'template.txt'))
+    const file = new MustacheTemplate(fs.basePath, 'foo.txt', join(fs.basePath, 'template.txt'))
     file.overwrite = true
     file.apply().commit()
 
@@ -85,7 +87,7 @@ test.group('DotTemplate file', (group) => {
     await fs.add('template.txt', 'hello world')
     await fs.add('foo.txt', 'hi world')
 
-    const file = new DotTemplate(fs.basePath, 'foo.txt', join(fs.basePath, 'template.txt'))
+    const file = new MustacheTemplate(fs.basePath, 'foo.txt', join(fs.basePath, 'template.txt'))
     file.apply().rollback()
 
     const hasFile = await fs.fsExtra.pathExists(join(fs.basePath, 'foo.txt'))
@@ -96,11 +98,32 @@ test.group('DotTemplate file', (group) => {
     await fs.add('template.txt', 'hello world')
     await fs.add('foo.txt', 'hi world')
 
-    const file = new DotTemplate(fs.basePath, 'foo.txt', join(fs.basePath, 'template.txt'))
+    const file = new MustacheTemplate(fs.basePath, 'foo.txt', join(fs.basePath, 'template.txt'))
     file.removeOnRollback = false
     file.apply().rollback()
 
     const hasFile = await fs.fsExtra.pathExists(join(fs.basePath, 'foo.txt'))
     assert.isTrue(hasFile)
+  })
+
+  test('do not mess up whitespaces inside conditionals and loops', async (assert) => {
+    await fs.add('template.txt', endent`
+    {
+      {{#lucid}}
+      "driver": "lucid"
+      {{/lucid}}
+      {{#database}}
+      "driver": "database"
+      {{/database}}
+    }
+    `)
+
+    const file = new MustacheTemplate(fs.basePath, 'foo.txt', join(fs.basePath, 'template.txt'))
+    file.apply({ lucid: true }).commit()
+
+    const contents = await fs.get('foo.txt')
+    assert.equal(contents.trim(), endent`{
+      "driver": "lucid"
+    }`)
   })
 })

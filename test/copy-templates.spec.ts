@@ -133,9 +133,9 @@ test.group('Copy templates', (group) => {
       export default foo\n`)
   })
 
-  test('copy templates use dot templates', async (assert) => {
+  test('copy templates use mustache templates', async (assert) => {
     await fs.add('templates/config/app.txt', `
-      const foo = {{= it.name}}
+      const foo = {{{name}}}
       export default foo`)
 
     const application = new Application(fs.basePath, new Ioc(), {
@@ -143,7 +143,7 @@ test.group('Copy templates', (group) => {
     }, {})
 
     copyTemplates(fs.basePath, application, join(fs.basePath, 'templates/config'), {
-      config: [{ src: 'app.txt', dest: 'foo.ts', dotSyntax: true, data: { name: '\'bar\'' } }],
+      config: [{ src: 'app.txt', dest: 'foo.ts', mustache: true, data: { name: '\'bar\'' } }],
     })
 
     const contents = await fs.get('config/foo.ts')

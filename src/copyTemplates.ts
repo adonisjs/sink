@@ -12,13 +12,13 @@ import { extname, join, normalize } from 'path'
 import { ApplicationContract } from '@ioc:Adonis/Core/Application'
 
 import { logger } from './logger'
-import { DotTemplate } from './formats/DotTemplate'
 import { TemplateFile } from './formats/TemplateFile'
+import { MustacheTemplate } from './formats/MustacheTemplate'
 
 type TemplateNode = {
   src: string,
   dest: string,
-  dotSyntax?: boolean,
+  mustache?: boolean,
   data?: any,
 } | string
 
@@ -31,7 +31,7 @@ function normalizeTemplateNode (templateNode: TemplateNode) {
   templateNode = typeof (templateNode) === 'string' ? {
     src: templateNode,
     dest: templateNode.replace(new RegExp(`${extname(templateNode)}$`), ''),
-    dotSyntax: false,
+    mustache: false,
     data: {},
   } : templateNode
 
@@ -78,7 +78,7 @@ export function copyTemplates (
       ? templates[templateFor] as TemplateNode[]
       : [templates[templateFor]] as TemplateNode[]
 
-    templatesToCopy.map(normalizeTemplateNode).forEach(({ src, dest, dotSyntax, data }) => {
+    templatesToCopy.map(normalizeTemplateNode).forEach(({ src, dest, mustache, data }) => {
       if (!src || !dest) {
         throw new Error('src and dest are required when copying templates')
       }
@@ -86,8 +86,8 @@ export function copyTemplates (
       const sourcePath = join(templatesBasePath, src)
       const destinationPath = normalize(`${configuredDirectory}/${dest}`)
 
-      const template = dotSyntax
-        ? new DotTemplate(projectRoot, destinationPath, sourcePath)
+      const template = mustache
+        ? new MustacheTemplate(projectRoot, destinationPath, sourcePath)
         : new TemplateFile(projectRoot, destinationPath, sourcePath)
 
       /**

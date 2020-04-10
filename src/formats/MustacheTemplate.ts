@@ -7,7 +7,7 @@
  * file that was distributed with this source code.
 */
 
-import dot from 'dot'
+import mustache from 'mustache'
 import { file } from 'mrm-core'
 import { readFileSync } from 'fs'
 import { BaseFile } from '../base/BaseFile'
@@ -15,9 +15,8 @@ import { BaseFile } from '../base/BaseFile'
 /**
  * Exposes the API to generate source files from template files.
  */
-export class DotTemplate extends BaseFile {
+export class MustacheTemplate extends BaseFile {
   private templateData: any = {}
-  private whitespace: boolean = true
   protected actions = []
 
   public filePointer: ReturnType<typeof file>
@@ -70,15 +69,6 @@ export class DotTemplate extends BaseFile {
   }
 
   /**
-   * Control whether or not to render whitespace. It is enabled by
-   * default
-   */
-  public renderWhitespace (whitespaceFlag: boolean): this {
-    this.whitespace = whitespaceFlag
-    return this
-  }
-
-  /**
    * Commit changes
    */
   public commit () {
@@ -94,10 +84,7 @@ export class DotTemplate extends BaseFile {
     }
 
     try {
-      const templateFn = dot.template(this.readTemplate(), Object.assign({}, dot.templateSettings, {
-        strip: !this.whitespace,
-      }))
-      this.filePointer.save(templateFn(this.templateData))
+      this.filePointer.save(mustache.render(this.readTemplate(), this.templateData))
       this.cdOut()
     } catch (error) {
       this.cdOut()
