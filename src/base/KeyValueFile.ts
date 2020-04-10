@@ -15,7 +15,7 @@ import { BaseFile } from './BaseFile'
  * and `json`.
  */
 export abstract class KeyValueFile extends BaseFile {
-  protected $actions = []
+  protected actions = []
   public abstract filePointer: ReturnType<typeof json> | ReturnType<typeof yaml> | ReturnType<typeof ini>
 
   constructor (basePath: string) {
@@ -26,7 +26,7 @@ export abstract class KeyValueFile extends BaseFile {
    * Set key/value pair
    */
   public set (key: string, value: any): this {
-    this.$addAction('set', { key, value })
+    this.addAction('set', { key, value })
     return this
   }
 
@@ -34,7 +34,7 @@ export abstract class KeyValueFile extends BaseFile {
    * Unset key/value pair
    */
   public unset (key: string): this {
-    this.$addAction('unset', { key })
+    this.addAction('unset', { key })
     return this
   }
 
@@ -42,7 +42,7 @@ export abstract class KeyValueFile extends BaseFile {
    * Remove file
    */
   public delete () {
-    this.$addAction('delete')
+    this.addAction('delete')
     return this
   }
 
@@ -66,8 +66,8 @@ export abstract class KeyValueFile extends BaseFile {
    * Commit mutations
    */
   public commit () {
-    this.$cdIn()
-    const actions = this.$getCommitActions()
+    this.cdIn()
+    const actions = this.getCommitActions()
     const deleteFile = actions.find(({ action }) => action === 'delete')
 
     /**
@@ -76,7 +76,7 @@ export abstract class KeyValueFile extends BaseFile {
      */
     if (deleteFile) {
       this.filePointer.delete()
-      this.$cdOut()
+      this.cdOut()
       return
     }
 
@@ -102,15 +102,15 @@ export abstract class KeyValueFile extends BaseFile {
     })
 
     this.filePointer.save()
-    this.$cdOut()
+    this.cdOut()
   }
 
   /**
    * Rollback mutations
    */
   public rollback () {
-    this.$cdIn()
-    const actions = this.$getRevertActions()
+    this.cdIn()
+    const actions = this.getRevertActions()
 
     actions.forEach(({ action, body }) => {
       if (typeof (this[`on${action}`]) === 'function') {
@@ -131,6 +131,6 @@ export abstract class KeyValueFile extends BaseFile {
     })
 
     this.filePointer.save()
-    this.$cdOut()
+    this.cdOut()
   }
 }

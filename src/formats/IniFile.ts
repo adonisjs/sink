@@ -32,9 +32,9 @@ export class IniFile extends KeyValueFile {
      * working directory, that's why we have to cd in to the
      * base path before creating a new instance of it.
      */
-    this.$cdIn()
+    this.cdIn()
     this.filePointer = ini(filename)
-    this.$cdOut()
+    this.cdOut()
   }
 
   /**
@@ -71,7 +71,7 @@ export class IniFile extends KeyValueFile {
       return this
     }
 
-    this.$addAction('merge', { section, values })
+    this.addAction('merge', { section, values })
     return this
   }
 }

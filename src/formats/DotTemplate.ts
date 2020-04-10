@@ -18,7 +18,7 @@ import { BaseFile } from '../base/BaseFile'
 export class DotTemplate extends BaseFile {
   private templateData: any = {}
   private whitespace: boolean = true
-  protected $actions = []
+  protected actions = []
 
   public filePointer: ReturnType<typeof file>
   public removeOnRollback = true
@@ -27,9 +27,9 @@ export class DotTemplate extends BaseFile {
   constructor (basePath: string, filename: string, private templatePath: string) {
     super(basePath)
 
-    this.$cdIn()
+    this.cdIn()
     this.filePointer = file(filename)
-    this.$cdOut()
+    this.cdOut()
   }
 
   /**
@@ -82,14 +82,14 @@ export class DotTemplate extends BaseFile {
    * Commit changes
    */
   public commit () {
-    this.$cdIn()
+    this.cdIn()
 
     /**
      * Do not overwrite contents when file already exists and
      * `overwrite = false`
      */
     if (this.filePointer.exists() && !this.overwrite) {
-      this.$cdOut()
+      this.cdOut()
       return
     }
 
@@ -98,9 +98,9 @@ export class DotTemplate extends BaseFile {
         strip: !this.whitespace,
       }))
       this.filePointer.save(templateFn(this.templateData))
-      this.$cdOut()
+      this.cdOut()
     } catch (error) {
-      this.$cdOut()
+      this.cdOut()
       throw error
     }
   }
@@ -109,7 +109,7 @@ export class DotTemplate extends BaseFile {
    * Rollback changes
    */
   public rollback () {
-    this.$cdIn()
+    this.cdIn()
 
     /**
      * Remove the file on rollback (only when instructed) or this method results
@@ -119,6 +119,6 @@ export class DotTemplate extends BaseFile {
       this.filePointer.delete()
     }
 
-    this.$cdOut()
+    this.cdOut()
   }
 }

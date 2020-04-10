@@ -12,7 +12,7 @@
  * the application base directory.
  */
 export abstract class BaseFile {
-  protected abstract $actions: { action: string, body?: any }[] = []
+  protected abstract actions: { action: string, body?: any }[] = []
 
   private currentDir: string
   constructor (private basePath: string) {
@@ -22,15 +22,15 @@ export abstract class BaseFile {
    * Add a new action to the actions stack. The action workings
    * are independent on the user adding the action
    */
-  protected $addAction (action: string, body?: any): void {
-    this.$actions.push({ action, body })
+  protected addAction (action: string, body?: any): void {
+    this.actions.push({ action, body })
   }
 
   /**
    * Returns an array of actions to commit
    */
-  protected $getCommitActions () {
-    return this.$actions
+  protected getCommitActions () {
+    return this.actions
   }
 
   /**
@@ -38,14 +38,14 @@ export abstract class BaseFile {
    * reverts are done in reverse, this method will reverse
    * the actions array.
    */
-  protected $getRevertActions () {
-    return this.$actions.slice().reverse()
+  protected getRevertActions () {
+    return this.actions.slice().reverse()
   }
 
   /**
    * `cd` to the application base path
    */
-  protected $cdIn () {
+  protected cdIn () {
     this.currentDir = process.cwd()
     process.chdir(this.basePath)
   }
@@ -53,7 +53,7 @@ export abstract class BaseFile {
   /**
    * `cd` out from the application base path
    */
-  protected $cdOut () {
+  protected cdOut () {
     process.chdir(this.currentDir)
   }
 }

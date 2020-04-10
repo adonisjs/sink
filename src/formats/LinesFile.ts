@@ -16,21 +16,21 @@ import { BaseFile } from '../base/BaseFile'
  */
 export class LinesFile extends BaseFile {
   public filePointer: ReturnType<typeof lines>
-  protected $actions = []
+  protected actions = []
 
   constructor (basePath: string, filename: string) {
     super(basePath)
 
-    this.$cdIn()
+    this.cdIn()
     this.filePointer = lines(filename)
-    this.$cdOut()
+    this.cdOut()
   }
 
   /**
    * Add one or more new lines
    */
   public add (line: string | string[]): this {
-    this.$addAction('add', { line })
+    this.addAction('add', { line })
     return this
   }
 
@@ -38,7 +38,7 @@ export class LinesFile extends BaseFile {
    * Update existing text with new text
    */
   public update (oldText: string, newText: string): this {
-    this.$addAction('update', { oldText, newText })
+    this.addAction('update', { oldText, newText })
     return this
   }
 
@@ -46,7 +46,7 @@ export class LinesFile extends BaseFile {
    * Remove lines matching the give text
    */
   public remove (line: string | string[]): this {
-    this.$addAction('remove', { line })
+    this.addAction('remove', { line })
     return this
   }
 
@@ -54,7 +54,7 @@ export class LinesFile extends BaseFile {
    * Delete file
    */
   public delete () {
-    this.$addAction('delete')
+    this.addAction('delete')
     return this
   }
 
@@ -76,8 +76,8 @@ export class LinesFile extends BaseFile {
    * Commit mutations
    */
   public commit () {
-    this.$cdIn()
-    const actions = this.$getCommitActions()
+    this.cdIn()
+    const actions = this.getCommitActions()
     const deleteFile = actions.find(({ action }) => action === 'delete')
 
     /**
@@ -86,7 +86,7 @@ export class LinesFile extends BaseFile {
      */
     if (deleteFile) {
       this.filePointer.delete()
-      this.$cdOut()
+      this.cdOut()
       return
     }
 
@@ -121,15 +121,15 @@ export class LinesFile extends BaseFile {
     })
 
     this.filePointer.save()
-    this.$cdOut()
+    this.cdOut()
   }
 
   /**
    * Rollback mutations
    */
   public rollback () {
-    this.$cdIn()
-    const actions = this.$getRevertActions()
+    this.cdIn()
+    const actions = this.getRevertActions()
 
     actions.forEach(({ action, body }) => {
       if (typeof (this[`on${action}`]) === 'function') {
@@ -160,6 +160,6 @@ export class LinesFile extends BaseFile {
     })
 
     this.filePointer.save()
-    this.$cdOut()
+    this.cdOut()
   }
 }

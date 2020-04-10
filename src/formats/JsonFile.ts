@@ -26,8 +26,8 @@ export class JsonFile extends KeyValueFile {
   constructor (basePath: string, filename: string) {
     super(basePath)
 
-    this.$cdIn()
+    this.cdIn()
     this.filePointer = json(filename)
-    this.$cdOut()
+    this.cdOut()
   }
 }

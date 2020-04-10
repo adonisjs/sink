@@ -27,8 +27,8 @@ export class YamlFile extends KeyValueFile {
   constructor (basePath: string, filename: string) {
     super(basePath)
 
-    this.$cdIn()
+    this.cdIn()
     this.filePointer = yaml(filename)
-    this.$cdOut()
+    this.cdOut()
   }
 }

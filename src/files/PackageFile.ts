@@ -26,17 +26,18 @@ export class PackageFile extends BaseFile {
   /**
    * Collection of actions to be executed on package file
    */
-  protected $actions = []
+  protected actions = []
 
   /**
    * A copy of install instructions
    */
-  protected $install: { dependency: string, version: string, dev: boolean }[] = []
-
-  /**
-   * A copy of uninstall instructions
-   */
-  protected $uninstall: { dependency: string, dev: boolean }[] = []
+  protected packages: {
+    install: { dependency: string, version: string, dev: boolean }[],
+    uninstall: { dependency: string, dev: boolean }[],
+  } = {
+    install: [],
+    uninstall: [],
+  }
 
   /**
    * Explicitly force to use yarn instead of npm
@@ -55,9 +56,9 @@ export class PackageFile extends BaseFile {
 
   constructor (basePath: string, private installerOutput: StdioOptions = 'pipe') {
     super(basePath)
-    this.$cdIn()
+    this.cdIn()
     this.filePointer = packageJson()
-    this.$cdOut()
+    this.cdOut()
   }
 
   /**
@@ -219,7 +220,7 @@ export class PackageFile extends BaseFile {
    * Commits actions defined on the given file
    */
   private commitActions (): boolean {
-    const actions = this.$getCommitActions()
+    const actions = this.getCommitActions()
     const deleteFile = actions.find(({ action }) => action === 'delete')
 
     /**
@@ -228,7 +229,7 @@ export class PackageFile extends BaseFile {
      */
     if (deleteFile) {
       this.filePointer.delete()
-      this.$cdOut()
+      this.cdOut()
       return false
     }
 
@@ -258,7 +259,7 @@ export class PackageFile extends BaseFile {
    * Rollsback actions defined on the package file
    */
   private rollbackActions () {
-    const actions = this.$getCommitActions()
+    const actions = this.getCommitActions()
 
     /**
      * Executing actions in reverse.
@@ -291,7 +292,7 @@ export class PackageFile extends BaseFile {
    * Set key/value pair in the package.json file
    */
   public set (key: string, value: any): this {
-    this.$addAction('set', { key, value })
+    this.addAction('set', { key, value })
     return this
   }
 
@@ -307,7 +308,7 @@ export class PackageFile extends BaseFile {
    * Unset key/value pair from the package.json file
    */
   public unset (key: string): this {
-    this.$addAction('unset', { key })
+    this.addAction('unset', { key })
     return this
   }
 
@@ -315,7 +316,7 @@ export class PackageFile extends BaseFile {
    * Set package.json script
    */
   public setScript (name: string, script: string): this {
-    this.$addAction('setScript', { name, script })
+    this.addAction('setScript', { name, script })
     return this
   }
 
@@ -323,7 +324,7 @@ export class PackageFile extends BaseFile {
    * Append to existing package.json script
    */
   public appendScript (name: string, script: string) {
-    this.$addAction('appendScript', { name, script })
+    this.addAction('appendScript', { name, script })
     return this
   }
 
@@ -331,7 +332,7 @@ export class PackageFile extends BaseFile {
    * Prepend to existing package.json script
    */
   public prependScript (name: string, script: string) {
-    this.$addAction('prependScript', { name, script })
+    this.addAction('prependScript', { name, script })
     return this
   }
 
@@ -340,7 +341,7 @@ export class PackageFile extends BaseFile {
    * existing script
    */
   public removeScript (name: string, script?: string | RegExp) {
-    this.$addAction('removeScript', { name, script })
+    this.addAction('removeScript', { name, script })
     return this
   }
 
@@ -352,7 +353,7 @@ export class PackageFile extends BaseFile {
     version: string = 'latest',
     dev: boolean = true,
   ) {
-    this.$install.push({ dependency, version, dev })
+    this.packages.install.push({ dependency, version, dev })
     return this
   }
 
@@ -360,7 +361,7 @@ export class PackageFile extends BaseFile {
    * Uninstall dependencies
    */
   public uninstall (dependency: string, dev: boolean = true) {
-    this.$uninstall.push({ dependency, dev })
+    this.packages.uninstall.push({ dependency, dev })
     return this
   }
 
@@ -368,7 +369,7 @@ export class PackageFile extends BaseFile {
    * Remove file
    */
   public delete () {
-    this.$addAction('delete')
+    this.addAction('delete')
     return this
   }
 
@@ -394,7 +395,7 @@ export class PackageFile extends BaseFile {
   public getInstalls (dev: boolean = true) {
     const dependencies: Dependencies = { versions: {}, list: [], dev }
 
-    return this.$install.reduce((result, dependency) => {
+    return this.packages.install.reduce((result, dependency) => {
       if (dependency.dev && dev) {
         result.list.push(dependency.dependency)
         if (dependency.version !== 'latest') {
@@ -418,7 +419,7 @@ export class PackageFile extends BaseFile {
   public getUninstalls (dev: boolean) {
     const dependencies: Dependencies = { list: [], dev }
 
-    return this.$uninstall.reduce((result, dependency) => {
+    return this.packages.uninstall.reduce((result, dependency) => {
       if (dependency.dev && dev) {
         result.list.push(dependency.dependency)
       } else if (!dependency.dev && !dev) {
@@ -449,7 +450,7 @@ export class PackageFile extends BaseFile {
    * Commit mutations
    */
   public commit () {
-    this.$cdIn()
+    this.cdIn()
 
     const success = this.commitActions()
     if (!success) {
@@ -464,7 +465,7 @@ export class PackageFile extends BaseFile {
       [this.getUninstalls(true), this.getUninstalls(false)],
     )
 
-    this.$cdOut()
+    this.cdOut()
     return response
   }
 
@@ -473,7 +474,7 @@ export class PackageFile extends BaseFile {
    * API. However, the install and uninstall becomes async.
    */
   public async commitAsync () {
-    this.$cdIn()
+    this.cdIn()
 
     const success = this.commitActions()
     if (!success) {
@@ -488,7 +489,7 @@ export class PackageFile extends BaseFile {
       [this.getUninstalls(true), this.getUninstalls(false)],
     )
 
-    this.$cdOut()
+    this.cdOut()
     return response
   }
 
@@ -496,7 +497,7 @@ export class PackageFile extends BaseFile {
    * Rollback mutations
    */
   public rollback () {
-    this.$cdIn()
+    this.cdIn()
 
     const success = this.rollbackActions()
     if (!success) {
@@ -511,7 +512,7 @@ export class PackageFile extends BaseFile {
       this.getInstalls(false),
     ])
 
-    this.$cdOut()
+    this.cdOut()
     return response
   }
 
@@ -520,7 +521,7 @@ export class PackageFile extends BaseFile {
    * API. However, the uninstall becomes async.
    */
   public async rollbackAsync () {
-    this.$cdIn()
+    this.cdIn()
 
     const success = this.rollbackActions()
     if (!success) {
@@ -535,7 +536,7 @@ export class PackageFile extends BaseFile {
       this.getInstalls(false),
     ])
 
-    this.$cdOut()
+    this.cdOut()
     return response
   }
 }

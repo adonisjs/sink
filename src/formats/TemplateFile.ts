@@ -14,7 +14,7 @@ import { BaseFile } from '../base/BaseFile'
  * Exposes the API to generate source files from template files.
  */
 export class TemplateFile extends BaseFile {
-  protected $actions = []
+  protected actions = []
   public filePointer: ReturnType<typeof template>
   public removeOnRollback = true
   public overwrite = false
@@ -22,9 +22,9 @@ export class TemplateFile extends BaseFile {
   constructor (basePath: string, filename: string, templatePath: string) {
     super(basePath)
 
-    this.$cdIn()
+    this.cdIn()
     this.filePointer = template(filename, templatePath)
-    this.$cdOut()
+    this.cdOut()
   }
 
   /**
@@ -53,26 +53,26 @@ export class TemplateFile extends BaseFile {
    * Commit changes
    */
   public commit () {
-    this.$cdIn()
+    this.cdIn()
 
     /**
      * Do not overwrite contents when file already exists and
      * `overwrite = false`
      */
     if (this.filePointer.exists() && !this.overwrite) {
-      this.$cdOut()
+      this.cdOut()
       return
     }
 
     this.filePointer.save()
-    this.$cdOut()
+    this.cdOut()
   }
 
   /**
    * Rollback changes
    */
   public rollback () {
-    this.$cdIn()
+    this.cdIn()
 
     /**
      * Remove the file on rollback (only when instructed) or this method results
@@ -82,6 +82,6 @@ export class TemplateFile extends BaseFile {
       this.filePointer.delete()
     }
 
-    this.$cdOut()
+    this.cdOut()
   }
 }
