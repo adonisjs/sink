@@ -15,7 +15,7 @@ import { MustacheFile } from '../src/Files/Formats/Mustache'
 
 const fs = new Filesystem(join(__dirname, '__app'))
 
-test.group('DotTemplate file', (group) => {
+test.group('Mustache File', (group) => {
   group.afterEach(async () => {
     await fs.cleanup()
   })
@@ -125,5 +125,19 @@ test.group('DotTemplate file', (group) => {
     assert.equal(contents.trim(), endent`{
       "driver": "lucid"
     }`)
+  })
+
+  test('render partials', async (assert) => {
+    await fs.add('template.txt', '{{ > user }}')
+    await fs.add('user.txt', 'hello {{ name }}')
+
+    const file = new MustacheFile(fs.basePath, 'foo.txt', join(fs.basePath, 'template.txt'))
+    file.partials({
+      user: join(fs.basePath, 'user.txt'),
+    })
+    file.apply({ name: 'virk' }).commit()
+
+    const contents = await fs.get('foo.txt')
+    assert.equal(contents.trim(), 'hello virk')
   })
 })

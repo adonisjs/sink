@@ -16,6 +16,7 @@ import { File } from '../Base/File'
  * Exposes the API to generate source files from template files.
  */
 export class MustacheFile extends File {
+  private partialsPaths: { [key: string]: string } = {}
   private templateData: any = {}
   protected actions = []
 
@@ -32,14 +33,24 @@ export class MustacheFile extends File {
   }
 
   /**
+   * Returns a key-value pair of partial names and their contents
+   */
+  private getPartials () {
+    return Object.keys(this.partialsPaths).reduce((result, name) => {
+      result[name] = this.readTemplate(this.partialsPaths[name])
+      return result
+    }, {})
+  }
+
+  /**
    * Returns the contents of the template file
    */
-  private readTemplate () {
+  private readTemplate (templatePath: string) {
     try {
-      return readFileSync(this.templatePath, 'utf8')
+      return readFileSync(templatePath, 'utf8')
     } catch (err) {
       if (err.code === 'ENOENT') {
-        throw Error(`Template file not found: ${this.templatePath}`)
+        throw Error(`Template file not found: ${templatePath}`)
       } else {
         throw err
       }
@@ -58,6 +69,15 @@ export class MustacheFile extends File {
    */
   public exists () {
     return this.filePointer.exists()
+  }
+
+  /**
+   * Define one or more partials by defining key-value
+   * pair of partial name and path to the file.
+   */
+  public partials (partials: { [key: string]: string }): this {
+    this.partialsPaths = partials
+    return this
   }
 
   /**
@@ -84,7 +104,11 @@ export class MustacheFile extends File {
     }
 
     try {
-      this.filePointer.save(mustache.render(this.readTemplate(), this.templateData))
+      this.filePointer.save(mustache.render(
+        this.readTemplate(this.templatePath),
+        this.templateData,
+        this.getPartials(),
+      ))
       this.cdOut()
     } catch (error) {
       this.cdOut()
