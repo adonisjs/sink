@@ -42,7 +42,7 @@ export class Instructions {
       return resolveFrom(this.projectRoot, `${this.packageName}/package.json`)
     } catch (error) {
       if (['MODULE_NOT_FOUND', 'ENOENT'].includes(error.code)) {
-        throw new Error(`Cannot invoke instructions. Missing package "${this.packagePath}"`)
+        throw new Error(`Cannot invoke instructions. Missing package "${this.packageName}"`)
       }
       throw error
     }
@@ -84,8 +84,7 @@ export class Instructions {
     Object.keys(instructions.env).forEach((envKey) => envFile.set(envKey, instructions.env![envKey]))
     envFile.commit()
 
-    const suffix = this.verbose ? `{${Object.keys(instructions.env)}}` : ''
-    logger.update({ message: '.env', suffix: suffix })
+    logger.update({ message: '.env' })
   }
 
   /**
@@ -109,7 +108,7 @@ export class Instructions {
       tsConfig.commit()
     }
 
-    const suffix = this.verbose ? `{types += ${instructions.types}}` : ''
+    const suffix = this.verbose ? `{ types += ${instructions.types} }` : ''
     logger.update({ message: fileName, suffix })
   }
 
@@ -125,7 +124,7 @@ export class Instructions {
     instructions.commands.forEach((command) => adonisRcFile.addCommand(command))
     adonisRcFile.commit()
 
-    const suffix = this.verbose ? `{commands += ${instructions.commands}}` : ''
+    const suffix = this.verbose ? `{ commands += ${instructions.commands} }` : ''
     logger.update({ message: '.adonisrc.json', suffix })
   }
 
@@ -145,12 +144,12 @@ export class Instructions {
     const adonisRcFile = new sink.files.AdonisRcFile(this.projectRoot)
     if (instructions.providers) {
       instructions.providers.forEach((provider) => adonisRcFile.addProvider(provider))
-      suffix += `{providers += ${instructions.providers}} `
+      suffix += `{ providers += ${instructions.providers} } `
     }
 
     if (instructions.aceProviders) {
       instructions.aceProviders.forEach((provider) => adonisRcFile.addAceProvider(provider))
-      suffix += `{aceProviders += ${instructions.aceProviders}}`
+      suffix += `{ aceProviders += ${instructions.aceProviders} }`
     }
 
     adonisRcFile.commit()
@@ -211,6 +210,7 @@ export class Instructions {
     if (this.markdownDisplay === 'browser') {
       renderer.renderInBrowser()
     } else {
+      console.log('')
       renderer.renderInTerminal()
     }
   }
