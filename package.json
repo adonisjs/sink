@@ -18,7 +18,9 @@
     "build": "npm run compile",
     "commit": "git-cz",
     "release": "np",
-    "version": "npm run build"
+    "version": "npm run build",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
   "keywords": [
     "adonisjs",
@@ -83,7 +85,8 @@
     "marked-terminal": "^4.1.0",
     "mrm-core": "^4.1.0",
     "mustache": "^4.0.1",
-    "open": "^7.0.3"
+    "open": "^7.0.3",
+    "snyk": "^1.316.1"
   },
   "peerDependencies": {
     "@adonisjs/application": "1.x.x"
@@ -106,5 +109,6 @@
   "np": {
     "contents": "build",
     "anyBranch": false
-  }
+  },
+  "snyk": true
 }
