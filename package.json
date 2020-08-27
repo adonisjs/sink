@@ -31,28 +31,28 @@
   "devDependencies": {
     "@adonisjs/application": "^2.0.0",
     "@adonisjs/dev-utils": "^1.4.0",
-    "@adonisjs/fold": "^6.3.5",
-    "@adonisjs/mrm-preset": "^2.3.0",
-    "@types/fs-extra": "^8.1.0",
+    "@adonisjs/fold": "^6.4.0",
+    "@adonisjs/mrm-preset": "^2.4.0",
+    "@types/fs-extra": "^9.0.1",
     "@types/ini": "^1.3.30",
-    "@types/marked": "^0.7.4",
-    "@types/node": "^13.13.4",
+    "@types/marked": "^1.1.0",
+    "@types/node": "^14.6.1",
     "@types/yaml": "^1.9.7",
-    "commitizen": "^4.0.4",
-    "cz-conventional-changelog": "^3.1.0",
-    "del-cli": "^3.0.0",
+    "commitizen": "^4.2.1",
+    "cz-conventional-changelog": "^3.3.0",
+    "del-cli": "^3.0.1",
     "doctoc": "^1.4.0",
     "endent": "^2.0.1",
-    "eslint": "^6.8.0",
-    "eslint-plugin-adonis": "^1.0.9",
+    "eslint": "^7.7.0",
+    "eslint-plugin-adonis": "^1.0.14",
     "husky": "^4.2.5",
     "ini": "^1.3.5",
-    "japa": "^3.0.1",
-    "mrm": "^2.2.1",
-    "np": "^5.2.1",
-    "ts-node": "^8.9.1",
-    "typescript": "^3.8.3",
-    "yaml": "^1.9.2"
+    "japa": "^3.1.1",
+    "mrm": "^2.3.5",
+    "np": "^6.4.0",
+    "ts-node": "^9.0.0",
+    "typescript": "^3.9.7",
+    "yaml": "^1.10.0"
   },
   "nyc": {
     "exclude": [
@@ -73,17 +73,17 @@
     }
   },
   "dependencies": {
-    "@poppinss/colors": "^1.0.6",
+    "@poppinss/colors": "^2.0.1",
     "@poppinss/fancy-logs": "^1.3.7",
-    "@poppinss/prompts": "^1.0.9",
-    "@poppinss/utils": "^2.2.6",
+    "@poppinss/prompts": "^1.1.3",
+    "@poppinss/utils": "^2.5.5",
     "cp-file": "^9.0.0",
-    "fs-extra": "^9.0.0",
+    "fs-extra": "^9.0.1",
     "marked": "^1.1.1",
     "marked-terminal": "^4.1.0",
-    "mrm-core": "^4.1.0",
+    "mrm-core": "^4.1.2",
     "mustache": "^4.0.1",
-    "open": "^7.0.3"
+    "open": "^7.2.0"
   },
   "peerDependencies": {
     "@adonisjs/application": "2.x.x"
