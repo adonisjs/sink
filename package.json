@@ -107,7 +107,7 @@
   "homepage": "https://github.com/adonisjs/sink#readme",
   "publishConfig": {
     "access": "public",
-    "tag": "alpha"
+    "tag": "next"
   },
   "np": {
     "contents": ".",
