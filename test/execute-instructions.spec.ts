@@ -9,9 +9,8 @@
 
 import test from 'japa'
 import { join } from 'path'
-import { Ioc } from '@adonisjs/fold'
-import { Filesystem } from '@adonisjs/dev-utils'
-import { Application } from '@adonisjs/application/build/standalone'
+import { Filesystem } from '@poppinss/dev-utils'
+import { Application } from '@adonisjs/application'
 
 import { Instructions } from '../src/Tasks/Instructions'
 
@@ -39,7 +38,7 @@ test.group('Execute instructions', (group) => {
       version: '1.0.0',
     }))
 
-    const application = new Application(fs.basePath, new Ioc(), {}, {})
+    const application = new Application(fs.basePath, 'web', {})
     const completed = await new Instructions('@fake/app', fs.basePath, application).execute()
     assert.isTrue(completed)
   })
@@ -62,7 +61,7 @@ test.group('Execute instructions', (group) => {
       },
     }))
 
-    const application = new Application(fs.basePath, new Ioc(), {}, {})
+    const application = new Application(fs.basePath, 'web', {})
 
     try {
       await new Instructions('@fake/app', fs.basePath, application).execute()
@@ -90,8 +89,7 @@ test.group('Execute instructions', (group) => {
       },
     }))
 
-    const application = new Application(fs.basePath, new Ioc(), {}, {})
-
+    const application = new Application(fs.basePath, 'web', {})
     const completed = await new Instructions('@fake/app', fs.basePath, application).execute()
     assert.isTrue(completed)
   })
@@ -117,8 +115,7 @@ test.group('Execute instructions', (group) => {
       },
     }))
 
-    const application = new Application(fs.basePath, new Ioc(), {}, {})
-
+    const application = new Application(fs.basePath, 'web', {})
     const completed = await new Instructions('@fake/app', fs.basePath, application).execute()
     assert.isTrue(completed)
   })
@@ -141,7 +138,7 @@ test.group('Execute instructions', (group) => {
       },
     }))
 
-    const application = new Application(fs.basePath, new Ioc(), {}, {})
+    const application = new Application(fs.basePath, 'web', {})
     const completed = await new Instructions('@fake/app', fs.basePath, application).execute()
     assert.isTrue(completed)
 
@@ -167,7 +164,7 @@ test.group('Execute instructions', (group) => {
       },
     }))
 
-    const application = new Application(fs.basePath, new Ioc(), {}, {})
+    const application = new Application(fs.basePath, 'web', {})
     const completed = await new Instructions('@fake/app', fs.basePath, application, true)
       .setDisplay('browser')
       .execute()
@@ -192,7 +189,7 @@ test.group('Execute instructions', (group) => {
       },
     }))
 
-    const application = new Application(fs.basePath, new Ioc(), {}, {})
+    const application = new Application(fs.basePath, 'web', {})
     const completed = await new Instructions('@fake/app', fs.basePath, application, true)
       .setDisplay('terminal')
       .execute()
@@ -221,9 +218,9 @@ test.group('Execute instructions', (group) => {
       },
     }))
 
-    const application = new Application(fs.basePath, new Ioc(), {
+    const application = new Application(fs.basePath, 'web', {
       directories: new Map([['config', 'config']]),
-    }, {})
+    })
 
     const completed = await new Instructions('@fake/app', fs.basePath, application).execute()
     assert.isTrue(completed)
@@ -241,7 +238,7 @@ test.group('Execute instructions', (group) => {
       },
     }))
 
-    const application = new Application(fs.basePath, new Ioc(), {}, {})
+    const application = new Application(fs.basePath, 'web', {})
     const completed = await new Instructions('@fake/app', fs.basePath, application).execute()
     assert.isTrue(completed)
 
@@ -260,7 +257,7 @@ test.group('Execute instructions', (group) => {
       },
     }))
 
-    const application = new Application(fs.basePath, new Ioc(), {}, {})
+    const application = new Application(fs.basePath, 'web', {})
     const completed = await new Instructions('@fake/app', fs.basePath, application).execute()
     assert.isTrue(completed)
 
@@ -281,7 +278,7 @@ test.group('Execute instructions', (group) => {
       },
     }))
 
-    const application = new Application(fs.basePath, new Ioc(), {}, {})
+    const application = new Application(fs.basePath, 'web', {})
     const completed = await new Instructions('@fake/app', fs.basePath, application).execute()
     assert.isTrue(completed)
 

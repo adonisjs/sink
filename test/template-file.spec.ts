@@ -9,7 +9,7 @@
 
 import test from 'japa'
 import { join } from 'path'
-import { Filesystem } from '@adonisjs/dev-utils'
+import { Filesystem } from '@poppinss/dev-utils'
 import { TemplateLiteralFile } from '../src/Files/Formats/TemplateLiteral'
 
 const fs = new Filesystem(join(__dirname, '__app'))

@@ -9,7 +9,7 @@
 
 import test from 'japa'
 import { EnvFile } from '../src/Files/Special/Env'
-import { Filesystem } from '@adonisjs/dev-utils'
+import { Filesystem } from '@poppinss/dev-utils'
 import { join } from 'path'
 
 const fs = new Filesystem(join(__dirname, '__app'))

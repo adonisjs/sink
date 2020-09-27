@@ -9,7 +9,7 @@
 
 import test from 'japa'
 import { PackageJsonFile } from '../src/Files/Special/PackageJson'
-import { Filesystem } from '@adonisjs/dev-utils'
+import { Filesystem } from '@poppinss/dev-utils'
 import { join } from 'path'
 
 const fs = new Filesystem(join(__dirname, '__app'))

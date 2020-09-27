@@ -10,7 +10,7 @@
 import { join } from 'path'
 import test from 'japa'
 import ini from 'ini'
-import { Filesystem } from '@adonisjs/dev-utils'
+import { Filesystem } from '@poppinss/dev-utils'
 
 import { IniFile } from '../src/Files/Formats/Ini'
 

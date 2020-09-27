@@ -10,7 +10,7 @@
 import test from 'japa'
 import endent from 'endent'
 import { join } from 'path'
-import { Filesystem } from '@adonisjs/dev-utils'
+import { Filesystem } from '@poppinss/dev-utils'
 import { MustacheFile } from '../src/Files/Formats/Mustache'
 
 const fs = new Filesystem(join(__dirname, '__app'))

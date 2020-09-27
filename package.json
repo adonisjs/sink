@@ -29,29 +29,28 @@
   "author": "virk,adonisjs",
   "license": "MIT",
   "devDependencies": {
-    "@adonisjs/application": "^2.0.0",
-    "@adonisjs/dev-utils": "^1.4.0",
-    "@adonisjs/fold": "^6.4.0",
+    "@adonisjs/application": "^3.0.7",
     "@adonisjs/mrm-preset": "^2.4.0",
+    "@adonisjs/require-ts": "^1.0.0",
+    "@poppinss/dev-utils": "^1.0.10",
     "@types/fs-extra": "^9.0.1",
     "@types/ini": "^1.3.30",
     "@types/marked": "^1.1.0",
-    "@types/node": "^14.6.1",
+    "@types/node": "^14.11.2",
     "@types/yaml": "^1.9.7",
     "commitizen": "^4.2.1",
     "cz-conventional-changelog": "^3.3.0",
     "del-cli": "^3.0.1",
     "doctoc": "^1.4.0",
     "endent": "^2.0.1",
-    "eslint": "^7.7.0",
-    "eslint-plugin-adonis": "^1.0.14",
-    "husky": "^4.2.5",
+    "eslint": "^7.10.0",
+    "eslint-plugin-adonis": "^1.0.15",
+    "husky": "^4.3.0",
     "ini": "^1.3.5",
     "japa": "^3.1.1",
-    "mrm": "^2.3.5",
-    "np": "^6.4.0",
-    "ts-node": "^9.0.0",
-    "typescript": "^3.9.7",
+    "mrm": "^2.5.1",
+    "np": "^6.5.0",
+    "typescript": "^4.0.3",
     "yaml": "^1.10.0"
   },
   "nyc": {
@@ -73,20 +72,20 @@
     }
   },
   "dependencies": {
-    "@poppinss/colors": "^2.0.1",
-    "@poppinss/fancy-logs": "^1.3.7",
-    "@poppinss/prompts": "^1.1.3",
-    "@poppinss/utils": "^2.5.5",
+    "@poppinss/colors": "^2.0.3",
+    "@poppinss/fancy-logs": "^1.3.9",
+    "@poppinss/prompts": "^1.1.5",
+    "@poppinss/utils": "^2.5.7",
     "cp-file": "^9.0.0",
     "fs-extra": "^9.0.1",
     "marked": "^1.1.1",
     "marked-terminal": "^4.1.0",
     "mrm-core": "^4.1.2",
     "mustache": "^4.0.1",
-    "open": "^7.2.0"
+    "open": "^7.2.1"
   },
   "peerDependencies": {
-    "@adonisjs/application": "2.x.x"
+    "@adonisjs/application": "^3.0.0"
   },
   "directories": {
     "test": "test"

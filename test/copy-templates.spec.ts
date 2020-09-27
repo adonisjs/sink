@@ -9,9 +9,8 @@
 
 import test from 'japa'
 import { join } from 'path'
-import { Ioc } from '@adonisjs/fold'
-import { Filesystem } from '@adonisjs/dev-utils'
-import { Application } from '@adonisjs/application/build/standalone'
+import { Filesystem } from '@poppinss/dev-utils'
+import { Application } from '@adonisjs/application'
 import { TemplatesManager } from '../src/Tasks/TemplatesManager'
 
 const fs = new Filesystem(join(__dirname, '__app'))
@@ -30,9 +29,9 @@ test.group('Copy templates', (group) => {
       const foo = 'foo'
       export default foo`)
 
-    const application = new Application(fs.basePath, new Ioc(), {
+    const application = new Application(fs.basePath, 'web', {
       directories: new Map([['config', 'config']]),
-    }, {})
+    })
 
     new TemplatesManager(fs.basePath, join(fs.basePath, 'templates/config'), application).copy({
       config: ['app.txt'],
@@ -50,9 +49,9 @@ test.group('Copy templates', (group) => {
       export default foo
     `)
 
-    const application = new Application(fs.basePath, new Ioc(), {
+    const application = new Application(fs.basePath, 'web', {
       directories: new Map([['config', 'config']]),
-    }, {})
+    })
 
     new TemplatesManager(fs.basePath, join(fs.basePath, 'templates/config'), application).copy({
       foo: ['app.txt'],
@@ -60,9 +59,9 @@ test.group('Copy templates', (group) => {
   })
 
   test('do not overwrite contents when file already exists', async (assert) => {
-    const application = new Application(fs.basePath, new Ioc(), {
+    const application = new Application(fs.basePath, 'web', {
       directories: new Map([['config', 'config']]),
-    }, {})
+    })
 
     /**
      * Round 1
@@ -100,9 +99,9 @@ test.group('Copy templates', (group) => {
       const foo = 'foo'
       export default foo`)
 
-    const application = new Application(fs.basePath, new Ioc(), {
+    const application = new Application(fs.basePath, 'web', {
       directories: new Map([['config', 'config']]),
-    }, {})
+    })
 
     new TemplatesManager(fs.basePath, join(fs.basePath, 'templates/config'), application).copy({
       config: [{ src: 'app.txt', dest: 'foo.ts' }],
@@ -119,9 +118,9 @@ test.group('Copy templates', (group) => {
       const foo = 'foo'
       export default foo`)
 
-    const application = new Application(fs.basePath, new Ioc(), {
+    const application = new Application(fs.basePath, 'web', {
       directories: new Map([['config', 'config']]),
-    }, {})
+    })
 
     new TemplatesManager(fs.basePath, join(fs.basePath, 'templates/config'), application).copy({
       config: [{ src: 'app.txt', dest: 'foo' }],
@@ -138,9 +137,9 @@ test.group('Copy templates', (group) => {
       const foo = {{{name}}}
       export default foo`)
 
-    const application = new Application(fs.basePath, new Ioc(), {
+    const application = new Application(fs.basePath, 'web', {
       directories: new Map([['config', 'config']]),
-    }, {})
+    })
 
     new TemplatesManager(fs.basePath, join(fs.basePath, 'templates/config'), application).copy({
       config: [{ src: 'app.txt', dest: 'foo.ts', mustache: true, data: { name: '\'bar\'' } }],
