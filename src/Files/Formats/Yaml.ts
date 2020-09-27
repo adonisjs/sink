@@ -5,7 +5,7 @@
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
-*/
+ */
 
 import { yaml } from 'mrm-core'
 import { KeyValuePair } from '../Base/KeyValuePair'
@@ -22,13 +22,13 @@ import { KeyValuePair } from '../Base/KeyValuePair'
  * ```
  */
 export class YamlFile extends KeyValuePair {
-  public filePointer: ReturnType<typeof yaml>
+	public filePointer: ReturnType<typeof yaml>
 
-  constructor (basePath: string, filename: string) {
-    super(basePath)
+	constructor(basePath: string, filename: string) {
+		super(basePath)
 
-    this.cdIn()
-    this.filePointer = yaml(filename)
-    this.cdOut()
-  }
+		this.cdIn()
+		this.filePointer = yaml(filename)
+		this.cdOut()
+	}
 }
