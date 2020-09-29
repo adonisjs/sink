@@ -31,7 +31,7 @@
   "author": "virk,adonisjs",
   "license": "MIT",
   "devDependencies": {
-    "@adonisjs/application": "^3.0.7",
+    "@adonisjs/application": "^3.0.8",
     "@adonisjs/mrm-preset": "^2.4.0",
     "@adonisjs/require-ts": "^1.0.0",
     "@poppinss/dev-utils": "^1.0.10",
@@ -80,16 +80,16 @@
     }
   },
   "dependencies": {
-    "@poppinss/cliui": "^1.0.6",
+    "@poppinss/cliui": "^1.1.0",
     "@poppinss/prompts": "^1.1.6",
     "@poppinss/utils": "^2.5.7",
     "cp-file": "^9.0.0",
     "fs-extra": "^9.0.1",
-    "marked": "^1.1.1",
+    "marked": "^1.2.0",
     "marked-terminal": "^4.1.0",
     "mrm-core": "^4.1.2",
     "mustache": "^4.0.1",
-    "open": "^7.2.1"
+    "open": "^7.3.0"
   },
   "peerDependencies": {
     "@adonisjs/application": "^3.0.0"
