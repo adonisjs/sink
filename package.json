@@ -110,7 +110,7 @@
     "tag": "next"
   },
   "np": {
-    "contents": ".",
+    "contents": "build",
     "anyBranch": false
   }
 }
