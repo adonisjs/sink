@@ -35,6 +35,36 @@ export class Instructions {
 	) {}
 
 	/**
+	 * Formats object to string
+	 */
+	private formatObject(values: { [key: string]: string }): string {
+		return Object.keys(values)
+			.map((key) => {
+				return `"${key} = ${values[key]}"`
+			})
+			.join(',')
+	}
+
+	/**
+	 * Formats array to string
+	 */
+	private formatArray(values: string[]): string {
+		return values.map((v) => `"${v}"`).join(',')
+	}
+
+	private getSuffix(value: string, key?: string) {
+		if (!this.verbose) {
+			return ''
+		}
+
+		if (key) {
+			return logger.colors.yellow().dim(`{ ${key} += ${value} }`)
+		}
+
+		return logger.colors.yellow().dim(`{ ${value} }`)
+	}
+
+	/**
 	 * Returns the absolute path to the package
 	 */
 	private getPackagePath() {
@@ -86,7 +116,8 @@ export class Instructions {
 		)
 
 		envFile.commit()
-		sink.logger.action('update').succeeded('.env')
+		const suffix = this.getSuffix(this.formatObject(instructions.env))
+		sink.logger.action('update').succeeded(`.env ${suffix}`)
 	}
 
 	/**
@@ -108,10 +139,10 @@ export class Instructions {
 			existingTypes.push(instructions.types)
 			tsConfig.set('compilerOptions.types', existingTypes)
 			tsConfig.commit()
-		}
 
-		const suffix = this.verbose ? `{ types += ${instructions.types} }` : ''
-		logger.action('update').succeeded(`${fileName} ${logger.colors.yellow(suffix)}`)
+			const suffix = this.getSuffix(this.formatArray([instructions.types]), 'types')
+			logger.action('update').succeeded(`${fileName} ${suffix}`)
+		}
 	}
 
 	/**
@@ -126,16 +157,42 @@ export class Instructions {
 		instructions.commands.forEach((command) => adonisRcFile.addCommand(command))
 		adonisRcFile.commit()
 
-		const suffix = this.verbose ? `{ commands += ${instructions.commands} }` : ''
-		logger.action('update').succeeded(`.adonisrc.json ${logger.colors.yellow(suffix)}`)
+		const suffix = this.getSuffix(this.formatArray(instructions.commands), 'commands')
+		logger.action('update').succeeded(`.adonisrc.json ${suffix}`)
+	}
+
+	/**
+	 * Set aliases inside the adonisrc.json file
+	 */
+	private setAliases(instructions: PackageInstructionsBlock) {
+		if (!instructions.aliases) {
+			return
+		}
+
+		const adonisRcFile = new sink.files.AdonisRcFile(this.projectRoot)
+		const tsConfig = new sink.files.JsonFile(this.projectRoot, 'tsconfig.json')
+
+		const existingPaths = tsConfig.get('compilerOptions.paths') || {}
+
+		Object.keys(instructions.aliases).forEach((alias) => {
+			adonisRcFile.setAlias(alias, instructions.aliases![alias])
+			existingPaths[`${alias}/*`] = [`${instructions.aliases![alias]}/*`]
+		})
+
+		const suffix = this.getSuffix(this.formatObject(instructions.aliases), 'aliases')
+
+		adonisRcFile.commit()
+		sink.logger.action('update').succeeded(`.adonisrc.json ${suffix}`)
+
+		tsConfig.set('compilerOptions.paths', existingPaths)
+		tsConfig.commit()
+		sink.logger.action('update').succeeded(`tsconfig.json ${suffix}`)
 	}
 
 	/**
 	 * Sets providers or ace providers inside the `.adonisrc.json` file
 	 */
 	private setProviders(instructions: PackageInstructionsBlock) {
-		let suffix = ''
-
 		/**
 		 * Return early when not providers are mentioned
 		 */
@@ -146,16 +203,23 @@ export class Instructions {
 		const adonisRcFile = new sink.files.AdonisRcFile(this.projectRoot)
 		if (instructions.providers) {
 			instructions.providers.forEach((provider) => adonisRcFile.addProvider(provider))
-			suffix += logger.colors.yellow(`{ providers += ${instructions.providers} } `)
 		}
 
 		if (instructions.aceProviders) {
 			instructions.aceProviders.forEach((provider) => adonisRcFile.addAceProvider(provider))
-			suffix += logger.colors.yellow(`{ aceProviders += ${instructions.aceProviders} }`)
 		}
 
 		adonisRcFile.commit()
-		logger.action('update').succeeded(`.adonisrc.json ${suffix}`)
+
+		if (instructions.providers) {
+			const suffix = this.getSuffix(this.formatArray(instructions.providers), 'providers')
+			logger.action('update').succeeded(`.adonisrc.json ${suffix}`)
+		}
+
+		if (instructions.aceProviders) {
+			const suffix = this.getSuffix(this.formatArray(instructions.aceProviders), 'aceProviders')
+			logger.action('update').succeeded(`.adonisrc.json ${suffix}`)
+		}
 	}
 
 	/**
@@ -238,6 +302,7 @@ export class Instructions {
 		this.setEnvVariables(pkg.adonisjs)
 		this.setTypes(pkg.adonisjs)
 		this.setCommands(pkg.adonisjs)
+		this.setAliases(pkg.adonisjs)
 		this.setProviders(pkg.adonisjs)
 		await this.runInstructions(pkg.adonisjs)
 		await this.renderMarkdownFile(pkg.adonisjs)

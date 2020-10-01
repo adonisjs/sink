@@ -45,7 +45,7 @@ test.group('Execute instructions', (group) => {
 		)
 
 		const application = new Application(fs.basePath, 'web', {})
-		const completed = await new Instructions('@fake/app', fs.basePath, application).execute()
+		const completed = await new Instructions('@fake/app', fs.basePath, application, true).execute()
 		assert.isTrue(completed)
 	})
 
@@ -76,7 +76,7 @@ test.group('Execute instructions', (group) => {
 		const application = new Application(fs.basePath, 'web', {})
 
 		try {
-			await new Instructions('@fake/app', fs.basePath, application).execute()
+			await new Instructions('@fake/app', fs.basePath, application, true).execute()
 		} catch ({ message }) {
 			assert.match(message, /Cannot find module/)
 		}
@@ -111,7 +111,7 @@ test.group('Execute instructions', (group) => {
 		)
 
 		const application = new Application(fs.basePath, 'web', {})
-		const completed = await new Instructions('@fake/app', fs.basePath, application).execute()
+		const completed = await new Instructions('@fake/app', fs.basePath, application, true).execute()
 		assert.isTrue(completed)
 	})
 
@@ -146,7 +146,7 @@ test.group('Execute instructions', (group) => {
 		)
 
 		const application = new Application(fs.basePath, 'web', {})
-		const completed = await new Instructions('@fake/app', fs.basePath, application).execute()
+		const completed = await new Instructions('@fake/app', fs.basePath, application, true).execute()
 		assert.isTrue(completed)
 	})
 
@@ -175,7 +175,7 @@ test.group('Execute instructions', (group) => {
 		)
 
 		const application = new Application(fs.basePath, 'web', {})
-		const completed = await new Instructions('@fake/app', fs.basePath, application).execute()
+		const completed = await new Instructions('@fake/app', fs.basePath, application, true).execute()
 		assert.isTrue(completed)
 
 		const envContents = await fs.get('.env')
@@ -276,7 +276,7 @@ test.group('Execute instructions', (group) => {
 			directories: new Map([['config', 'config']]),
 		})
 
-		const completed = await new Instructions('@fake/app', fs.basePath, application).execute()
+		const completed = await new Instructions('@fake/app', fs.basePath, application, true).execute()
 		assert.isTrue(completed)
 
 		const configContents = await fs.get('config/app.ts')
@@ -296,7 +296,7 @@ test.group('Execute instructions', (group) => {
 		)
 
 		const application = new Application(fs.basePath, 'web', {})
-		const completed = await new Instructions('@fake/app', fs.basePath, application).execute()
+		const completed = await new Instructions('@fake/app', fs.basePath, application, true).execute()
 		assert.isTrue(completed)
 
 		const rcContents = await fs.fsExtra.readJSON(join(fs.basePath, '.adonisrc.json'))
@@ -318,7 +318,7 @@ test.group('Execute instructions', (group) => {
 		)
 
 		const application = new Application(fs.basePath, 'web', {})
-		const completed = await new Instructions('@fake/app', fs.basePath, application).execute()
+		const completed = await new Instructions('@fake/app', fs.basePath, application, true).execute()
 		assert.isTrue(completed)
 
 		const tsContents = await fs.fsExtra.readJSON(join(fs.basePath, 'tsconfig.json'))
@@ -342,12 +342,48 @@ test.group('Execute instructions', (group) => {
 		)
 
 		const application = new Application(fs.basePath, 'web', {})
-		const completed = await new Instructions('@fake/app', fs.basePath, application).execute()
+		const completed = await new Instructions('@fake/app', fs.basePath, application, true).execute()
 		assert.isTrue(completed)
 
 		const rcContents = await fs.fsExtra.readJSON(join(fs.basePath, '.adonisrc.json'))
 		assert.deepEqual(rcContents, {
 			providers: ['@fake/app'],
+		})
+	})
+
+	test('define aliases inside .adonisrc.json and tsconfig.json file', async (assert) => {
+		await fs.add(
+			'node_modules/@fake/app/package.json',
+			JSON.stringify({
+				name: '@fake/app',
+				version: '1.0.0',
+				adonisjs: {
+					aliases: {
+						App: './app',
+					},
+				},
+			})
+		)
+
+		const application = new Application(fs.basePath, 'web', {})
+		const completed = await new Instructions('@fake/app', fs.basePath, application, true).execute()
+		assert.isTrue(completed)
+
+		const rcContents = await fs.fsExtra.readJSON(join(fs.basePath, '.adonisrc.json'))
+		const tsConfig = await fs.fsExtra.readJSON(join(fs.basePath, 'tsconfig.json'))
+
+		assert.deepEqual(rcContents, {
+			aliases: {
+				App: './app',
+			},
+		})
+
+		assert.deepEqual(tsConfig, {
+			compilerOptions: {
+				paths: {
+					'App/*': ['./app/*'],
+				},
+			},
 		})
 	})
 })

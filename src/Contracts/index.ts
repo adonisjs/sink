@@ -36,6 +36,7 @@ export type PackageInstructionsBlock = {
 	types?: string
 	commands?: string[]
 	providers?: string[]
+	aliases?: { [key: string]: string }
 	aceProviders?: string[]
 }
 
