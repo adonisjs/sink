@@ -239,6 +239,7 @@ export class Instructions {
 		 * Requiring and executing instructions file
 		 */
 		const instructionsFn = esmRequire(instructionsPath)
+		console.log(instructionsPath, instructionsFn)
 		await instructionsFn(this.projectRoot, this.application, sink)
 	}
 
