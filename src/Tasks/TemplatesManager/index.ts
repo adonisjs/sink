@@ -60,7 +60,7 @@ export class TemplatesManager {
 		 */
 		const configuredDirectory = this.application.directoriesMap.get(templateFor)
 		if (!configuredDirectory) {
-			logger.error(`Unknown directory type ${logger.colors.underline(templateFor)}`)
+			logger.warning(`Unknown directory type ${logger.colors.underline(templateFor)}`)
 			return
 		}
 
