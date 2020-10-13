@@ -23,7 +23,21 @@ test.group('Copy files', (group) => {
 		await fs.add('foo.txt', 'hello world')
 		await fs.add('bar.txt', 'hi world')
 
-		copyFiles(fs.basePath, join(fs.basePath, 'project', 'foo'), ['foo.txt', 'bar.txt'])
+		const response = copyFiles(fs.basePath, join(fs.basePath, 'project', 'foo'), [
+			'foo.txt',
+			'bar.txt',
+		])
+
+		assert.deepEqual(response, [
+			{
+				filePath: 'foo.txt',
+				state: 'copied',
+			},
+			{
+				filePath: 'bar.txt',
+				state: 'copied',
+			},
+		])
 
 		const fooContents = await fs.get('project/foo/foo.txt')
 		const barContents = await fs.get('project/foo/bar.txt')
@@ -36,7 +50,21 @@ test.group('Copy files', (group) => {
 		await fs.add('bar.txt', 'hi world')
 		await fs.add('project/foo/foo.txt', 'hey world')
 
-		copyFiles(fs.basePath, join(fs.basePath, 'project', 'foo'), ['foo.txt', 'bar.txt'])
+		const response = copyFiles(fs.basePath, join(fs.basePath, 'project', 'foo'), [
+			'foo.txt',
+			'bar.txt',
+		])
+
+		assert.deepEqual(response, [
+			{
+				filePath: 'foo.txt',
+				state: 'skipped',
+			},
+			{
+				filePath: 'bar.txt',
+				state: 'copied',
+			},
+		])
 
 		const fooContents = await fs.get('project/foo/foo.txt')
 		const barContents = await fs.get('project/foo/bar.txt')
@@ -49,9 +77,25 @@ test.group('Copy files', (group) => {
 		await fs.add('bar.txt', 'hi world')
 		await fs.add('project/foo/foo.txt', 'hey world')
 
-		copyFiles(fs.basePath, join(fs.basePath, 'project', 'foo'), ['foo.txt', 'bar.txt'], {
-			overwrite: true,
-		})
+		const response = copyFiles(
+			fs.basePath,
+			join(fs.basePath, 'project', 'foo'),
+			['foo.txt', 'bar.txt'],
+			{
+				overwrite: true,
+			}
+		)
+
+		assert.deepEqual(response, [
+			{
+				filePath: 'foo.txt',
+				state: 'copied',
+			},
+			{
+				filePath: 'bar.txt',
+				state: 'copied',
+			},
+		])
 
 		const fooContents = await fs.get('project/foo/foo.txt')
 		const barContents = await fs.get('project/foo/bar.txt')

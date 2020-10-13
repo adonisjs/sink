@@ -8,14 +8,14 @@
  */
 
 export {
+	table,
 	logger,
+	sticker,
 	instructions,
 	isInteractive,
-	sticker,
 	supportsColors,
-	table,
-	tasks as tasksUi,
 	testingRenderer,
+	tasks as tasksUi,
 } from '@poppinss/cliui'
 import { PromptContract } from '@poppinss/prompts'
 

@@ -10,7 +10,6 @@
 import { join } from 'path'
 import copyFile from 'cp-file'
 import { existsSync } from 'fs'
-import { logger } from '@poppinss/cliui'
 
 /**
  * Utility method to copy files
@@ -20,23 +19,22 @@ export function copyFiles(
 	destinationBaseDir: string,
 	files: string[],
 	options?: { overwrite: boolean }
-) {
+): { filePath: string; state: 'skipped' | 'copied' }[] {
 	const overwrite = options ? options.overwrite : false
 
-	files.forEach((file) => {
+	return files.map((file) => {
 		const absPath = join(sourceBaseDir, file)
 		if (!existsSync(absPath)) {
-			throw new Error(`Missing source file ${absPath}`)
+			throw new Error(`Missing source file "${absPath}"`)
 		}
 
 		const targetAbsPath = join(destinationBaseDir, file)
 		const hasTarget = existsSync(targetAbsPath)
 		if (hasTarget && !overwrite) {
-			logger.action('copy').skipped(file, 'File already exists')
-			return
+			return { filePath: file, state: 'skipped' }
 		}
 
 		copyFile.sync(absPath, targetAbsPath, { overwrite: true })
-		logger.action('copy').succeeded(file)
+		return { filePath: file, state: 'copied' }
 	})
 }

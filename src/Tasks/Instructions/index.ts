@@ -8,7 +8,6 @@
  */
 
 import { dirname, join } from 'path'
-import { logger } from '@poppinss/cliui'
 import { esmRequire, resolveFrom } from '@poppinss/utils'
 import { ApplicationContract } from '@ioc:Adonis/Core/Application'
 
@@ -26,6 +25,7 @@ export class Instructions {
 	 */
 	private packagePath: string = this.getPackagePath()
 	private markdownDisplay: 'browser' | 'terminal' | undefined = undefined
+	private logger: typeof sink.logger = sink.logger
 
 	constructor(
 		private packageName: string,
@@ -52,16 +52,19 @@ export class Instructions {
 		return values.map((v) => `"${v}"`).join(',')
 	}
 
+	/**
+	 * Returns the suffix for the logger statements
+	 */
 	private getSuffix(value: string, key?: string) {
 		if (!this.verbose) {
 			return ''
 		}
 
 		if (key) {
-			return logger.colors.yellow().dim(`{ ${key} += ${value} }`)
+			return this.logger.colors.yellow().dim(`{ ${key} += ${value} }`)
 		}
 
-		return logger.colors.yellow().dim(`{ ${value} }`)
+		return this.logger.colors.yellow().dim(`{ ${value} }`)
 	}
 
 	/**
@@ -141,7 +144,7 @@ export class Instructions {
 			tsConfig.commit()
 
 			const suffix = this.getSuffix(this.formatArray([instructions.types]), 'types')
-			logger.action('update').succeeded(`${fileName} ${suffix}`)
+			this.logger.action('update').succeeded(`${fileName} ${suffix}`)
 		}
 	}
 
@@ -171,7 +174,8 @@ export class Instructions {
 			),
 			'metaFiles'
 		)
-		logger.action('update').succeeded(`.adonisrc.json ${suffix}`)
+
+		this.logger.action('update').succeeded(`.adonisrc.json ${suffix}`)
 	}
 
 	/**
@@ -200,7 +204,8 @@ export class Instructions {
 			),
 			'preloads'
 		)
-		logger.action('update').succeeded(`.adonisrc.json ${suffix}`)
+
+		this.logger.action('update').succeeded(`.adonisrc.json ${suffix}`)
 	}
 
 	/**
@@ -216,7 +221,7 @@ export class Instructions {
 		adonisRcFile.commit()
 
 		const suffix = this.getSuffix(this.formatArray(instructions.commands), 'commands')
-		logger.action('update').succeeded(`.adonisrc.json ${suffix}`)
+		this.logger.action('update').succeeded(`.adonisrc.json ${suffix}`)
 	}
 
 	/**
@@ -271,12 +276,12 @@ export class Instructions {
 
 		if (instructions.providers) {
 			const suffix = this.getSuffix(this.formatArray(instructions.providers), 'providers')
-			logger.action('update').succeeded(`.adonisrc.json ${suffix}`)
+			this.logger.action('update').succeeded(`.adonisrc.json ${suffix}`)
 		}
 
 		if (instructions.aceProviders) {
 			const suffix = this.getSuffix(this.formatArray(instructions.aceProviders), 'aceProviders')
-			logger.action('update').succeeded(`.adonisrc.json ${suffix}`)
+			this.logger.action('update').succeeded(`.adonisrc.json ${suffix}`)
 		}
 	}
 
@@ -309,7 +314,7 @@ export class Instructions {
 		}
 
 		if (!this.markdownDisplay) {
-			logger.info('The package wants to display readable instructions for the setup')
+			this.logger.info('The package wants to display readable instructions for the setup')
 			this.markdownDisplay = await sink.getPrompt().choice('Select where to display instructions', [
 				{
 					name: 'browser',
@@ -344,6 +349,14 @@ export class Instructions {
 	 */
 	public setDisplay(display: 'browser' | 'terminal') {
 		this.markdownDisplay = display
+		return this
+	}
+
+	/**
+	 * Define a custom logger to use
+	 */
+	public useLogger(logger: typeof sink.logger) {
+		this.logger = logger
 		return this
 	}
 

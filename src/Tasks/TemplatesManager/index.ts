@@ -7,10 +7,10 @@
  * file that was distributed with this source code.
  */
 
-import { logger } from '@poppinss/cliui'
 import { extname, join, normalize, isAbsolute } from 'path'
 import { ApplicationContract } from '@ioc:Adonis/Core/Application'
 
+import * as sink from '../../../index'
 import { TemplateNode } from '../../Contracts'
 import { MustacheFile } from '../../Files/Formats/Mustache'
 import { TemplateLiteralFile } from '../../Files/Formats/TemplateLiteral'
@@ -19,6 +19,8 @@ import { TemplateLiteralFile } from '../../Files/Formats/TemplateLiteral'
  * Templates manager to copy one or more templates to the user project.
  */
 export class TemplatesManager {
+	private logger: typeof sink.logger = sink.logger
+
 	constructor(
 		private projectRoot: string,
 		private templatesSourceDir: string,
@@ -34,7 +36,7 @@ export class TemplatesManager {
 	}
 
 	/**
-	 * Normalizes the template node to it's object version
+	 * Normalizes the template node to its object version
 	 */
 	private normalizeTemplateNode(template: TemplateNode): Exclude<TemplateNode, string> {
 		template =
@@ -60,7 +62,7 @@ export class TemplatesManager {
 		 */
 		const configuredDirectory = this.application.directoriesMap.get(templateFor)
 		if (!configuredDirectory) {
-			logger.warning(`Unknown directory type ${logger.colors.underline(templateFor)}`)
+			this.logger.warning(`Unknown directory type ${this.logger.colors.underline(templateFor)}`)
 			return
 		}
 
@@ -68,7 +70,7 @@ export class TemplatesManager {
 	}
 
 	/**
-	 * Copies template for a given given pre-defined directory within the rc file.
+	 * Copy templates for a given pre-defined directory within the rcfile.
 	 */
 	private copyTemplateFor(templateFor: string, template: Exclude<TemplateNode, string>) {
 		const configuredDirectory = this.getDirectoryFor(templateFor)
@@ -77,7 +79,7 @@ export class TemplatesManager {
 		}
 
 		if (!template.src || !template.dest) {
-			throw new Error('src and dest are required when copying templates')
+			throw new Error('"src" and "dest" are required when copying templates')
 		}
 
 		const sourcePath = join(this.templatesSourceDir, template.src)
@@ -92,9 +94,9 @@ export class TemplatesManager {
 		renderer.commit()
 
 		if (hasFile) {
-			logger.action('create').skipped(destinationPath)
+			this.logger.action('create').skipped(destinationPath)
 		} else {
-			logger.action('create').succeeded(destinationPath)
+			this.logger.action('create').succeeded(destinationPath)
 		}
 	}
 
@@ -106,6 +108,14 @@ export class TemplatesManager {
 		templates
 			.map((template) => this.normalizeTemplateNode(template))
 			.forEach((template) => this.copyTemplateFor(templateFor, template))
+	}
+
+	/**
+	 * Define a custom logger to use
+	 */
+	public useLogger(logger: typeof sink.logger) {
+		this.logger = logger
+		return this
 	}
 
 	/**
