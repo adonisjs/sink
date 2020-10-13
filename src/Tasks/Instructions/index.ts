@@ -146,6 +146,64 @@ export class Instructions {
 	}
 
 	/**
+	 * Adds the meta files to `.adonisrc.json` file
+	 */
+	private setMetaFiles(instructions: PackageInstructionsBlock) {
+		if (!instructions.metaFiles) {
+			return
+		}
+
+		const adonisRcFile = new sink.files.AdonisRcFile(this.projectRoot)
+		instructions.metaFiles.forEach((metaFile) => {
+			if (typeof metaFile === 'string') {
+				adonisRcFile.addMetaFile(metaFile)
+			} else {
+				adonisRcFile.addMetaFile(metaFile.pattern, metaFile.reloadServer)
+			}
+		})
+		adonisRcFile.commit()
+
+		const suffix = this.getSuffix(
+			this.formatArray(
+				instructions.metaFiles.map((metaFile) => {
+					return typeof metaFile === 'string' ? metaFile : metaFile.pattern
+				})
+			),
+			'metaFiles'
+		)
+		logger.action('update').succeeded(`.adonisrc.json ${suffix}`)
+	}
+
+	/**
+	 * Adds the preloads to `.adonisrc.json` file
+	 */
+	private setPreloads(instructions: PackageInstructionsBlock) {
+		if (!instructions.preloads) {
+			return
+		}
+
+		const adonisRcFile = new sink.files.AdonisRcFile(this.projectRoot)
+		instructions.preloads.forEach((preloadFile) => {
+			if (typeof preloadFile === 'string') {
+				adonisRcFile.setPreload(preloadFile)
+			} else {
+				adonisRcFile.setPreload(preloadFile.file, preloadFile.environment, preloadFile.optional)
+			}
+		})
+		adonisRcFile.commit()
+
+		const suffix = this.getSuffix(
+			this.formatArray(
+				instructions.preloads.map((preloadFile) => {
+					return typeof preloadFile === 'string' ? preloadFile : preloadFile.file
+				})
+			),
+			'preloads'
+		)
+		logger.action('update').succeeded(`.adonisrc.json ${suffix}`)
+	}
+
+	/**
 	 * Set commands inside the adonisrc.json file
 	 */
 	private setCommands(instructions: PackageInstructionsBlock) {
@@ -304,6 +362,8 @@ export class Instructions {
 		this.setCommands(pkg.adonisjs)
 		this.setAliases(pkg.adonisjs)
 		this.setProviders(pkg.adonisjs)
+		this.setMetaFiles(pkg.adonisjs)
+		this.setPreloads(pkg.adonisjs)
 		await this.runInstructions(pkg.adonisjs)
 		await this.renderMarkdownFile(pkg.adonisjs)
 		return true

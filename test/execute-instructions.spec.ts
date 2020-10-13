@@ -386,4 +386,62 @@ test.group('Execute instructions', (group) => {
 			},
 		})
 	})
+
+	test('define metaFiles inside .adonisrc.json', async (assert) => {
+		await fs.add(
+			'node_modules/@fake/app/package.json',
+			JSON.stringify({
+				name: '@fake/app',
+				version: '1.0.0',
+				adonisjs: {
+					metaFiles: ['resources/foo/*', { pattern: 'schemas/*', reloadServer: false }],
+				},
+			})
+		)
+
+		const application = new Application(fs.basePath, 'web', {})
+		const completed = await new Instructions('@fake/app', fs.basePath, application, true).execute()
+		assert.isTrue(completed)
+
+		const rcContents = await fs.fsExtra.readJSON(join(fs.basePath, '.adonisrc.json'))
+
+		assert.deepEqual(rcContents, {
+			metaFiles: [
+				'resources/foo/*',
+				{
+					pattern: 'schemas/*',
+					reloadServer: false,
+				},
+			],
+		})
+	})
+
+	test('define preloads inside .adonisrc.json', async (assert) => {
+		await fs.add(
+			'node_modules/@fake/app/package.json',
+			JSON.stringify({
+				name: '@fake/app',
+				version: '1.0.0',
+				adonisjs: {
+					preloads: ['./start/kernel', { file: './start/repl', environment: ['web'] }],
+				},
+			})
+		)
+
+		const application = new Application(fs.basePath, 'web', {})
+		const completed = await new Instructions('@fake/app', fs.basePath, application, true).execute()
+		assert.isTrue(completed)
+
+		const rcContents = await fs.fsExtra.readJSON(join(fs.basePath, '.adonisrc.json'))
+
+		assert.deepEqual(rcContents, {
+			preloads: [
+				'./start/kernel',
+				{
+					file: './start/repl',
+					environment: ['web'],
+				},
+			],
+		})
+	})
 })

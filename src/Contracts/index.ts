@@ -7,6 +7,8 @@
  * file that was distributed with this source code.
  */
 
+import { AppEnvironments } from '@ioc:Adonis/Core/Application'
+
 /**
  * Shape of the template node
  */
@@ -33,6 +35,21 @@ export type PackageInstructionsBlock = {
 	env?: {
 		[key: string]: string
 	}
+	preloads?: (
+		| string
+		| {
+				file: string
+				environment?: AppEnvironments[]
+				optional?: boolean
+		  }
+	)[]
+	metaFiles?: (
+		| string
+		| {
+				pattern: string
+				reloadServer?: boolean
+		  }
+	)[]
 	types?: string
 	commands?: string[]
 	providers?: string[]

@@ -7,6 +7,7 @@
  * file that was distributed with this source code.
  */
 
+import { AppEnvironments } from '@ioc:Adonis/Core/Application'
 import { JsonFile } from '../Formats/Json'
 
 /**
@@ -102,11 +103,7 @@ export class AdonisRcFile extends JsonFile {
 	/**
 	 * Set the preload file to the `.adonisrc.json` file.
 	 */
-	public setPreload(
-		filePath: string,
-		environment?: ('console' | 'test' | 'web')[],
-		optional?: boolean
-	): this {
+	public setPreload(filePath: string, environment?: AppEnvironments[], optional?: boolean): this {
 		let preloadIndex = this.preloads.findIndex((preload) => {
 			if (preload.file) {
 				return preload.file === filePath
