@@ -80,7 +80,7 @@
     }
   },
   "dependencies": {
-    "@poppinss/cliui": "^2.0.1",
+    "@poppinss/cliui": "^2.0.2",
     "@poppinss/prompts": "^1.1.7",
     "@poppinss/utils": "^2.5.7",
     "cp-file": "^9.0.0",
