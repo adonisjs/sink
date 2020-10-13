@@ -102,7 +102,7 @@ export class Instructions {
 			join(dirname(this.packagePath), templatesSourceDir),
 			this.application
 		)
-		templatesManager.copy(instructions.templates)
+		templatesManager.useLogger(this.logger).copy(instructions.templates)
 	}
 
 	/**
@@ -120,7 +120,7 @@ export class Instructions {
 
 		envFile.commit()
 		const suffix = this.getSuffix(this.formatObject(instructions.env))
-		sink.logger.action('update').succeeded(`.env ${suffix}`)
+		this.logger.action('update').succeeded(`.env ${suffix}`)
 	}
 
 	/**
@@ -245,11 +245,11 @@ export class Instructions {
 		const suffix = this.getSuffix(this.formatObject(instructions.aliases), 'aliases')
 
 		adonisRcFile.commit()
-		sink.logger.action('update').succeeded(`.adonisrc.json ${suffix}`)
+		this.logger.action('update').succeeded(`.adonisrc.json ${suffix}`)
 
 		tsConfig.set('compilerOptions.paths', existingPaths)
 		tsConfig.commit()
-		sink.logger.action('update').succeeded(`tsconfig.json ${suffix}`)
+		this.logger.action('update').succeeded(`tsconfig.json ${suffix}`)
 	}
 
 	/**
@@ -302,7 +302,10 @@ export class Instructions {
 		 * Requiring and executing instructions file
 		 */
 		const instructionsFn = esmRequire(instructionsPath)
-		await instructionsFn(this.projectRoot, this.application, sink)
+		await instructionsFn(this.projectRoot, this.application, {
+			...sink,
+			logger: this.logger,
+		})
 	}
 
 	/**
