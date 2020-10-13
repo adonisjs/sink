@@ -154,6 +154,40 @@ test.group('AdonisRc file', (group) => {
 		})
 	})
 
+	test('do not set environment when defined as empty array', async (assert) => {
+		const rcfile = new AdonisRcFile(fs.basePath)
+		rcfile.setPreload('start/kernel', [])
+		rcfile.commit()
+
+		const contents = await fs.get('.adonisrc.json')
+		assert.deepEqual(JSON.parse(contents), {
+			preloads: ['start/kernel'],
+		})
+	})
+
+	test('remove environment when preloads edit', async (assert) => {
+		await fs.add(
+			'.adonisrc.json',
+			JSON.stringify({
+				preloads: [
+					{
+						file: 'start/kernel',
+						environment: ['web'],
+					},
+				],
+			})
+		)
+
+		const rcfile = new AdonisRcFile(fs.basePath)
+		rcfile.setPreload('start/kernel', [])
+		rcfile.commit()
+
+		const contents = await fs.get('.adonisrc.json')
+		assert.deepEqual(JSON.parse(contents), {
+			preloads: ['start/kernel'],
+		})
+	})
+
 	test('remove preload on rollback', async (assert) => {
 		await fs.add(
 			'.adonisrc.json',

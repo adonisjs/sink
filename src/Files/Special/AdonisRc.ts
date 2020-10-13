@@ -123,7 +123,7 @@ export class AdonisRcFile extends JsonFile {
 		/**
 		 * Set the environment when it exists
 		 */
-		if (environment) {
+		if (environment && environment.length) {
 			preloadEntry.environment = environment
 		}
 
