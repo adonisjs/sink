@@ -372,6 +372,7 @@ export class Instructions {
 			return true
 		}
 
+		await this.runInstructions(pkg.adonisjs)
 		this.copyTemplates(pkg.adonisjs)
 		this.setEnvVariables(pkg.adonisjs)
 		this.setTypes(pkg.adonisjs)
@@ -380,7 +381,6 @@ export class Instructions {
 		this.setProviders(pkg.adonisjs)
 		this.setMetaFiles(pkg.adonisjs)
 		this.setPreloads(pkg.adonisjs)
-		await this.runInstructions(pkg.adonisjs)
 		await this.renderMarkdownFile(pkg.adonisjs)
 		return true
 	}
