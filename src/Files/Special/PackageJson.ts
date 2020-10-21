@@ -116,7 +116,11 @@ export class PackageJsonFile extends File {
 			let response: SpawnSyncReturns<Buffer>
 
 			const fn = action === 'install' ? install : uninstall
+			let callbackInvoked = false
+
 			fn(list, options, (command: string, args: string[]) => {
+				callbackInvoked = true
+
 				const runner = spawn(command, args, { stdio: 'pipe' })
 				response = {
 					pid: runner.pid,
@@ -141,6 +145,10 @@ export class PackageJsonFile extends File {
 					resolve(response)
 				})
 			})
+
+			if (!callbackInvoked) {
+				resolve()
+			}
 		})
 	}
 

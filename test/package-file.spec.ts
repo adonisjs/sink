@@ -8,9 +8,9 @@
  */
 
 import test from 'japa'
-import { PackageJsonFile } from '../src/Files/Special/PackageJson'
-import { Filesystem } from '@poppinss/dev-utils'
 import { join } from 'path'
+import { Filesystem } from '@poppinss/dev-utils'
+import { PackageJsonFile } from '../src/Files/Special/PackageJson'
 
 const fs = new Filesystem(join(__dirname, '__app'))
 
@@ -282,5 +282,19 @@ test.group('Package file', (group) => {
 		const contents = await fs.get('package.json')
 		assert.isUndefined(JSON.parse(contents).devDependencies)
 		assert.isUndefined(JSON.parse(contents).dependencies)
+	}).timeout(0)
+
+	test('work fine when install array is empty', async (assert) => {
+		await fs.add('package.json', JSON.stringify({ name: 'foo' }))
+		const pkg = new PackageJsonFile(fs.basePath)
+		pkg.install('lodash')
+		await pkg.commitAsync()
+
+		const pkg1 = new PackageJsonFile(fs.basePath)
+		pkg1.install('lodash')
+		await pkg1.commitAsync()
+
+		const contents = await fs.get('package.json')
+		assert.property(JSON.parse(contents).devDependencies, 'lodash')
 	}).timeout(0)
 })
