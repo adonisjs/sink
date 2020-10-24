@@ -119,7 +119,9 @@ test.group('Package file', (group) => {
 		pkg.rollback()
 
 		const contents = await fs.get('package.json')
-		assert.deepEqual(JSON.parse(contents), { name: 'foo', devDependencies: {} })
+		const pkgContents = JSON.parse(contents)
+		pkgContents.devDependencies = pkgContents.devDependencies || {}
+		assert.deepEqual(pkgContents, { name: 'foo', devDependencies: {} })
 	}).timeout(0)
 
 	test('uninstall dependency', async (assert) => {
@@ -129,7 +131,9 @@ test.group('Package file', (group) => {
 		pkg.commit()
 
 		const contents = await fs.get('package.json')
-		assert.deepEqual(JSON.parse(contents), { name: 'foo', devDependencies: {} })
+		const pkgContents = JSON.parse(contents)
+		pkgContents.devDependencies = pkgContents.devDependencies || {}
+		assert.deepEqual(pkgContents, { name: 'foo', devDependencies: {} })
 	}).timeout(0)
 
 	test('do not install removed dependency on rollback', async (assert) => {
