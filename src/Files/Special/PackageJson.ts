@@ -103,10 +103,14 @@ export class PackageJsonFile extends File {
 	 * Executes the installer `install` or `uninstall` action. Use
 	 * `this.installerFn` for sync version
 	 */
-	private installerFnAsync(action: InstallerFns, list: string[], options: NpmOptions) {
+	private installerFnAsync(
+		action: InstallerFns,
+		list: string[],
+		options: NpmOptions
+	): Promise<undefined | SpawnSyncReturns<Buffer>> {
 		return new Promise<undefined | SpawnSyncReturns<Buffer>>((resolve) => {
 			if (!list.length) {
-				resolve()
+				resolve(undefined)
 				return
 			}
 
@@ -147,7 +151,7 @@ export class PackageJsonFile extends File {
 			})
 
 			if (!callbackInvoked) {
-				resolve()
+				resolve(undefined)
 			}
 		})
 	}
