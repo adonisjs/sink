@@ -85,7 +85,7 @@
     "@poppinss/utils": "^2.5.9",
     "cp-file": "^9.0.0",
     "fs-extra": "^9.0.1",
-    "marked": "^1.2.5",
+    "marked": "^2.0.0",
     "marked-terminal": "^4.1.0",
     "mrm-core": "^4.3.0",
     "mustache": "^4.0.1",
