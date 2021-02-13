@@ -21,13 +21,13 @@ import { css } from './Styles'
  * terminal or the browser.
  */
 export class MarkdownRenderer {
-	constructor(private mdFileAbsPath: string, private packageName: string) {}
+  constructor(private mdFileAbsPath: string, private packageName: string) {}
 
-	/**
-	 * Generates HTML with the markdown processed code
-	 */
-	private generateHtml(contents: string) {
-		return `<html>
+  /**
+   * Generates HTML with the markdown processed code
+   */
+  private generateHtml(contents: string) {
+    return `<html>
       <head>
         <style type="text/css">${css}</style>
       </head>
@@ -40,38 +40,38 @@ export class MarkdownRenderer {
         </article>
       </body>
     </html>`
-	}
+  }
 
-	/**
-	 * Opens the html contents by writing it to a temporary
-	 * file and opens up the file inside the browser.
-	 */
-	private async openContentsInBrowser(html: string) {
-		const filePath = join(tmpdir(), `adonis-${new Date().getTime()}.html`)
-		await outputFile(filePath, html)
-		await open(filePath, { wait: false })
-	}
+  /**
+   * Opens the html contents by writing it to a temporary
+   * file and opens up the file inside the browser.
+   */
+  private async openContentsInBrowser(html: string) {
+    const filePath = join(tmpdir(), `adonis-${new Date().getTime()}.html`)
+    await outputFile(filePath, html)
+    await open(filePath, { wait: false })
+  }
 
-	/**
-	 * Converts markdown to HTML and opens it up inside the browser
-	 */
-	public async renderInBrowser() {
-		try {
-			const contents = await readFile(this.mdFileAbsPath, 'utf-8')
-			const html = this.generateHtml(
-				marked.setOptions({ renderer: new marked.Renderer() })(contents.trim())
-			)
-			await this.openContentsInBrowser(html)
-		} catch (error) {}
-	}
+  /**
+   * Converts markdown to HTML and opens it up inside the browser
+   */
+  public async renderInBrowser() {
+    try {
+      const contents = await readFile(this.mdFileAbsPath, 'utf-8')
+      const html = this.generateHtml(
+        marked.setOptions({ renderer: new marked.Renderer() })(contents.trim())
+      )
+      await this.openContentsInBrowser(html)
+    } catch (error) {}
+  }
 
-	/**
-	 * Writes markdown in the terminal
-	 */
-	public async renderInTerminal() {
-		try {
-			const contents = await readFile(this.mdFileAbsPath, 'utf-8')
-			console.log(marked.setOptions({ renderer: new TerminalRenderer() })(contents.trim()).trim())
-		} catch (error) {}
-	}
+  /**
+   * Writes markdown in the terminal
+   */
+  public async renderInTerminal() {
+    try {
+      const contents = await readFile(this.mdFileAbsPath, 'utf-8')
+      console.log(marked.setOptions({ renderer: new TerminalRenderer() })(contents.trim()).trim())
+    } catch (error) {}
+  }
 }

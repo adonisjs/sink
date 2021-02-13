@@ -17,62 +17,62 @@ import { YamlFile } from '../src/Files/Formats/Yaml'
 const fs = new Filesystem(join(__dirname, '__app'))
 
 test.group('Yaml file', (group) => {
-	group.afterEach(async () => {
-		await fs.cleanup()
-	})
+  group.afterEach(async () => {
+    await fs.cleanup()
+  })
 
-	group.beforeEach(async () => {
-		await fs.ensureRoot()
-	})
+  group.beforeEach(async () => {
+    await fs.ensureRoot()
+  })
 
-	test('create json file', async (assert) => {
-		const file = new YamlFile(fs.basePath, 'foo.yml')
-		file.set('appName', 'hello-world')
-		file.commit()
+  test('create json file', async (assert) => {
+    const file = new YamlFile(fs.basePath, 'foo.yml')
+    file.set('appName', 'hello-world')
+    file.commit()
 
-		const contents = await fs.get('foo.yml')
-		assert.deepEqual(Yaml.parse(contents), { appName: 'hello-world' })
-	})
+    const contents = await fs.get('foo.yml')
+    assert.deepEqual(Yaml.parse(contents), { appName: 'hello-world' })
+  })
 
-	test('update json file', async (assert) => {
-		await fs.add('foo.yml', Yaml.stringify({ appName: 'hello-world', version: '1.0' }))
-		const file = new YamlFile(fs.basePath, 'foo.yml')
-		file.set('appName', 'hello-universe')
-		file.unset('version')
-		file.commit()
+  test('update json file', async (assert) => {
+    await fs.add('foo.yml', Yaml.stringify({ appName: 'hello-world', version: '1.0' }))
+    const file = new YamlFile(fs.basePath, 'foo.yml')
+    file.set('appName', 'hello-universe')
+    file.unset('version')
+    file.commit()
 
-		const contents = await fs.get('foo.yml')
-		assert.deepEqual(Yaml.parse(contents), { appName: 'hello-universe' })
-	})
+    const contents = await fs.get('foo.yml')
+    assert.deepEqual(Yaml.parse(contents), { appName: 'hello-universe' })
+  })
 
-	test('delete json file', async (assert) => {
-		await fs.add('foo.yml', Yaml.stringify({ appName: 'hello-world', version: '1.0' }))
-		const file = new YamlFile(fs.basePath, 'foo.yml')
-		file.delete()
+  test('delete json file', async (assert) => {
+    await fs.add('foo.yml', Yaml.stringify({ appName: 'hello-world', version: '1.0' }))
+    const file = new YamlFile(fs.basePath, 'foo.yml')
+    file.delete()
 
-		const hasFile = await fs.fsExtra.pathExists('foo.yml')
-		assert.isFalse(hasFile)
-	})
+    const hasFile = await fs.fsExtra.pathExists('foo.yml')
+    assert.isFalse(hasFile)
+  })
 
-	test('undo constructive commits on rollback', async (assert) => {
-		await fs.add('foo.yml', Yaml.stringify({ appName: 'hello-world' }))
+  test('undo constructive commits on rollback', async (assert) => {
+    await fs.add('foo.yml', Yaml.stringify({ appName: 'hello-world' }))
 
-		const file = new YamlFile(fs.basePath, 'foo.yml')
-		file.set('appName', 'hello-world')
-		file.rollback()
+    const file = new YamlFile(fs.basePath, 'foo.yml')
+    file.set('appName', 'hello-world')
+    file.rollback()
 
-		const contents = await fs.get('foo.yml')
-		assert.deepEqual(Yaml.parse(contents), {})
-	})
+    const contents = await fs.get('foo.yml')
+    assert.deepEqual(Yaml.parse(contents), {})
+  })
 
-	test('do not touch destructive commits on rollbacks', async (assert) => {
-		await fs.add('foo.yml', Yaml.stringify({ appName: 'hello-world' }))
+  test('do not touch destructive commits on rollbacks', async (assert) => {
+    await fs.add('foo.yml', Yaml.stringify({ appName: 'hello-world' }))
 
-		const file = new YamlFile(fs.basePath, 'foo.yml')
-		file.unset('appName')
-		file.rollback()
+    const file = new YamlFile(fs.basePath, 'foo.yml')
+    file.unset('appName')
+    file.rollback()
 
-		const contents = await fs.get('foo.yml')
-		assert.deepEqual(Yaml.parse(contents), { appName: 'hello-world' })
-	})
+    const contents = await fs.get('foo.yml')
+    assert.deepEqual(Yaml.parse(contents), { appName: 'hello-world' })
+  })
 })

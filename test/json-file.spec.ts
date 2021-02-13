@@ -16,62 +16,62 @@ import { JsonFile } from '../src/Files/Formats/Json'
 const fs = new Filesystem(join(__dirname, '__app'))
 
 test.group('Json file', (group) => {
-	group.afterEach(async () => {
-		await fs.cleanup()
-	})
+  group.afterEach(async () => {
+    await fs.cleanup()
+  })
 
-	group.beforeEach(async () => {
-		await fs.ensureRoot()
-	})
+  group.beforeEach(async () => {
+    await fs.ensureRoot()
+  })
 
-	test('create json file', async (assert) => {
-		const file = new JsonFile(fs.basePath, 'foo.json')
-		file.set('appName', 'hello-world')
-		file.commit()
+  test('create json file', async (assert) => {
+    const file = new JsonFile(fs.basePath, 'foo.json')
+    file.set('appName', 'hello-world')
+    file.commit()
 
-		const contents = await fs.get('foo.json')
-		assert.deepEqual(JSON.parse(contents), { appName: 'hello-world' })
-	})
+    const contents = await fs.get('foo.json')
+    assert.deepEqual(JSON.parse(contents), { appName: 'hello-world' })
+  })
 
-	test('update json file', async (assert) => {
-		await fs.add('foo.json', JSON.stringify({ appName: 'hello-world', version: '1.0' }))
-		const file = new JsonFile(fs.basePath, 'foo.json')
-		file.set('appName', 'hello-universe')
-		file.unset('version')
-		file.commit()
+  test('update json file', async (assert) => {
+    await fs.add('foo.json', JSON.stringify({ appName: 'hello-world', version: '1.0' }))
+    const file = new JsonFile(fs.basePath, 'foo.json')
+    file.set('appName', 'hello-universe')
+    file.unset('version')
+    file.commit()
 
-		const contents = await fs.get('foo.json')
-		assert.deepEqual(JSON.parse(contents), { appName: 'hello-universe' })
-	})
+    const contents = await fs.get('foo.json')
+    assert.deepEqual(JSON.parse(contents), { appName: 'hello-universe' })
+  })
 
-	test('delete json file', async (assert) => {
-		await fs.add('foo.json', JSON.stringify({ appName: 'hello-world', version: '1.0' }))
-		const file = new JsonFile(fs.basePath, 'foo.json')
-		file.delete()
+  test('delete json file', async (assert) => {
+    await fs.add('foo.json', JSON.stringify({ appName: 'hello-world', version: '1.0' }))
+    const file = new JsonFile(fs.basePath, 'foo.json')
+    file.delete()
 
-		const hasFile = await fs.fsExtra.pathExists('foo.json')
-		assert.isFalse(hasFile)
-	})
+    const hasFile = await fs.fsExtra.pathExists('foo.json')
+    assert.isFalse(hasFile)
+  })
 
-	test('undo constructive commits on rollback', async (assert) => {
-		await fs.add('foo.json', JSON.stringify({ appName: 'hello-world' }))
+  test('undo constructive commits on rollback', async (assert) => {
+    await fs.add('foo.json', JSON.stringify({ appName: 'hello-world' }))
 
-		const file = new JsonFile(fs.basePath, 'foo.json')
-		file.set('appName', 'hello-world')
-		file.rollback()
+    const file = new JsonFile(fs.basePath, 'foo.json')
+    file.set('appName', 'hello-world')
+    file.rollback()
 
-		const contents = await fs.get('foo.json')
-		assert.deepEqual(JSON.parse(contents), {})
-	})
+    const contents = await fs.get('foo.json')
+    assert.deepEqual(JSON.parse(contents), {})
+  })
 
-	test('do not touch destructive commits on rollbacks', async (assert) => {
-		await fs.add('foo.json', JSON.stringify({ appName: 'hello-world' }))
+  test('do not touch destructive commits on rollbacks', async (assert) => {
+    await fs.add('foo.json', JSON.stringify({ appName: 'hello-world' }))
 
-		const file = new JsonFile(fs.basePath, 'foo.json')
-		file.unset('appName')
-		file.rollback()
+    const file = new JsonFile(fs.basePath, 'foo.json')
+    file.unset('appName')
+    file.rollback()
 
-		const contents = await fs.get('foo.json')
-		assert.deepEqual(JSON.parse(contents), { appName: 'hello-world' })
-	})
+    const contents = await fs.get('foo.json')
+    assert.deepEqual(JSON.parse(contents), { appName: 'hello-world' })
+  })
 })

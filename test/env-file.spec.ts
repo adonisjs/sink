@@ -15,103 +15,103 @@ import { join } from 'path'
 const fs = new Filesystem(join(__dirname, '__app'))
 
 test.group('EnvFile', (group) => {
-	group.afterEach(async () => {
-		await fs.cleanup()
-	})
+  group.afterEach(async () => {
+    await fs.cleanup()
+  })
 
-	group.beforeEach(async () => {
-		await fs.ensureRoot()
-	})
+  group.beforeEach(async () => {
+    await fs.ensureRoot()
+  })
 
-	test('create .env and .env.example file', async (assert) => {
-		const envFile = new EnvFile(fs.basePath)
-		envFile.set('APP_KEY', 'foo-bar')
-		envFile.commit()
+  test('create .env and .env.example file', async (assert) => {
+    const envFile = new EnvFile(fs.basePath)
+    envFile.set('APP_KEY', 'foo-bar')
+    envFile.commit()
 
-		const contents = await fs.get('.env')
-		const exampleFileContents = await fs.get('.env.example')
-		assert.deepEqual(contents.trim(), 'APP_KEY=foo-bar')
-		assert.deepEqual(exampleFileContents.trim(), 'APP_KEY=')
-	})
+    const contents = await fs.get('.env')
+    const exampleFileContents = await fs.get('.env.example')
+    assert.deepEqual(contents.trim(), 'APP_KEY=foo-bar')
+    assert.deepEqual(exampleFileContents.trim(), 'APP_KEY=')
+  })
 
-	test('write subsitution variables inside .env file', async (assert) => {
-		const envFile = new EnvFile(fs.basePath)
-		envFile.set('URL', '$HOST:$PORT')
-		envFile.set('PASSWORD', 'pa\\$\\$word')
-		envFile.commit()
+  test('write subsitution variables inside .env file', async (assert) => {
+    const envFile = new EnvFile(fs.basePath)
+    envFile.set('URL', '$HOST:$PORT')
+    envFile.set('PASSWORD', 'pa\\$\\$word')
+    envFile.commit()
 
-		const contents = await fs.get('.env')
-		const exampleFileContents = await fs.get('.env.example')
+    const contents = await fs.get('.env')
+    const exampleFileContents = await fs.get('.env.example')
 
-		assert.deepEqual(contents.trim(), ['URL=$HOST:$PORT', 'PASSWORD=pa\\$\\$word'].join('\n'))
-		assert.deepEqual(exampleFileContents.trim(), ['URL=', 'PASSWORD='].join('\n'))
-	})
+    assert.deepEqual(contents.trim(), ['URL=$HOST:$PORT', 'PASSWORD=pa\\$\\$word'].join('\n'))
+    assert.deepEqual(exampleFileContents.trim(), ['URL=', 'PASSWORD='].join('\n'))
+  })
 
-	test('update existing key value', async (assert) => {
-		await fs.add('.env', 'APP_KEY=foo-bar')
-		await fs.add('.env.example', 'APP_KEY=')
+  test('update existing key value', async (assert) => {
+    await fs.add('.env', 'APP_KEY=foo-bar')
+    await fs.add('.env.example', 'APP_KEY=')
 
-		const envFile = new EnvFile(fs.basePath)
-		envFile.set('APP_KEY', 'bar')
-		envFile.commit()
+    const envFile = new EnvFile(fs.basePath)
+    envFile.set('APP_KEY', 'bar')
+    envFile.commit()
 
-		const contents = await fs.get('.env')
-		const exampleFileContents = await fs.get('.env.example')
+    const contents = await fs.get('.env')
+    const exampleFileContents = await fs.get('.env.example')
 
-		assert.deepEqual(contents.trim(), 'APP_KEY=bar')
-		assert.deepEqual(exampleFileContents.trim(), 'APP_KEY=')
-	})
+    assert.deepEqual(contents.trim(), 'APP_KEY=bar')
+    assert.deepEqual(exampleFileContents.trim(), 'APP_KEY=')
+  })
 
-	test('remove existing key', async (assert) => {
-		await fs.add('.env', 'APP_KEY=foo-bar')
-		await fs.add('.env.example', 'APP_KEY=')
+  test('remove existing key', async (assert) => {
+    await fs.add('.env', 'APP_KEY=foo-bar')
+    await fs.add('.env.example', 'APP_KEY=')
 
-		const envFile = new EnvFile(fs.basePath)
-		envFile.unset('APP_KEY')
-		envFile.commit()
+    const envFile = new EnvFile(fs.basePath)
+    envFile.unset('APP_KEY')
+    envFile.commit()
 
-		const contents = await fs.get('.env')
-		const exampleFileContents = await fs.get('.env.example')
+    const contents = await fs.get('.env')
+    const exampleFileContents = await fs.get('.env.example')
 
-		assert.deepEqual(contents.trim(), '')
-		assert.deepEqual(exampleFileContents.trim(), '')
-	})
+    assert.deepEqual(contents.trim(), '')
+    assert.deepEqual(exampleFileContents.trim(), '')
+  })
 
-	test('remove line to rollback', async (assert) => {
-		await fs.add('.env', 'APP_KEY=foo-bar')
-		await fs.add('.env.example', 'APP_KEY=')
+  test('remove line to rollback', async (assert) => {
+    await fs.add('.env', 'APP_KEY=foo-bar')
+    await fs.add('.env.example', 'APP_KEY=')
 
-		const envFile = new EnvFile(fs.basePath)
-		envFile.set('APP_KEY', 'foo-bar')
-		envFile.rollback()
+    const envFile = new EnvFile(fs.basePath)
+    envFile.set('APP_KEY', 'foo-bar')
+    envFile.rollback()
 
-		const contents = await fs.get('.env')
-		const exampleFileContents = await fs.get('.env.example')
+    const contents = await fs.get('.env')
+    const exampleFileContents = await fs.get('.env.example')
 
-		assert.deepEqual(contents.trim(), '')
-		assert.deepEqual(exampleFileContents.trim(), '')
-	})
+    assert.deepEqual(contents.trim(), '')
+    assert.deepEqual(exampleFileContents.trim(), '')
+  })
 
-	test('do not touch destructive commits on rollbacks', async (assert) => {
-		await fs.add('.env', 'APP_KEY=foo')
-		await fs.add('.env.example', 'APP_KEY=')
+  test('do not touch destructive commits on rollbacks', async (assert) => {
+    await fs.add('.env', 'APP_KEY=foo')
+    await fs.add('.env.example', 'APP_KEY=')
 
-		const envFile = new EnvFile(fs.basePath)
-		envFile.unset('APP_KEY')
-		envFile.rollback()
+    const envFile = new EnvFile(fs.basePath)
+    envFile.unset('APP_KEY')
+    envFile.rollback()
 
-		const contents = await fs.get('.env')
-		const exampleFileContents = await fs.get('.env.example')
+    const contents = await fs.get('.env')
+    const exampleFileContents = await fs.get('.env.example')
 
-		assert.deepEqual(contents.trim(), 'APP_KEY=foo')
-		assert.deepEqual(exampleFileContents.trim(), 'APP_KEY=')
-	})
+    assert.deepEqual(contents.trim(), 'APP_KEY=foo')
+    assert.deepEqual(exampleFileContents.trim(), 'APP_KEY=')
+  })
 
-	test('get file contents', async (assert) => {
-		await fs.add('.env', 'APP_KEY=foo')
-		await fs.add('.env.example', 'APP_KEY=')
+  test('get file contents', async (assert) => {
+    await fs.add('.env', 'APP_KEY=foo')
+    await fs.add('.env.example', 'APP_KEY=')
 
-		const envFile = new EnvFile(fs.basePath)
-		assert.deepEqual(envFile.get(), { APP_KEY: 'foo' })
-	})
+    const envFile = new EnvFile(fs.basePath)
+    assert.deepEqual(envFile.get(), { APP_KEY: 'foo' })
+  })
 })

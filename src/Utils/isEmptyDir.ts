@@ -14,10 +14,10 @@ import { readdirSync } from 'fs'
  * not.
  */
 export function isEmptyDir(location: string): boolean {
-	try {
-		const files = readdirSync(location)
-		return files.length === 0
-	} catch (error) {
-		return error.code === 'ENOENT'
-	}
+  try {
+    const files = readdirSync(location)
+    return files.length === 0
+  } catch (error) {
+    return error.code === 'ENOENT'
+  }
 }

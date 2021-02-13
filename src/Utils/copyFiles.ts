@@ -15,26 +15,26 @@ import { existsSync } from 'fs'
  * Utility method to copy files
  */
 export function copyFiles(
-	sourceBaseDir: string,
-	destinationBaseDir: string,
-	files: string[],
-	options?: { overwrite: boolean }
+  sourceBaseDir: string,
+  destinationBaseDir: string,
+  files: string[],
+  options?: { overwrite: boolean }
 ): { filePath: string; state: 'skipped' | 'copied' }[] {
-	const overwrite = options ? options.overwrite : false
+  const overwrite = options ? options.overwrite : false
 
-	return files.map((file) => {
-		const absPath = join(sourceBaseDir, file)
-		if (!existsSync(absPath)) {
-			throw new Error(`Missing source file "${absPath}"`)
-		}
+  return files.map((file) => {
+    const absPath = join(sourceBaseDir, file)
+    if (!existsSync(absPath)) {
+      throw new Error(`Missing source file "${absPath}"`)
+    }
 
-		const targetAbsPath = join(destinationBaseDir, file)
-		const hasTarget = existsSync(targetAbsPath)
-		if (hasTarget && !overwrite) {
-			return { filePath: file, state: 'skipped' }
-		}
+    const targetAbsPath = join(destinationBaseDir, file)
+    const hasTarget = existsSync(targetAbsPath)
+    if (hasTarget && !overwrite) {
+      return { filePath: file, state: 'skipped' }
+    }
 
-		copyFile.sync(absPath, targetAbsPath, { overwrite: true })
-		return { filePath: file, state: 'copied' }
-	})
+    copyFile.sync(absPath, targetAbsPath, { overwrite: true })
+    return { filePath: file, state: 'copied' }
+  })
 }

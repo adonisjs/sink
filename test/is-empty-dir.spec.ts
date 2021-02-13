@@ -15,20 +15,20 @@ import { join } from 'path'
 const fs = new Filesystem(join(__dirname, '__app'))
 
 test.group('isEmptyDir', (group) => {
-	group.afterEach(async () => {
-		await fs.cleanup()
-	})
+  group.afterEach(async () => {
+    await fs.cleanup()
+  })
 
-	group.beforeEach(async () => {
-		await fs.ensureRoot()
-	})
+  group.beforeEach(async () => {
+    await fs.ensureRoot()
+  })
 
-	test('return true when folder is empty', async (assert) => {
-		assert.isTrue(isEmptyDir(fs.basePath))
-	})
+  test('return true when folder is empty', async (assert) => {
+    assert.isTrue(isEmptyDir(fs.basePath))
+  })
 
-	test('return false when folder is not empty', async (assert) => {
-		await fs.add('.DS_STORE', '')
-		assert.isFalse(isEmptyDir(fs.basePath))
-	})
+  test('return false when folder is not empty', async (assert) => {
+    await fs.add('.DS_STORE', '')
+    assert.isFalse(isEmptyDir(fs.basePath))
+  })
 })

@@ -8,14 +8,14 @@
  */
 
 export {
-	table,
-	logger,
-	sticker,
-	instructions,
-	isInteractive,
-	supportsColors,
-	testingRenderer,
-	tasks as tasksUi,
+  table,
+  logger,
+  sticker,
+  instructions,
+  isInteractive,
+  supportsColors,
+  testingRenderer,
+  tasks as tasksUi,
 } from '@poppinss/cliui'
 import { PromptContract } from '@poppinss/prompts'
 
@@ -26,8 +26,8 @@ import * as pkg from './package.json'
  * Returns a new instance of prompt. Also we lazy load the prompts
  */
 function getPrompt(): PromptContract {
-	const { Prompt, FakePrompt } = require('@poppinss/prompts')
-	return process.env.CLI_UI_IS_TESTING ? new FakePrompt() : new Prompt()
+  const { Prompt, FakePrompt } = require('@poppinss/prompts')
+  return process.env.CLI_UI_IS_TESTING ? new FakePrompt() : new Prompt()
 }
 
 /**

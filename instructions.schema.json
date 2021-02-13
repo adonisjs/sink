@@ -1,152 +1,152 @@
 {
-	"$schema": "http://json-schema.org/draft-07/schema#",
-	"type": "object",
-	"properties": {
-		"adonisjs": {
-			"description": "Define instructions to configure an AdonisJS package",
-			"type": "object",
-			"properties": {
-				"instructions": {
-					"type": "string",
-					"description": "Define a custom instructions file"
-				},
-				"instructionsMd": {
-					"type": "string",
-					"description": "Define path to a readme file to open after running the package instructions"
-				},
-				"templates": {
-					"type": "object",
-					"properties": {
-						"basePath": {
-							"type": "string",
-							"description": "The base path for reading the templates"
-						}
-					},
-					"patternProperties": {
-						"^.*$": {
-							"type": "array",
-							"items": {
-								"anyOf": [
-									{
-										"type": "string"
-									},
-									{
-										"type": "object",
-										"properties": {
-											"src": {
-												"type": "string"
-											},
-											"dest": {
-												"type": "string"
-											},
-											"data": {
-												"type": "object"
-											},
-											"mustache": {
-												"type": "boolean"
-											}
-										},
-										"required": ["src", "dest"]
-									}
-								]
-							}
-						}
-					}
-				},
-				"env": {
-					"type": "object",
-					"patternProperties": {
-						"^.*$": {
-							"anyOf": [
-								{
-									"type": "string"
-								},
-								{
-									"type": "boolean"
-								},
-								{
-									"type": "number"
-								}
-							]
-						}
-					}
-				},
-				"preloads": {
-					"type": "array",
-					"items": {
-						"oneOf": [
-							{
-								"type": "string"
-							},
-							{
-								"type": "object",
-								"properties": {
-									"file": { "type": "string" },
-									"environment": {
-										"type": "array",
-										"items": {
-											"type": "string",
-											"enum": ["web", "console", "test", "repl"]
-										}
-									},
-									"optional": {
-										"type": "boolean"
-									}
-								},
-								"required": ["file"],
-								"additionalProperties": false
-							}
-						]
-					}
-				},
-				"metaFiles": {
-					"type": "array",
-					"items": {
-						"oneOf": [
-							{
-								"type": "string"
-							},
-							{
-								"type": "object",
-								"properties": {
-									"pattern": { "type": "string" },
-									"reloadServer": { "type": "boolean" }
-								},
-								"required": ["pattern"]
-							}
-						]
-					}
-				},
-				"types": {
-					"type": "string"
-				},
-				"commands": {
-					"type": "array",
-					"items": {
-						"type": "string"
-					}
-				},
-				"providers": {
-					"type": "array",
-					"items": {
-						"type": "string"
-					}
-				},
-				"aliases": {
-					"type": "object",
-					"patternProperties": {
-						"^.*$": {
-							"type": "string"
-						}
-					}
-				},
-				"aceProviders": {
-					"type": "array",
-					"items": {
-						"type": "string"
-					}
-				}
-			}
-		}
-	}
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "adonisjs": {
+      "description": "Define instructions to configure an AdonisJS package",
+      "type": "object",
+      "properties": {
+        "instructions": {
+          "type": "string",
+          "description": "Define a custom instructions file"
+        },
+        "instructionsMd": {
+          "type": "string",
+          "description": "Define path to a readme file to open after running the package instructions"
+        },
+        "templates": {
+          "type": "object",
+          "properties": {
+            "basePath": {
+              "type": "string",
+              "description": "The base path for reading the templates"
+            }
+          },
+          "patternProperties": {
+            "^.*$": {
+              "type": "array",
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "src": {
+                        "type": "string"
+                      },
+                      "dest": {
+                        "type": "string"
+                      },
+                      "data": {
+                        "type": "object"
+                      },
+                      "mustache": {
+                        "type": "boolean"
+                      }
+                    },
+                    "required": ["src", "dest"]
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "env": {
+          "type": "object",
+          "patternProperties": {
+            "^.*$": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "number"
+                }
+              ]
+            }
+          }
+        },
+        "preloads": {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "file": { "type": "string" },
+                  "environment": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "enum": ["web", "console", "test", "repl"]
+                    }
+                  },
+                  "optional": {
+                    "type": "boolean"
+                  }
+                },
+                "required": ["file"],
+                "additionalProperties": false
+              }
+            ]
+          }
+        },
+        "metaFiles": {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "pattern": { "type": "string" },
+                  "reloadServer": { "type": "boolean" }
+                },
+                "required": ["pattern"]
+              }
+            ]
+          }
+        },
+        "types": {
+          "type": "string"
+        },
+        "commands": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "providers": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "aliases": {
+          "type": "object",
+          "patternProperties": {
+            "^.*$": {
+              "type": "string"
+            }
+          }
+        },
+        "aceProviders": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
 }

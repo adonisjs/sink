@@ -21,13 +21,13 @@ import { KeyValuePair } from '../Base/KeyValuePair'
  * ```
  */
 export class JsonFile extends KeyValuePair {
-	public filePointer: ReturnType<typeof json>
+  public filePointer: ReturnType<typeof json>
 
-	constructor(basePath: string, filename: string) {
-		super(basePath)
+  constructor(basePath: string, filename: string) {
+    super(basePath)
 
-		this.cdIn()
-		this.filePointer = json(filename)
-		this.cdOut()
-	}
+    this.cdIn()
+    this.filePointer = json(filename)
+    this.cdOut()
+  }
 }
