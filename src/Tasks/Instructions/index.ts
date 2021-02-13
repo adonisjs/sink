@@ -8,7 +8,8 @@
  */
 
 import { dirname, join } from 'path'
-import { esmRequire, resolveFrom } from '@poppinss/utils'
+import { esmRequire } from '@poppinss/utils'
+import { resolveFrom } from '@poppinss/utils/build/helpers'
 import { ApplicationContract } from '@ioc:Adonis/Core/Application'
 
 import * as sink from '../../../index'
