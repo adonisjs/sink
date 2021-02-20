@@ -31,8 +31,8 @@ export class EnvFile {
       return this
     }
 
-    this.envContents.add(`${key}=${value}`)
-    this.exampleEnvContents.add(`${key}=`)
+    this.envContents.add(newText)
+    this.exampleEnvContents.add(newText)
     return this
   }
 
