@@ -4,5 +4,5 @@
     "resolveJsonModule": true,
     "forceConsistentCasingInFileNames": true
   },
-  "files": ["./node_modules/@adonisjs/application/build/adonis-typings/application.d.ts"]
+  "files": ["./node_modules/@adonisjs/application/build/adonis-typings/index.d.ts"]
 }
