@@ -6,4 +6,3 @@ out
 .nyc_output
 yarn.lock
 shrinkwrap.yaml
-package-lock.json
