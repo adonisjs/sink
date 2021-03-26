@@ -150,8 +150,8 @@ resolver.for('httpControllers').resolveFunc('HomeController.render')
 // returns { instance: HomeController, isClosure: false, method: render }
 ```
 
-[npm-image]: https://img.shields.io/npm/v/adonis-sink/legacy.svg?style=for-the-badge
-[npm-url]: https://npmjs.org/package/adonis-sink
+[npm-image]: https://img.shields.io/npm/v/@adonisjs/sink/legacy.svg?style=for-the-badge
+[npm-url]: https://npmjs.org/package/@adonisjs/sink
 
 [circleci-image]: https://img.shields.io/circleci/project/github/adonisjs/sink/legacy.svg?style=for-the-badge&logo=circleci
 [circleci-url]: https://circleci.com/gh/adonisjs/sink "circleci"
