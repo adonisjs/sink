@@ -1,3 +1,7 @@
+# [1.1.0](https://github.com/adonisjs/adonis-sink/compare/1.0.17...1.1.0) (2021-03-26)
+
+
+
 <a name="1.0.17"></a>
 ## [1.0.17](https://github.com/adonisjs/adonis-sink/compare/v1.0.16...v1.0.17) (2018-09-23)
 
