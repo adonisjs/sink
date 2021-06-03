@@ -40,8 +40,6 @@
     "@types/marked": "^2.0.3",
     "@types/node": "^15.9.0",
     "@types/yaml": "^1.9.7",
-    "commitizen": "^4.2.4",
-    "cz-conventional-changelog": "^3.3.0",
     "del-cli": "^3.0.1",
     "endent": "^2.0.1",
     "eslint": "^7.27.0",
@@ -65,11 +63,6 @@
     "extension": [
       ".ts"
     ]
-  },
-  "husky": {
-    "hooks": {
-      "commit-msg": "node ./node_modules/@adonisjs/mrm-preset/validateCommit/conventional/validate.js"
-    }
   },
   "config": {
     "commitizen": {
@@ -107,7 +100,7 @@
     "tag": "latest"
   },
   "np": {
-    "contents": "./build",
+    "contents": ".",
     "anyBranch": false
   }
 }
