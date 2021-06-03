@@ -100,7 +100,7 @@
     "tag": "latest"
   },
   "np": {
-    "contents": ".",
+    "contents": "./build",
     "anyBranch": false
   }
 }
