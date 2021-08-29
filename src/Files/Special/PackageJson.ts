@@ -7,8 +7,8 @@
  * file that was distributed with this source code.
  */
 
+import { packageJson, install, uninstall, NpmOptions } from 'mrm-core'
 import { spawnSync, SpawnSyncReturns, StdioOptions, spawn } from 'child_process'
-import { packageJson, install, uninstall } from 'mrm-core'
 import { File } from '../Base/File'
 
 type InstallerFns = 'install' | 'uninstall'
@@ -127,7 +127,7 @@ export class PackageJsonFile extends File {
 
         const runner = spawn(command, args, { stdio: 'pipe' })
         response = {
-          pid: runner.pid,
+          pid: runner.pid!,
           output: [],
           stdout: Buffer.from(''),
           stderr: Buffer.from(''),

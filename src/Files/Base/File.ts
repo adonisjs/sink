@@ -12,7 +12,7 @@
  * the application base directory.
  */
 export abstract class File {
-  protected abstract actions: { action: string; body?: any }[] = []
+  protected abstract actions: { action: string; body?: any }[]
 
   /**
    * The user current working directory reference. This is maintained, since

@@ -7,6 +7,7 @@
  * file that was distributed with this source code.
  */
 
+import { PackageJson } from 'mrm-core'
 import { AppEnvironments } from '@ioc:Adonis/Core/Application'
 
 /**
