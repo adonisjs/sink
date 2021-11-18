@@ -43,7 +43,7 @@ export class PackageJsonFile extends File {
   /**
    * Explicitly force to use another client instead of npm
    */
-  private specificPackageManager: SupportedPackageManager
+  private packageManager: SupportedPackageManager
 
   /**
    * Method invoked before installing dependencies
@@ -77,9 +77,9 @@ export class PackageJsonFile extends File {
    * Sets installation client
    */
   private setClient(options: NpmOptions) {
-    if (this.specificPackageManager === 'yarn') {
+    if (this.packageManager === 'yarn') {
       options.yarn = true
-    } else if (this.specificPackageManager === 'pnpm') {
+    } else if (this.packageManager === 'pnpm') {
       options.pnpm = true
     }
   }
@@ -315,7 +315,7 @@ export class PackageJsonFile extends File {
    * Set a specific client to be used
    */
   public useClient(client: SupportedPackageManager): this {
-    this.specificPackageManager = client
+    this.packageManager = client
     return this
   }
 
