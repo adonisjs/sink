@@ -320,6 +320,15 @@ export class PackageJsonFile extends File {
   }
 
   /**
+   * Enable/disable use of yarn
+   * @deprecated The "yarn" method is deprecated. Please use "useClient('yarn')" instead.
+   */
+  public yarn(_useYarn: boolean): this {
+    this.packageManager = 'yarn'
+    return this
+  }
+
+  /**
    * Unset key/value pair from the package.json file
    */
   public unset(key: string): this {
