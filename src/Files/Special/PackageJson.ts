@@ -14,6 +14,7 @@ import { File } from '../Base/File'
 type InstallerFns = 'install' | 'uninstall'
 type InstallerNotifier = (list: string[], dev: boolean) => void
 type Dependencies = { list: string[]; versions?: any; dev: boolean }
+type SupportedPackageManager = 'yarn' | 'pnpm' | 'npm'
 
 /**
  * Exposes the API to work with `package.json` file. The file is
@@ -40,9 +41,9 @@ export class PackageJsonFile extends File {
   }
 
   /**
-   * Explicitly force to use yarn instead of npm
+   * Explicitly force to use another client instead of npm
    */
-  private useYarn: boolean | null = null
+  private packageManager: SupportedPackageManager
 
   /**
    * Method invoked before installing dependencies
@@ -76,8 +77,10 @@ export class PackageJsonFile extends File {
    * Sets installation client
    */
   private setClient(options: NpmOptions) {
-    if (this.useYarn !== null) {
-      options.yarn = this.useYarn
+    if (this.packageManager === 'yarn') {
+      options.yarn = true
+    } else if (this.packageManager === 'pnpm') {
+      options.pnpm = true
     }
   }
 
@@ -309,10 +312,19 @@ export class PackageJsonFile extends File {
   }
 
   /**
-   * Enable/disable use of yarn
+   * Set a specific client to be used
    */
-  public yarn(useYarn: boolean): this {
-    this.useYarn = useYarn
+  public useClient(client: SupportedPackageManager): this {
+    this.packageManager = client
+    return this
+  }
+
+  /**
+   * Enable/disable use of yarn
+   * @deprecated The "yarn" method is deprecated. Please use "useClient('yarn')" instead.
+   */
+  public yarn(_useYarn: boolean): this {
+    this.packageManager = 'yarn'
     return this
   }
 
