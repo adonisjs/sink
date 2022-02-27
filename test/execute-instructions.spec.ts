@@ -7,7 +7,7 @@
  * file that was distributed with this source code.
  */
 
-import test from 'japa'
+import { test } from '@japa/runner'
 import { join } from 'path'
 import { Filesystem } from '@poppinss/dev-utils'
 import { Application } from '@adonisjs/application'
@@ -17,15 +17,15 @@ import { Instructions } from '../src/Tasks/Instructions'
 const fs = new Filesystem(join(__dirname, '__app'))
 
 test.group('Execute instructions', (group) => {
-  group.afterEach(async () => {
+  group.each.teardown(async () => {
     await fs.cleanup()
   })
 
-  group.beforeEach(async () => {
+  group.each.setup(async () => {
     await fs.ensureRoot()
   })
 
-  test('ignore when package.json doesnt give adonisjs instructions field', async (assert) => {
+  test('ignore when package.json doesnt give adonisjs instructions field', async ({ assert }) => {
     await fs.add(
       'package.json',
       JSON.stringify({
@@ -49,7 +49,7 @@ test.group('Execute instructions', (group) => {
     assert.isTrue(completed)
   })
 
-  test('raise error when instructions file is missing', async (assert) => {
+  test('raise error when instructions file is missing', async ({ assert }) => {
     assert.plan(1)
 
     await fs.add(
@@ -82,7 +82,7 @@ test.group('Execute instructions', (group) => {
     }
   })
 
-  test('execute instructions when defined', async (assert) => {
+  test('execute instructions when defined', async ({ assert }) => {
     await fs.add(
       'package.json',
       JSON.stringify({
@@ -115,7 +115,7 @@ test.group('Execute instructions', (group) => {
     assert.isTrue(completed)
   })
 
-  test('execute instructions with esm default export', async (assert) => {
+  test('execute instructions with esm default export', async ({ assert }) => {
     await fs.add(
       'package.json',
       JSON.stringify({
@@ -150,7 +150,7 @@ test.group('Execute instructions', (group) => {
     assert.isTrue(completed)
   })
 
-  test('execute instructions set env variables in .env file', async (assert) => {
+  test('execute instructions set env variables in .env file', async ({ assert }) => {
     await fs.add(
       'package.json',
       JSON.stringify({
@@ -182,7 +182,7 @@ test.group('Execute instructions', (group) => {
     assert.deepEqual(envContents.trim(), 'PORT=3333')
   })
 
-  test.skipInCI('execute instructions open instructions md file', async (assert) => {
+  test('execute instructions open instructions md file', async ({ assert }) => {
     await fs.add(
       'package.json',
       JSON.stringify({
@@ -211,9 +211,9 @@ test.group('Execute instructions', (group) => {
       .setDisplay('browser')
       .execute()
     assert.isTrue(completed)
-  })
+  }).skip(!!process.env.CI)
 
-  test.skipInCI('execute instructions display instructions md in browser', async (assert) => {
+  test('execute instructions display instructions md in browser', async ({ assert }) => {
     await fs.add(
       'package.json',
       JSON.stringify({
@@ -243,9 +243,9 @@ test.group('Execute instructions', (group) => {
       .execute()
 
     assert.isTrue(completed)
-  })
+  }).skip(!!process.env.CI)
 
-  test('execute instructions copy templates', async (assert) => {
+  test('execute instructions copy templates', async ({ assert }) => {
     await fs.add(
       'package.json',
       JSON.stringify({
@@ -283,7 +283,7 @@ test.group('Execute instructions', (group) => {
     assert.deepEqual(configContents.trim(), 'export const config = { app: true }')
   })
 
-  test('define commands inside .adonisrc.json file', async (assert) => {
+  test('define commands inside .adonisrc.json file', async ({ assert }) => {
     await fs.add(
       'node_modules/@fake/app/package.json',
       JSON.stringify({
@@ -305,7 +305,7 @@ test.group('Execute instructions', (group) => {
     })
   })
 
-  test('define types inside tsconfig.json file', async (assert) => {
+  test('define types inside tsconfig.json file', async ({ assert }) => {
     await fs.add(
       'node_modules/@fake/app/package.json',
       JSON.stringify({
@@ -329,7 +329,7 @@ test.group('Execute instructions', (group) => {
     })
   })
 
-  test('define providers inside .adonisrc.json file', async (assert) => {
+  test('define providers inside .adonisrc.json file', async ({ assert }) => {
     await fs.add(
       'node_modules/@fake/app/package.json',
       JSON.stringify({
@@ -351,7 +351,7 @@ test.group('Execute instructions', (group) => {
     })
   })
 
-  test('define aliases inside .adonisrc.json and tsconfig.json file', async (assert) => {
+  test('define aliases inside .adonisrc.json and tsconfig.json file', async ({ assert }) => {
     await fs.add(
       'node_modules/@fake/app/package.json',
       JSON.stringify({
@@ -387,7 +387,7 @@ test.group('Execute instructions', (group) => {
     })
   })
 
-  test('define metaFiles inside .adonisrc.json', async (assert) => {
+  test('define metaFiles inside .adonisrc.json', async ({ assert }) => {
     await fs.add(
       'node_modules/@fake/app/package.json',
       JSON.stringify({
@@ -416,7 +416,7 @@ test.group('Execute instructions', (group) => {
     })
   })
 
-  test('define preloads inside .adonisrc.json', async (assert) => {
+  test('define preloads inside .adonisrc.json', async ({ assert }) => {
     await fs.add(
       'node_modules/@fake/app/package.json',
       JSON.stringify({

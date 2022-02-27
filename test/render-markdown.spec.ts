@@ -7,7 +7,7 @@
  * file that was distributed with this source code.
  */
 
-import test from 'japa'
+import { test } from '@japa/runner'
 import { join } from 'path'
 import { Filesystem } from '@poppinss/dev-utils'
 import { MarkdownRenderer } from '../src/Tasks/MarkdownRenderer'
@@ -15,11 +15,11 @@ import { MarkdownRenderer } from '../src/Tasks/MarkdownRenderer'
 const fs = new Filesystem(join(__dirname, '__app'))
 
 test.group('Render markdown', (group) => {
-  group.afterEach(async () => {
+  group.each.teardown(async () => {
     await fs.cleanup()
   })
 
-  group.beforeEach(async () => {
+  group.each.setup(async () => {
     await fs.ensureRoot()
   })
 
@@ -27,13 +27,13 @@ test.group('Render markdown', (group) => {
    * Skipping the tests in CI, since there is no way to automatically
    * test that everything is working fine without manual verification
    */
-  test.skipInCI('render markdown file by opening it in the browser', async () => {
+  test('render markdown file by opening it in the browser', async () => {
     await fs.add('foo.md', '## Hello world')
     await new MarkdownRenderer(join(fs.basePath, 'foo.md'), '@adonisjs/core').renderInBrowser()
-  })
+  }).skip(!!process.env.CI)
 
-  test.skipInCI('render markdown file by rendering it inside terminal', async () => {
+  test('render markdown file by rendering it inside terminal', async () => {
     await fs.add('foo.md', '## Hello world')
     await new MarkdownRenderer(join(fs.basePath, 'foo.md'), '@adonisjs/core').renderInTerminal()
-  })
+  }).skip(!!process.env.CI)
 })

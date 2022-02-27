@@ -7,7 +7,7 @@
  * file that was distributed with this source code.
  */
 
-import test from 'japa'
+import { test } from '@japa/runner'
 import { join } from 'path'
 import { Filesystem } from '@poppinss/dev-utils'
 
@@ -15,11 +15,11 @@ import { copyFiles } from '../src/Utils/copyFiles'
 const fs = new Filesystem(join(__dirname, '__app'))
 
 test.group('Copy files', (group) => {
-  group.afterEach(async () => {
+  group.each.teardown(async () => {
     await fs.cleanup()
   })
 
-  test('copy files from source to destination', async (assert) => {
+  test('copy files from source to destination', async ({ assert }) => {
     await fs.add('foo.txt', 'hello world')
     await fs.add('bar.txt', 'hi world')
 
@@ -45,7 +45,7 @@ test.group('Copy files', (group) => {
     assert.equal(barContents, 'hi world')
   })
 
-  test('do not overwrite file when file already exists', async (assert) => {
+  test('do not overwrite file when file already exists', async ({ assert }) => {
     await fs.add('foo.txt', 'hello world')
     await fs.add('bar.txt', 'hi world')
     await fs.add('project/foo/foo.txt', 'hey world')
@@ -72,7 +72,7 @@ test.group('Copy files', (group) => {
     assert.equal(barContents, 'hi world')
   })
 
-  test('overwrite file when overwrite flag is set to true', async (assert) => {
+  test('overwrite file when overwrite flag is set to true', async ({ assert }) => {
     await fs.add('foo.txt', 'hello world')
     await fs.add('bar.txt', 'hi world')
     await fs.add('project/foo/foo.txt', 'hey world')
@@ -103,7 +103,7 @@ test.group('Copy files', (group) => {
     assert.equal(barContents, 'hi world')
   })
 
-  test('copy images', async (assert) => {
+  test('copy images', async ({ assert }) => {
     copyFiles(__dirname, join(fs.basePath, 'project', 'foo'), ['unicorn.jpg'])
 
     const exists = await fs.fsExtra.pathExists(join(fs.basePath, 'project/foo/unicorn.jpg'))

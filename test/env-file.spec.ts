@@ -7,7 +7,7 @@
  * file that was distributed with this source code.
  */
 
-import test from 'japa'
+import { test } from '@japa/runner'
 import { EnvFile } from '../src/Files/Special/Env'
 import { Filesystem } from '@poppinss/dev-utils'
 import { join } from 'path'
@@ -15,15 +15,15 @@ import { join } from 'path'
 const fs = new Filesystem(join(__dirname, '__app'))
 
 test.group('EnvFile', (group) => {
-  group.afterEach(async () => {
+  group.each.teardown(async () => {
     await fs.cleanup()
   })
 
-  group.beforeEach(async () => {
+  group.each.setup(async () => {
     await fs.ensureRoot()
   })
 
-  test('create .env and .env.example file', async (assert) => {
+  test('create .env and .env.example file', async ({ assert }) => {
     const envFile = new EnvFile(fs.basePath)
     envFile.set('APP_KEY', 'foo-bar')
     envFile.commit()
@@ -34,7 +34,7 @@ test.group('EnvFile', (group) => {
     assert.deepEqual(exampleFileContents.trim(), 'APP_KEY=foo-bar')
   })
 
-  test('write subsitution variables inside .env file', async (assert) => {
+  test('write subsitution variables inside .env file', async ({ assert }) => {
     const envFile = new EnvFile(fs.basePath)
     envFile.set('URL', '$HOST:$PORT')
     envFile.set('PASSWORD', 'pa\\$\\$word')
@@ -50,7 +50,7 @@ test.group('EnvFile', (group) => {
     )
   })
 
-  test('update existing key value', async (assert) => {
+  test('update existing key value', async ({ assert }) => {
     await fs.add('.env', 'APP_KEY=foo-bar')
     await fs.add('.env.example', 'APP_KEY=foo-bar')
 
@@ -65,7 +65,7 @@ test.group('EnvFile', (group) => {
     assert.deepEqual(exampleFileContents.trim(), 'APP_KEY=foo-bar')
   })
 
-  test('remove existing key', async (assert) => {
+  test('remove existing key', async ({ assert }) => {
     await fs.add('.env', 'APP_KEY=foo-bar')
     await fs.add('.env.example', 'APP_KEY=foo-bar')
 
@@ -80,7 +80,7 @@ test.group('EnvFile', (group) => {
     assert.deepEqual(exampleFileContents.trim(), '')
   })
 
-  test('remove line to rollback', async (assert) => {
+  test('remove line to rollback', async ({ assert }) => {
     await fs.add('.env', 'APP_KEY=foo-bar')
     await fs.add('.env.example', 'APP_KEY=foo-bar')
 
@@ -95,7 +95,7 @@ test.group('EnvFile', (group) => {
     assert.deepEqual(exampleFileContents.trim(), '')
   })
 
-  test('do not touch destructive commits on rollbacks', async (assert) => {
+  test('do not touch destructive commits on rollbacks', async ({ assert }) => {
     await fs.add('.env', 'APP_KEY=foo')
     await fs.add('.env.example', 'APP_KEY=foo')
 
@@ -110,7 +110,7 @@ test.group('EnvFile', (group) => {
     assert.deepEqual(exampleFileContents.trim(), 'APP_KEY=foo')
   })
 
-  test('get file contents', async (assert) => {
+  test('get file contents', async ({ assert }) => {
     await fs.add('.env', 'APP_KEY=foo')
     await fs.add('.env.example', 'APP_KEY=foo')
 

@@ -7,7 +7,7 @@
  * file that was distributed with this source code.
  */
 
-import test from 'japa'
+import { test } from '@japa/runner'
 import { join } from 'path'
 import { Filesystem } from '@poppinss/dev-utils'
 import { TemplateLiteralFile } from '../src/Files/Formats/TemplateLiteral'
@@ -15,15 +15,15 @@ import { TemplateLiteralFile } from '../src/Files/Formats/TemplateLiteral'
 const fs = new Filesystem(join(__dirname, '__app'))
 
 test.group('Template file', (group) => {
-  group.afterEach(async () => {
+  group.each.teardown(async () => {
     await fs.cleanup()
   })
 
-  group.beforeEach(async () => {
+  group.each.setup(async () => {
     await fs.ensureRoot()
   })
 
-  test('create template file', async (assert) => {
+  test('create template file', async ({ assert }) => {
     await fs.add('template.txt', 'hello world')
 
     const file = new TemplateLiteralFile(fs.basePath, 'foo.txt', join(fs.basePath, 'template.txt'))
@@ -33,7 +33,7 @@ test.group('Template file', (group) => {
     assert.equal(contents.trim(), 'hello world')
   })
 
-  test('do not modify template file when it already exists', async (assert) => {
+  test('do not modify template file when it already exists', async ({ assert }) => {
     await fs.add('template.txt', 'hello world')
     await fs.add('foo.txt', 'hi world')
 
@@ -44,7 +44,7 @@ test.group('Template file', (group) => {
     assert.equal(contents.trim(), 'hi world')
   })
 
-  test('modify template file when overwrite is true', async (assert) => {
+  test('modify template file when overwrite is true', async ({ assert }) => {
     await fs.add('template.txt', 'hello world')
     await fs.add('foo.txt', 'hi world')
 
@@ -56,7 +56,7 @@ test.group('Template file', (group) => {
     assert.equal(contents.trim(), 'hello world')
   })
 
-  test('remove file on rollback', async (assert) => {
+  test('remove file on rollback', async ({ assert }) => {
     await fs.add('template.txt', 'hello world')
     await fs.add('foo.txt', 'hi world')
 
@@ -67,7 +67,7 @@ test.group('Template file', (group) => {
     assert.isFalse(hasFile)
   })
 
-  test('do not remove file on rollback when removeOnRollback=false', async (assert) => {
+  test('do not remove file on rollback when removeOnRollback=false', async ({ assert }) => {
     await fs.add('template.txt', 'hello world')
     await fs.add('foo.txt', 'hi world')
 

@@ -7,7 +7,7 @@
  * file that was distributed with this source code.
  */
 
-import test from 'japa'
+import { test } from '@japa/runner'
 import { join } from 'path'
 import { Filesystem } from '@poppinss/dev-utils'
 
@@ -16,15 +16,15 @@ import { AdonisRcFile } from '../src/Files/Special/AdonisRc'
 const fs = new Filesystem(join(__dirname, '__app'))
 
 test.group('AdonisRc file', (group) => {
-  group.afterEach(async () => {
+  group.each.teardown(async () => {
     await fs.cleanup()
   })
 
-  group.beforeEach(async () => {
+  group.each.setup(async () => {
     await fs.ensureRoot()
   })
 
-  test('create adonisrc file when missing', async (assert) => {
+  test('create adonisrc file when missing', async ({ assert }) => {
     const rcfile = new AdonisRcFile(fs.basePath)
     rcfile.set('name', 'foo-app')
     rcfile.commit()
@@ -33,7 +33,7 @@ test.group('AdonisRc file', (group) => {
     assert.deepEqual(JSON.parse(contents), { name: 'foo-app' })
   })
 
-  test('set exception handler', async (assert) => {
+  test('set exception handler', async ({ assert }) => {
     const rcfile = new AdonisRcFile(fs.basePath)
     rcfile.setExceptionHandler('App/Exceptions/Handler')
     rcfile.commit()
@@ -42,7 +42,7 @@ test.group('AdonisRc file', (group) => {
     assert.deepEqual(JSON.parse(contents), { exceptionHandlerNamespace: 'App/Exceptions/Handler' })
   })
 
-  test('remove handler namespace on rollback', async (assert) => {
+  test('remove handler namespace on rollback', async ({ assert }) => {
     await fs.add(
       '.adonisrc.json',
       JSON.stringify({
@@ -58,7 +58,7 @@ test.group('AdonisRc file', (group) => {
     assert.deepEqual(JSON.parse(contents), {})
   })
 
-  test('set preloads', async (assert) => {
+  test('set preloads', async ({ assert }) => {
     const rcfile = new AdonisRcFile(fs.basePath)
     rcfile.setPreload('start/routes')
     rcfile.commit()
@@ -69,7 +69,7 @@ test.group('AdonisRc file', (group) => {
     })
   })
 
-  test('set mulitple preloads', async (assert) => {
+  test('set mulitple preloads', async ({ assert }) => {
     const rcfile = new AdonisRcFile(fs.basePath)
     rcfile.setPreload('start/routes')
     rcfile.setPreload('start/kernel')
@@ -81,7 +81,7 @@ test.group('AdonisRc file', (group) => {
     })
   })
 
-  test('append to preloads when already exists', async (assert) => {
+  test('append to preloads when already exists', async ({ assert }) => {
     await fs.add(
       '.adonisrc.json',
       JSON.stringify({
@@ -103,7 +103,7 @@ test.group('AdonisRc file', (group) => {
     })
   })
 
-  test('edit existing preload file when filePath are same', async (assert) => {
+  test('edit existing preload file when filePath are same', async ({ assert }) => {
     await fs.add(
       '.adonisrc.json',
       JSON.stringify({
@@ -126,7 +126,7 @@ test.group('AdonisRc file', (group) => {
     })
   })
 
-  test('edit existing preload by adding new properties', async (assert) => {
+  test('edit existing preload by adding new properties', async ({ assert }) => {
     await fs.add(
       '.adonisrc.json',
       JSON.stringify({
@@ -154,7 +154,7 @@ test.group('AdonisRc file', (group) => {
     })
   })
 
-  test('do not set environment when defined as empty array', async (assert) => {
+  test('do not set environment when defined as empty array', async ({ assert }) => {
     const rcfile = new AdonisRcFile(fs.basePath)
     rcfile.setPreload('start/kernel', [])
     rcfile.commit()
@@ -165,7 +165,7 @@ test.group('AdonisRc file', (group) => {
     })
   })
 
-  test('remove environment when preloads edit', async (assert) => {
+  test('remove environment when preloads edit', async ({ assert }) => {
     await fs.add(
       '.adonisrc.json',
       JSON.stringify({
@@ -188,7 +188,7 @@ test.group('AdonisRc file', (group) => {
     })
   })
 
-  test('remove preload on rollback', async (assert) => {
+  test('remove preload on rollback', async ({ assert }) => {
     await fs.add(
       '.adonisrc.json',
       JSON.stringify(
@@ -221,7 +221,7 @@ test.group('AdonisRc file', (group) => {
     })
   })
 
-  test('set autoload path', async (assert) => {
+  test('set autoload path', async ({ assert }) => {
     const rcfile = new AdonisRcFile(fs.basePath)
     rcfile.setAlias('App', 'app')
     rcfile.commit()
@@ -234,7 +234,7 @@ test.group('AdonisRc file', (group) => {
     })
   })
 
-  test('update existing autoload path', async (assert) => {
+  test('update existing autoload path', async ({ assert }) => {
     await fs.add(
       '.adonisrc.json',
       JSON.stringify(
@@ -260,7 +260,7 @@ test.group('AdonisRc file', (group) => {
     })
   })
 
-  test('remove existing autoload path on rollback', async (assert) => {
+  test('remove existing autoload path on rollback', async ({ assert }) => {
     await fs.add(
       '.adonisrc.json',
       JSON.stringify(
@@ -284,7 +284,7 @@ test.group('AdonisRc file', (group) => {
     })
   })
 
-  test('set custom directory', async (assert) => {
+  test('set custom directory', async ({ assert }) => {
     const rcfile = new AdonisRcFile(fs.basePath)
     rcfile.setDirectory('config', 'config')
     rcfile.commit()
@@ -297,7 +297,7 @@ test.group('AdonisRc file', (group) => {
     })
   })
 
-  test('update existing directory path', async (assert) => {
+  test('update existing directory path', async ({ assert }) => {
     await fs.add(
       '.adonisrc.json',
       JSON.stringify(
@@ -323,7 +323,7 @@ test.group('AdonisRc file', (group) => {
     })
   })
 
-  test('remove existing directory path on rollback', async (assert) => {
+  test('remove existing directory path on rollback', async ({ assert }) => {
     await fs.add(
       '.adonisrc.json',
       JSON.stringify(
@@ -350,7 +350,7 @@ test.group('AdonisRc file', (group) => {
     })
   })
 
-  test('add file to metaFiles array', async (assert) => {
+  test('add file to metaFiles array', async ({ assert }) => {
     const rcfile = new AdonisRcFile(fs.basePath)
     rcfile.addMetaFile('.env')
     rcfile.commit()
@@ -361,7 +361,7 @@ test.group('AdonisRc file', (group) => {
     })
   })
 
-  test('add multiple files to metaFiles array', async (assert) => {
+  test('add multiple files to metaFiles array', async ({ assert }) => {
     const rcfile = new AdonisRcFile(fs.basePath)
     rcfile.addMetaFile('.env')
     rcfile.addMetaFile('.gitignore')
@@ -373,7 +373,7 @@ test.group('AdonisRc file', (group) => {
     })
   })
 
-  test('update file inside metaFiles array', async (assert) => {
+  test('update file inside metaFiles array', async ({ assert }) => {
     await fs.add(
       '.adonisrc.json',
       JSON.stringify(
@@ -395,7 +395,7 @@ test.group('AdonisRc file', (group) => {
     })
   })
 
-  test('update file inside metaFiles array by adding new file', async (assert) => {
+  test('update file inside metaFiles array by adding new file', async ({ assert }) => {
     await fs.add(
       '.adonisrc.json',
       JSON.stringify(
@@ -417,7 +417,7 @@ test.group('AdonisRc file', (group) => {
     })
   })
 
-  test('remove file from metaFiles array on rollback', async (assert) => {
+  test('remove file from metaFiles array on rollback', async ({ assert }) => {
     await fs.add(
       '.adonisrc.json',
       JSON.stringify(
@@ -439,7 +439,7 @@ test.group('AdonisRc file', (group) => {
     })
   })
 
-  test('add meta file with explicit reloadServer property', async (assert) => {
+  test('add meta file with explicit reloadServer property', async ({ assert }) => {
     const rcfile = new AdonisRcFile(fs.basePath)
     rcfile.addMetaFile('.adonisrc.json', false)
     rcfile.commit()
@@ -450,7 +450,7 @@ test.group('AdonisRc file', (group) => {
     })
   })
 
-  test('set reloadServer property to false', async (assert) => {
+  test('set reloadServer property to false', async ({ assert }) => {
     await fs.add(
       '.adonisrc.json',
       JSON.stringify(
@@ -472,7 +472,7 @@ test.group('AdonisRc file', (group) => {
     })
   })
 
-  test('set reloadServer property to true', async (assert) => {
+  test('set reloadServer property to true', async ({ assert }) => {
     await fs.add(
       '.adonisrc.json',
       JSON.stringify(
@@ -494,7 +494,7 @@ test.group('AdonisRc file', (group) => {
     })
   })
 
-  test('add command apth to commands array', async (assert) => {
+  test('add command apth to commands array', async ({ assert }) => {
     const rcfile = new AdonisRcFile(fs.basePath)
     rcfile.addCommand('./commands/Foo')
     rcfile.commit()
@@ -505,7 +505,7 @@ test.group('AdonisRc file', (group) => {
     })
   })
 
-  test('add multiple command paths to commands array', async (assert) => {
+  test('add multiple command paths to commands array', async ({ assert }) => {
     const rcfile = new AdonisRcFile(fs.basePath)
     rcfile.addCommand('./commands/Foo')
     rcfile.addCommand('./commands/Bar')
@@ -517,7 +517,7 @@ test.group('AdonisRc file', (group) => {
     })
   })
 
-  test('update command path inside commands array', async (assert) => {
+  test('update command path inside commands array', async ({ assert }) => {
     await fs.add(
       '.adonisrc.json',
       JSON.stringify(
@@ -539,7 +539,7 @@ test.group('AdonisRc file', (group) => {
     })
   })
 
-  test('update command path inside commands array by adding new command', async (assert) => {
+  test('update command path inside commands array by adding new command', async ({ assert }) => {
     await fs.add(
       '.adonisrc.json',
       JSON.stringify(
@@ -561,7 +561,7 @@ test.group('AdonisRc file', (group) => {
     })
   })
 
-  test('remove commands path from commands array on rollback', async (assert) => {
+  test('remove commands path from commands array on rollback', async ({ assert }) => {
     await fs.add(
       '.adonisrc.json',
       JSON.stringify(
@@ -583,7 +583,7 @@ test.group('AdonisRc file', (group) => {
     })
   })
 
-  test('add provider to providers array', async (assert) => {
+  test('add provider to providers array', async ({ assert }) => {
     const rcfile = new AdonisRcFile(fs.basePath)
     rcfile.addProvider('./providers/App')
     rcfile.commit()
@@ -594,7 +594,7 @@ test.group('AdonisRc file', (group) => {
     })
   })
 
-  test('add multiple providers to providers array', async (assert) => {
+  test('add multiple providers to providers array', async ({ assert }) => {
     const rcfile = new AdonisRcFile(fs.basePath)
     rcfile.addProvider('@adonisjs/core')
     rcfile.addProvider('@adonisjs/fold')
@@ -606,7 +606,7 @@ test.group('AdonisRc file', (group) => {
     })
   })
 
-  test('update provider path inside providers array', async (assert) => {
+  test('update provider path inside providers array', async ({ assert }) => {
     await fs.add(
       '.adonisrc.json',
       JSON.stringify(
@@ -628,7 +628,7 @@ test.group('AdonisRc file', (group) => {
     })
   })
 
-  test('update provider path inside providers array by adding new provider', async (assert) => {
+  test('update provider path inside providers array by adding new provider', async ({ assert }) => {
     await fs.add(
       '.adonisrc.json',
       JSON.stringify(
@@ -650,7 +650,7 @@ test.group('AdonisRc file', (group) => {
     })
   })
 
-  test('remove provider path from providers array on rollback', async (assert) => {
+  test('remove provider path from providers array on rollback', async ({ assert }) => {
     await fs.add(
       '.adonisrc.json',
       JSON.stringify(
@@ -672,7 +672,7 @@ test.group('AdonisRc file', (group) => {
     })
   })
 
-  test('add provider to ace providers array', async (assert) => {
+  test('add provider to ace providers array', async ({ assert }) => {
     const rcfile = new AdonisRcFile(fs.basePath)
     rcfile.addAceProvider('./providers/App')
     rcfile.commit()
@@ -683,7 +683,7 @@ test.group('AdonisRc file', (group) => {
     })
   })
 
-  test('add multiple providers to ace providers array', async (assert) => {
+  test('add multiple providers to ace providers array', async ({ assert }) => {
     const rcfile = new AdonisRcFile(fs.basePath)
     rcfile.addAceProvider('@adonisjs/core')
     rcfile.addAceProvider('@adonisjs/fold')
@@ -695,7 +695,7 @@ test.group('AdonisRc file', (group) => {
     })
   })
 
-  test('update provider path inside ace providers array', async (assert) => {
+  test('update provider path inside ace providers array', async ({ assert }) => {
     await fs.add(
       '.adonisrc.json',
       JSON.stringify(
@@ -717,7 +717,9 @@ test.group('AdonisRc file', (group) => {
     })
   })
 
-  test('update provider path inside ace providers array by adding new provider', async (assert) => {
+  test('update provider path inside ace providers array by adding new provider', async ({
+    assert,
+  }) => {
     await fs.add(
       '.adonisrc.json',
       JSON.stringify(
@@ -739,7 +741,7 @@ test.group('AdonisRc file', (group) => {
     })
   })
 
-  test('remove provider path from ace providers array on rollback', async (assert) => {
+  test('remove provider path from ace providers array on rollback', async ({ assert }) => {
     await fs.add(
       '.adonisrc.json',
       JSON.stringify(
