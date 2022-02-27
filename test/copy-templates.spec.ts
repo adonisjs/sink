@@ -7,7 +7,7 @@
  * file that was distributed with this source code.
  */
 
-import test from 'japa'
+import { test } from '@japa/runner'
 import { join } from 'path'
 import { Filesystem } from '@poppinss/dev-utils'
 import { Application } from '@adonisjs/application'
@@ -16,15 +16,15 @@ import { TemplatesManager } from '../src/Tasks/TemplatesManager'
 const fs = new Filesystem(join(__dirname, '__app'))
 
 test.group('Copy templates', (group) => {
-  group.afterEach(async () => {
+  group.each.teardown(async () => {
     await fs.cleanup()
   })
 
-  group.beforeEach(async () => {
+  group.each.setup(async () => {
     await fs.ensureRoot()
   })
 
-  test('copy templates to the destination path', async (assert) => {
+  test('copy templates to the destination path', async ({ assert }) => {
     await fs.add(
       'templates/config/app.txt',
       `
@@ -67,7 +67,7 @@ test.group('Copy templates', (group) => {
     })
   })
 
-  test('do not overwrite contents when file already exists', async (assert) => {
+  test('do not overwrite contents when file already exists', async ({ assert }) => {
     const application = new Application(fs.basePath, 'web', {
       directories: new Map([['config', 'config']]),
     })
@@ -112,7 +112,7 @@ test.group('Copy templates', (group) => {
     )
   })
 
-  test('copy templates with custom destination path', async (assert) => {
+  test('copy templates with custom destination path', async ({ assert }) => {
     await fs.add(
       'templates/config/app.txt',
       `
@@ -137,7 +137,7 @@ test.group('Copy templates', (group) => {
     )
   })
 
-  test('define custom destination paths without extension', async (assert) => {
+  test('define custom destination paths without extension', async ({ assert }) => {
     await fs.add(
       'templates/config/app.txt',
       `
@@ -162,7 +162,7 @@ test.group('Copy templates', (group) => {
     )
   })
 
-  test('copy templates use mustache templates', async (assert) => {
+  test('copy templates use mustache templates', async ({ assert }) => {
     await fs.add(
       'templates/config/app.txt',
       `
@@ -187,7 +187,7 @@ test.group('Copy templates', (group) => {
     )
   })
 
-  test('copy tests templates to the destination path', async (assert) => {
+  test('copy tests templates to the destination path', async ({ assert }) => {
     await fs.add(
       'templates/tests/bootstrap.txt',
       `
@@ -212,7 +212,7 @@ test.group('Copy templates', (group) => {
     )
   })
 
-  test('copy templates to the root of the app', async (assert) => {
+  test('copy templates to the root of the app', async ({ assert }) => {
     await fs.add(
       'templates/env.txt',
       `

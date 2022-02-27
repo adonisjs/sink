@@ -7,7 +7,7 @@
  * file that was distributed with this source code.
  */
 
-import test from 'japa'
+import { test } from '@japa/runner'
 import { join } from 'path'
 import { Filesystem } from '@poppinss/dev-utils'
 import { PackageJsonFile } from '../src/Files/Special/PackageJson'
@@ -15,15 +15,15 @@ import { PackageJsonFile } from '../src/Files/Special/PackageJson'
 const fs = new Filesystem(join(__dirname, '__app'))
 
 test.group('Package file', (group) => {
-  group.afterEach(async () => {
+  group.each.teardown(async () => {
     await fs.cleanup()
   })
 
-  group.beforeEach(async () => {
+  group.each.setup(async () => {
     await fs.ensureRoot()
   })
 
-  test('create package file when missing', async (assert) => {
+  test('create package file when missing', async ({ assert }) => {
     const pkg = new PackageJsonFile(fs.basePath)
     pkg.set('name', 'foo-app')
     pkg.commit()
@@ -32,7 +32,7 @@ test.group('Package file', (group) => {
     assert.deepEqual(JSON.parse(contents), { name: 'foo-app' })
   })
 
-  test('unset existing values when down is called', async (assert) => {
+  test('unset existing values when down is called', async ({ assert }) => {
     await fs.add('package.json', JSON.stringify({ name: 'foo' }))
 
     const pkg = new PackageJsonFile(fs.basePath)
@@ -43,7 +43,7 @@ test.group('Package file', (group) => {
     assert.deepEqual(JSON.parse(contents), {})
   })
 
-  test('add script', async (assert) => {
+  test('add script', async ({ assert }) => {
     const pkg = new PackageJsonFile(fs.basePath)
     pkg.setScript('test', 'japa')
     pkg.commit()
@@ -52,7 +52,7 @@ test.group('Package file', (group) => {
     assert.deepEqual(JSON.parse(contents), { scripts: { test: 'japa' } })
   })
 
-  test('remove added script on down', async (assert) => {
+  test('remove added script on down', async ({ assert }) => {
     await fs.add('package.json', JSON.stringify({ scripts: { test: 'japa' } }))
     const pkg = new PackageJsonFile(fs.basePath)
     pkg.setScript('test', 'japa')
@@ -62,7 +62,7 @@ test.group('Package file', (group) => {
     assert.deepEqual(JSON.parse(contents), { scripts: {} })
   })
 
-  test('append script', async (assert) => {
+  test('append script', async ({ assert }) => {
     await fs.add('package.json', JSON.stringify({ scripts: { test: 'japa' } }))
     const pkg = new PackageJsonFile(fs.basePath)
     pkg.appendScript('test', 'tsc')
@@ -72,7 +72,7 @@ test.group('Package file', (group) => {
     assert.deepEqual(JSON.parse(contents), { scripts: { test: 'japa && tsc' } })
   })
 
-  test('remove appended script on rollback', async (assert) => {
+  test('remove appended script on rollback', async ({ assert }) => {
     await fs.add('package.json', JSON.stringify({ scripts: { test: 'japa && tsc' } }))
     const pkg = new PackageJsonFile(fs.basePath)
     pkg.appendScript('test', 'tsc')
@@ -82,7 +82,7 @@ test.group('Package file', (group) => {
     assert.deepEqual(JSON.parse(contents), { scripts: { test: 'japa' } })
   })
 
-  test('prepend script', async (assert) => {
+  test('prepend script', async ({ assert }) => {
     await fs.add('package.json', JSON.stringify({ scripts: { test: 'japa' } }))
     const pkg = new PackageJsonFile(fs.basePath)
     pkg.prependScript('test', 'tsc')
@@ -92,7 +92,7 @@ test.group('Package file', (group) => {
     assert.deepEqual(JSON.parse(contents), { scripts: { test: 'tsc && japa' } })
   })
 
-  test('remove appended script on rollback', async (assert) => {
+  test('remove appended script on rollback', async ({ assert }) => {
     await fs.add('package.json', JSON.stringify({ scripts: { test: 'tsc && japa' } }))
     const pkg = new PackageJsonFile(fs.basePath)
     pkg.prependScript('test', 'tsc')
@@ -102,7 +102,7 @@ test.group('Package file', (group) => {
     assert.deepEqual(JSON.parse(contents), { scripts: { test: 'japa' } })
   })
 
-  test('install dev dependency', async (assert) => {
+  test('install dev dependency', async ({ assert }) => {
     await fs.add('package.json', JSON.stringify({ name: 'foo' }))
     const pkg = new PackageJsonFile(fs.basePath)
     pkg.install('lodash')
@@ -112,7 +112,7 @@ test.group('Package file', (group) => {
     assert.property(JSON.parse(contents).devDependencies, 'lodash')
   }).timeout(0)
 
-  test('uninstall dev dependency on rollback', async (assert) => {
+  test('uninstall dev dependency on rollback', async ({ assert }) => {
     await fs.add('package.json', JSON.stringify({ name: 'foo', devDependencies: { lodash: '*' } }))
     const pkg = new PackageJsonFile(fs.basePath)
     pkg.install('lodash')
@@ -124,7 +124,7 @@ test.group('Package file', (group) => {
     assert.deepEqual(pkgContents, { name: 'foo', devDependencies: {} })
   }).timeout(0)
 
-  test('uninstall dependency', async (assert) => {
+  test('uninstall dependency', async ({ assert }) => {
     await fs.add('package.json', JSON.stringify({ name: 'foo', devDependencies: { lodash: '*' } }))
     const pkg = new PackageJsonFile(fs.basePath)
     pkg.uninstall('lodash')
@@ -136,7 +136,7 @@ test.group('Package file', (group) => {
     assert.deepEqual(pkgContents, { name: 'foo', devDependencies: {} })
   }).timeout(0)
 
-  test('do not install removed dependency on rollback', async (assert) => {
+  test('do not install removed dependency on rollback', async ({ assert }) => {
     await fs.add('package.json', JSON.stringify({ name: 'foo', devDependencies: { lodash: '*' } }))
     const pkg = new PackageJsonFile(fs.basePath)
     pkg.uninstall('lodash')
@@ -146,7 +146,7 @@ test.group('Package file', (group) => {
     assert.deepEqual(JSON.parse(contents), { name: 'foo', devDependencies: { lodash: '*' } })
   }).timeout(0)
 
-  test('install given version of a package', async (assert) => {
+  test('install given version of a package', async ({ assert }) => {
     await fs.add('package.json', JSON.stringify({ name: 'foo' }))
     const pkg = new PackageJsonFile(fs.basePath)
     pkg.install('lodash', '1.0.0')
@@ -157,7 +157,7 @@ test.group('Package file', (group) => {
     assert.equal(JSON.parse(contents).devDependencies.lodash, '^1.0.0')
   }).timeout(0)
 
-  test('get list of dev & production installs', async (assert) => {
+  test('get list of dev & production installs', async ({ assert }) => {
     await fs.add('package.json', JSON.stringify({ name: 'foo' }))
     const pkg = new PackageJsonFile(fs.basePath)
 
@@ -178,7 +178,7 @@ test.group('Package file', (group) => {
     })
   }).timeout(0)
 
-  test('get list of dev & production uninstalls', async (assert) => {
+  test('get list of dev & production uninstalls', async ({ assert }) => {
     await fs.add('package.json', JSON.stringify({ name: 'foo' }))
     const pkg = new PackageJsonFile(fs.basePath)
     pkg.uninstall('lodash', false)
@@ -195,7 +195,7 @@ test.group('Package file', (group) => {
     })
   }).timeout(0)
 
-  test('return install errors from commit action', async (assert) => {
+  test('return install errors from commit action', async ({ assert }) => {
     await fs.add('package.json', JSON.stringify({ name: 'foo' }))
     const pkg = new PackageJsonFile(fs.basePath)
     pkg.install('sdasdjksadjkasdkja')
@@ -207,7 +207,7 @@ test.group('Package file', (group) => {
     assert.isUndefined(JSON.parse(contents).devDependencies)
   }).timeout(0)
 
-  test('do not continue commit when one of the install command fails', async (assert) => {
+  test('do not continue commit when one of the install command fails', async ({ assert }) => {
     await fs.add('package.json', JSON.stringify({ name: 'foo' }))
     const pkg = new PackageJsonFile(fs.basePath)
 
@@ -222,7 +222,7 @@ test.group('Package file', (group) => {
     assert.isUndefined(JSON.parse(contents).dependencies)
   }).timeout(0)
 
-  test('execute callback before installing packages', async (assert) => {
+  test('execute callback before installing packages', async ({ assert }) => {
     assert.plan(2)
     await fs.add('package.json', JSON.stringify({ name: 'foo' }))
     const pkg = new PackageJsonFile(fs.basePath)
@@ -236,7 +236,7 @@ test.group('Package file', (group) => {
     pkg.commit()
   }).timeout(0)
 
-  test('execute callback before uninstalling packages', async (assert) => {
+  test('execute callback before uninstalling packages', async ({ assert }) => {
     assert.plan(2)
     await fs.add('package.json', JSON.stringify({ name: 'foo' }))
     const pkg = new PackageJsonFile(fs.basePath)
@@ -250,7 +250,7 @@ test.group('Package file', (group) => {
     pkg.rollback()
   }).timeout(0)
 
-  test('install given version of a package asynchronously', async (assert) => {
+  test('install given version of a package asynchronously', async ({ assert }) => {
     await fs.add('package.json', JSON.stringify({ name: 'foo' }))
     const pkg = new PackageJsonFile(fs.basePath)
     pkg.install('lodash', '1.0.0')
@@ -261,7 +261,7 @@ test.group('Package file', (group) => {
     assert.equal(JSON.parse(contents).devDependencies.lodash, '^1.0.0')
   }).timeout(0)
 
-  test('return install errors from asynchronous commit action', async (assert) => {
+  test('return install errors from asynchronous commit action', async ({ assert }) => {
     await fs.add('package.json', JSON.stringify({ name: 'foo' }))
     const pkg = new PackageJsonFile(fs.basePath)
     pkg.install('sdasdjksadjkasdkja')
@@ -273,7 +273,7 @@ test.group('Package file', (group) => {
     assert.isUndefined(JSON.parse(contents).devDependencies)
   }).timeout(0)
 
-  test('do not continue commit when one of the asynchronous install fails', async (assert) => {
+  test('do not continue commit when one of the asynchronous install fails', async ({ assert }) => {
     await fs.add('package.json', JSON.stringify({ name: 'foo' }))
     const pkg = new PackageJsonFile(fs.basePath)
 
@@ -288,7 +288,7 @@ test.group('Package file', (group) => {
     assert.isUndefined(JSON.parse(contents).dependencies)
   }).timeout(0)
 
-  test('work fine when install array is empty', async (assert) => {
+  test('work fine when install array is empty', async ({ assert }) => {
     await fs.add('package.json', JSON.stringify({ name: 'foo' }))
     const pkg = new PackageJsonFile(fs.basePath)
     pkg.install('lodash')

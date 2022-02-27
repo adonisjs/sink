@@ -7,7 +7,7 @@
  * file that was distributed with this source code.
  */
 
-import test from 'japa'
+import { test } from '@japa/runner'
 import endent from 'endent'
 import { join } from 'path'
 import { Filesystem } from '@poppinss/dev-utils'
@@ -16,15 +16,15 @@ import { MustacheFile } from '../src/Files/Formats/Mustache'
 const fs = new Filesystem(join(__dirname, '__app'))
 
 test.group('Mustache File', (group) => {
-  group.afterEach(async () => {
+  group.each.teardown(async () => {
     await fs.cleanup()
   })
 
-  group.beforeEach(async () => {
+  group.each.setup(async () => {
     await fs.ensureRoot()
   })
 
-  test('create template file', async (assert) => {
+  test('create template file', async ({ assert }) => {
     await fs.add('template.txt', 'hello world')
 
     const file = new MustacheFile(fs.basePath, 'foo.txt', join(fs.basePath, 'template.txt'))
@@ -34,7 +34,7 @@ test.group('Mustache File', (group) => {
     assert.equal(contents.trim(), 'hello world')
   })
 
-  test('subsitute data', async (assert) => {
+  test('subsitute data', async ({ assert }) => {
     await fs.add('template.txt', 'hello {{ name }}')
 
     const file = new MustacheFile(fs.basePath, 'foo.txt', join(fs.basePath, 'template.txt'))
@@ -44,7 +44,7 @@ test.group('Mustache File', (group) => {
     assert.equal(contents.trim(), 'hello virk')
   })
 
-  test('write conditionals', async (assert) => {
+  test('write conditionals', async ({ assert }) => {
     await fs.add(
       'template.txt',
       `
@@ -63,7 +63,7 @@ test.group('Mustache File', (group) => {
     assert.equal(contents.trim(), 'Hello virk')
   })
 
-  test('do not modify template file when it already exists', async (assert) => {
+  test('do not modify template file when it already exists', async ({ assert }) => {
     await fs.add('template.txt', 'hello world')
     await fs.add('foo.txt', 'hi world')
 
@@ -74,7 +74,7 @@ test.group('Mustache File', (group) => {
     assert.equal(contents.trim(), 'hi world')
   })
 
-  test('modify template file when overwrite is true', async (assert) => {
+  test('modify template file when overwrite is true', async ({ assert }) => {
     await fs.add('template.txt', 'hello world')
     await fs.add('foo.txt', 'hi world')
 
@@ -86,7 +86,7 @@ test.group('Mustache File', (group) => {
     assert.equal(contents.trim(), 'hello world')
   })
 
-  test('remove file on rollback', async (assert) => {
+  test('remove file on rollback', async ({ assert }) => {
     await fs.add('template.txt', 'hello world')
     await fs.add('foo.txt', 'hi world')
 
@@ -97,7 +97,7 @@ test.group('Mustache File', (group) => {
     assert.isFalse(hasFile)
   })
 
-  test('do not remove file on rollback when removeOnRollback=false', async (assert) => {
+  test('do not remove file on rollback when removeOnRollback=false', async ({ assert }) => {
     await fs.add('template.txt', 'hello world')
     await fs.add('foo.txt', 'hi world')
 
@@ -109,7 +109,7 @@ test.group('Mustache File', (group) => {
     assert.isTrue(hasFile)
   })
 
-  test('do not mess up whitespaces inside conditionals and loops', async (assert) => {
+  test('do not mess up whitespaces inside conditionals and loops', async ({ assert }) => {
     await fs.add(
       'template.txt',
       endent`
@@ -136,7 +136,7 @@ test.group('Mustache File', (group) => {
     )
   })
 
-  test('render partials', async (assert) => {
+  test('render partials', async ({ assert }) => {
     await fs.add('template.txt', '{{ > user }}')
     await fs.add('user.txt', 'hello {{ name }}')
 

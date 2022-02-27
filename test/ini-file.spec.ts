@@ -8,7 +8,7 @@
  */
 
 import { join } from 'path'
-import test from 'japa'
+import { test } from '@japa/runner'
 import ini from 'ini'
 import { Filesystem } from '@poppinss/dev-utils'
 
@@ -17,15 +17,15 @@ import { IniFile } from '../src/Files/Formats/Ini'
 const fs = new Filesystem(join(__dirname, '__app'))
 
 test.group('Ini file', (group) => {
-  group.afterEach(async () => {
+  group.each.teardown(async () => {
     await fs.cleanup()
   })
 
-  group.beforeEach(async () => {
+  group.each.setup(async () => {
     await fs.ensureRoot()
   })
 
-  test('create ini file', async (assert) => {
+  test('create ini file', async ({ assert }) => {
     const file = new IniFile(fs.basePath, 'foo.ini')
     file.set('_global', { appName: 'hello-world' })
     file.commit()
@@ -34,7 +34,7 @@ test.group('Ini file', (group) => {
     assert.deepEqual(ini.parse(contents), { appName: 'hello-world' })
   })
 
-  test('define custom section in ini file', async (assert) => {
+  test('define custom section in ini file', async ({ assert }) => {
     const file = new IniFile(fs.basePath, 'foo.ini')
     file.set('foo', { appName: 'hello-world' })
     file.commit()
@@ -43,7 +43,7 @@ test.group('Ini file', (group) => {
     assert.deepEqual(ini.parse(contents), { foo: { appName: 'hello-world' } })
   })
 
-  test('update ini file', async (assert) => {
+  test('update ini file', async ({ assert }) => {
     await fs.add('foo.ini', ini.encode({ appName: 'hello-world', version: '1.0' }))
 
     const file = new IniFile(fs.basePath, 'foo.ini')
@@ -54,7 +54,7 @@ test.group('Ini file', (group) => {
     assert.deepEqual(ini.parse(contents), { appName: 'hello-universe' })
   })
 
-  test('merge to ini file', async (assert) => {
+  test('merge to ini file', async ({ assert }) => {
     await fs.add('foo.ini', ini.encode({ appName: 'hello-world', version: '1.0' }))
     const file = new IniFile(fs.basePath, 'foo.ini')
 
@@ -65,7 +65,7 @@ test.group('Ini file', (group) => {
     assert.deepEqual(ini.parse(contents), { appName: 'hello-universe', version: '1.0' })
   })
 
-  test('merge to custom section in ini file', async (assert) => {
+  test('merge to custom section in ini file', async ({ assert }) => {
     await fs.add(
       'foo.ini',
       ini.encode({ appName: 'hello-world', version: '1.0' }, { section: 'foo', whitespace: false })
@@ -79,7 +79,7 @@ test.group('Ini file', (group) => {
     assert.deepEqual(ini.parse(contents), { foo: { appName: 'hello-universe', version: '1.0' } })
   })
 
-  test('unset section from ini file', async (assert) => {
+  test('unset section from ini file', async ({ assert }) => {
     await fs.add('foo.ini', ini.encode({ appName: 'hello-world', version: '1.0' }))
     const file = new IniFile(fs.basePath, 'foo.ini')
     file.unset('_global')
@@ -89,7 +89,7 @@ test.group('Ini file', (group) => {
     assert.deepEqual(ini.parse(contents), {})
   })
 
-  test('unset section value from ini file', async (assert) => {
+  test('unset section value from ini file', async ({ assert }) => {
     await fs.add('foo.ini', ini.encode({ appName: 'hello-world', version: '1.0' }))
     const file = new IniFile(fs.basePath, 'foo.ini')
     file.merge('_global', { version: undefined })
@@ -99,7 +99,7 @@ test.group('Ini file', (group) => {
     assert.deepEqual(ini.parse(contents), { appName: 'hello-world' })
   })
 
-  test('delete ini file', async (assert) => {
+  test('delete ini file', async ({ assert }) => {
     await fs.add('foo.ini', ini.encode({ appName: 'hello-world', version: '1.0' }))
     const file = new IniFile(fs.basePath, 'foo.ini')
     file.delete()
@@ -108,7 +108,7 @@ test.group('Ini file', (group) => {
     assert.isFalse(hasFile)
   })
 
-  test('undo constructive commits on rollback', async (assert) => {
+  test('undo constructive commits on rollback', async ({ assert }) => {
     await fs.add('foo.ini', ini.encode({ appName: 'hello-world', version: '1.0' }))
 
     const file = new IniFile(fs.basePath, 'foo.ini')
@@ -119,7 +119,7 @@ test.group('Ini file', (group) => {
     assert.deepEqual(ini.parse(contents), { version: '1.0' })
   })
 
-  test('do not touch destructive commits on rollbacks', async (assert) => {
+  test('do not touch destructive commits on rollbacks', async ({ assert }) => {
     await fs.add('foo.ini', ini.encode({ appName: 'hello-world' }))
 
     const file = new IniFile(fs.basePath, 'foo.ini')
