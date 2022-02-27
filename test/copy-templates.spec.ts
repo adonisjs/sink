@@ -186,4 +186,51 @@ test.group('Copy templates', (group) => {
       export default foo\n`
     )
   })
+
+  test('copy tests templates to the destination path', async (assert) => {
+    await fs.add(
+      'templates/tests/bootstrap.txt',
+      `
+      const foo = 'foo'
+      export default foo`
+    )
+
+    const application = new Application(fs.basePath, 'web', {
+      directories: new Map([['tests', 'tests']]),
+    })
+
+    new TemplatesManager(fs.basePath, join(fs.basePath, 'templates/tests'), application).copy({
+      tests: ['bootstrap.txt'],
+    })
+
+    const contents = await fs.get('tests/bootstrap.ts')
+    assert.equal(
+      contents,
+      `
+      const foo = 'foo'
+      export default foo\n`
+    )
+  })
+
+  test('copy templates to the root of the app', async (assert) => {
+    await fs.add(
+      'templates/env.txt',
+      `
+      const foo = 'foo'
+      export default foo`
+    )
+
+    const application = new Application(fs.basePath, 'web', {})
+    new TemplatesManager(fs.basePath, join(fs.basePath, 'templates'), application).copy({
+      './': ['env.txt'],
+    })
+
+    const contents = await fs.get('env.ts')
+    assert.equal(
+      contents,
+      `
+      const foo = 'foo'
+      export default foo\n`
+    )
+  })
 })

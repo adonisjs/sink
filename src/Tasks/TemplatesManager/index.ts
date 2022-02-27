@@ -57,6 +57,10 @@ export class TemplatesManager {
    * Returns directory for the template key. It is defined inside the adonisrc file.
    */
   private getDirectoryFor(templateFor: string): string | undefined {
+    if (templateFor === './' || templateFor === '/') {
+      return './'
+    }
+
     /**
      * Ensure the object key inside package.json file is a known directory
      */
