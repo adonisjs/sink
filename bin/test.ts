@@ -23,9 +23,11 @@ configure({
     plugins: [assert(), runFailedTests()],
     reporters: [specReporter()],
     importer: (filePath: string) => import(filePath),
-    setup: [() => {
-      import('../src/disableLogger')
-    }]
+    setup: [
+      () => {
+        import('../src/disableLogger')
+      },
+    ],
   },
 })
 
