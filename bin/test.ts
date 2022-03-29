@@ -25,7 +25,7 @@ configure({
     importer: (filePath: string) => import(filePath),
     setup: [
       () => {
-        import('../src/disableLogger')
+        import('../src/disableLogger.js')
       },
     ],
   },

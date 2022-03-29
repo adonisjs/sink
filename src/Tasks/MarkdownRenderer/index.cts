@@ -8,10 +8,8 @@
  */
 
 import open from 'open'
-import marked from 'marked'
 import { join } from 'path'
 import { tmpdir } from 'os'
-import TerminalRenderer from 'marked-terminal'
 import { readFile, outputFile } from 'fs-extra'
 
 import { css } from './Styles'
@@ -56,10 +54,11 @@ export class MarkdownRenderer {
    * Converts markdown to HTML and opens it up inside the browser
    */
   public async renderInBrowser() {
+    const { marked, Renderer } = await import('marked')
     try {
       const contents = await readFile(this.mdFileAbsPath, 'utf-8')
       const html = this.generateHtml(
-        marked.setOptions({ renderer: new marked.Renderer() })(contents.trim())
+        marked.setOptions({ renderer: new Renderer() })(contents.trim())
       )
       await this.openContentsInBrowser(html)
     } catch (error) {}
@@ -69,6 +68,8 @@ export class MarkdownRenderer {
    * Writes markdown in the terminal
    */
   public async renderInTerminal() {
+    const { marked } = await import('marked')
+    const { default: TerminalRenderer } = await import('marked-terminal')
     try {
       const contents = await readFile(this.mdFileAbsPath, 'utf-8')
       console.log(marked.setOptions({ renderer: new TerminalRenderer() })(contents.trim()).trim())

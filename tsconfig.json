@@ -3,9 +3,9 @@
   "compilerOptions": {
     "resolveJsonModule": true,
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "module": "Node12",
+    "moduleResolution": "Node12"
   },
-  "files": [
-    "./node_modules/@adonisjs/application/build/adonis-typings/index.d.ts"
-  ]
+  "files": ["./node_modules/@adonisjs/application/build/adonis-typings/index.d.ts"]
 }

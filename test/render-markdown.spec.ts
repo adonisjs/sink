@@ -10,7 +10,7 @@
 import { test } from '@japa/runner'
 import { join } from 'path'
 import { Filesystem } from '@poppinss/dev-utils'
-import { MarkdownRenderer } from '../src/Tasks/MarkdownRenderer'
+import { MarkdownRenderer } from '../src/Tasks/MarkdownRenderer/index.cjs'
 
 const fs = new Filesystem(join(__dirname, '__app'))
 

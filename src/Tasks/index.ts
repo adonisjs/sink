@@ -8,5 +8,5 @@
  */
 
 export { Instructions } from './Instructions'
-export { MarkdownRenderer } from './MarkdownRenderer'
+export { MarkdownRenderer } from './MarkdownRenderer/index.cjs'
 export { TemplatesManager } from './TemplatesManager'
