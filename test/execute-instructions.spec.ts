@@ -444,4 +444,26 @@ test.group('Execute instructions', (group) => {
       ],
     })
   })
+
+  test('define test providers inside .adonisrc.json file', async ({ assert }) => {
+    await fs.add(
+      'node_modules/@fake/app/package.json',
+      JSON.stringify({
+        name: '@fake/app',
+        version: '1.0.0',
+        adonisjs: {
+          testProviders: ['@fake/app'],
+        },
+      })
+    )
+
+    const application = new Application(fs.basePath, 'web', {})
+    const completed = await new Instructions('@fake/app', fs.basePath, application, true).execute()
+    assert.isTrue(completed)
+
+    const rcContents = await fs.fsExtra.readJSON(join(fs.basePath, '.adonisrc.json'))
+    assert.deepEqual(rcContents, {
+      testProviders: ['@fake/app'],
+    })
+  })
 })

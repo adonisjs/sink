@@ -44,6 +44,12 @@ export class AdonisRcFile extends JsonFile {
    */
   private aceProviders: any[] = []
 
+  /**
+   * Storing a local copy of testProviders for concatenating
+   * new entries.
+   */
+  private testProviders: any[] = []
+
   constructor(basePath: string) {
     super(basePath, '.adonisrc.json')
     this.preloads = this.get('preloads', [])
@@ -51,6 +57,7 @@ export class AdonisRcFile extends JsonFile {
     this.commands = this.get('commands', [])
     this.providers = this.get('providers', [])
     this.aceProviders = this.get('aceProviders', [])
+    this.testProviders = this.get('testProviders', [])
   }
 
   /**
@@ -80,6 +87,10 @@ export class AdonisRcFile extends JsonFile {
 
       if (body.key.startsWith('aceProviders')) {
         key = 'aceProviders'
+      }
+
+      if (body.key.startsWith('testProviders')) {
+        key = 'testProviders'
       }
 
       if (!key) {
@@ -224,5 +235,19 @@ export class AdonisRcFile extends JsonFile {
 
     this.aceProviders[entryIndex] = provider
     this.set(`aceProviders[${entryIndex}]`, provider)
+  }
+
+  /**
+   * Add new providers to the test providers array
+   */
+  public addTestProvider(provider: string) {
+    let entryIndex = this.testProviders.findIndex((command) => {
+      return command === provider
+    })
+
+    entryIndex = entryIndex === -1 ? this.testProviders.length : entryIndex
+
+    this.testProviders[entryIndex] = provider
+    this.set(`testProviders[${entryIndex}]`, provider)
   }
 }

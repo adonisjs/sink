@@ -145,6 +145,12 @@
           "items": {
             "type": "string"
           }
+        },
+        "testProviders": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     }

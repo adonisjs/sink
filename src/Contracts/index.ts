@@ -56,6 +56,7 @@ export type PackageInstructionsBlock = {
   providers?: string[]
   aliases?: { [key: string]: string }
   aceProviders?: string[]
+  testProviders?: string[]
 }
 
 /**
