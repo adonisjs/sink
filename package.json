@@ -1,6 +1,6 @@
 {
   "name": "@adonisjs/sink",
-  "version": "5.2.3",
+  "version": "5.3.0",
   "description": "AdonisJS sink is a swiss knife for managing project files by applying minimal changes, inferring formatting from EditorConfig file and comes with specialized tasks for different file formats and file types.",
   "main": "index.js",
   "files": [
