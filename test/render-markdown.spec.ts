@@ -7,8 +7,8 @@
  * file that was distributed with this source code.
  */
 
-import { test } from '@japa/runner'
 import { join } from 'path'
+import { test } from '@japa/runner'
 import { Filesystem } from '@poppinss/dev-utils'
 import { MarkdownRenderer } from '../src/Tasks/MarkdownRenderer'
 
