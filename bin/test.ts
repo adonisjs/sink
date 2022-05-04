@@ -22,10 +22,10 @@ configure({
     files: ['test/**/*.spec.ts'],
     plugins: [assert(), runFailedTests()],
     reporters: [specReporter()],
-    importer: (filePath: string) => import(filePath),
+    importer: (filePath: string) => require(filePath),
     setup: [
       () => {
-        import('../src/disableLogger')
+        import('../src/disableLogger.js')
       },
     ],
   },

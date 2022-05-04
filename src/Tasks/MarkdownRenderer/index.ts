@@ -10,7 +10,6 @@
 import open from 'open'
 import { join } from 'path'
 import { tmpdir } from 'os'
-import inclusion from 'inclusion'
 import { readFile, outputFile } from 'fs-extra'
 
 import { css } from './Styles'
@@ -55,7 +54,7 @@ export class MarkdownRenderer {
    * Converts markdown to HTML and opens it up inside the browser
    */
   public async renderInBrowser() {
-    const { marked, Renderer } = await inclusion('marked')
+    const { marked, Renderer } = await import('marked')
     const renderer = new Renderer()
 
     try {
@@ -69,10 +68,8 @@ export class MarkdownRenderer {
    * Writes markdown in the terminal
    */
   public async renderInTerminal() {
-    const { marked } = (await inclusion('marked')) as typeof import('marked')
-    const { default: TerminalRenderer } = (await inclusion(
-      'marked-terminal'
-    )) as typeof import('marked-terminal')
+    const { marked } = await import('marked')
+    const { default: TerminalRenderer } = await import('marked-terminal')
     const renderer = new TerminalRenderer()
 
     try {
