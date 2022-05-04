@@ -56,12 +56,11 @@ export class MarkdownRenderer {
    */
   public async renderInBrowser() {
     const { marked, Renderer } = await inclusion('marked')
+    const renderer = new Renderer()
 
     try {
       const contents = await readFile(this.mdFileAbsPath, 'utf-8')
-      const html = this.generateHtml(
-        marked.setOptions({ renderer: new Renderer() })(contents.trim())
-      )
+      const html = this.generateHtml(marked.setOptions({ renderer })(contents.trim()))
       await this.openContentsInBrowser(html)
     } catch (error) {}
   }
@@ -70,11 +69,15 @@ export class MarkdownRenderer {
    * Writes markdown in the terminal
    */
   public async renderInTerminal() {
-    const { marked } = await inclusion('marked')
-    const { TerminalRenderer } = await inclusion('marked-terminal')
+    const { marked } = (await inclusion('marked')) as typeof import('marked')
+    const { default: TerminalRenderer } = (await inclusion(
+      'marked-terminal'
+    )) as typeof import('marked-terminal')
+    const renderer = new TerminalRenderer()
+
     try {
       const contents = await readFile(this.mdFileAbsPath, 'utf-8')
-      console.log(marked.setOptions({ renderer: new TerminalRenderer() })(contents.trim()).trim())
+      console.log(marked.setOptions({ renderer })(contents.trim()).trim())
     } catch (error) {}
   }
 }

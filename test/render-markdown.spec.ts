@@ -30,10 +30,10 @@ test.group('Render markdown', (group) => {
   test('render markdown file by opening it in the browser', async () => {
     await fs.add('foo.md', '## Hello world')
     await new MarkdownRenderer(join(fs.basePath, 'foo.md'), '@adonisjs/core').renderInBrowser()
-  }).skip(!!process.env.CI)
+  })
 
   test('render markdown file by rendering it inside terminal', async () => {
     await fs.add('foo.md', '## Hello world')
     await new MarkdownRenderer(join(fs.basePath, 'foo.md'), '@adonisjs/core').renderInTerminal()
-  }).skip(!!process.env.CI)
+  })
 })
