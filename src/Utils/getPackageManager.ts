@@ -12,7 +12,9 @@ import { pathExistsSync } from 'fs-extra'
 
 /**
  * Returns the package manager in use by checking for the lock files
- * on the disk or by inspecting the "npm_execpath"
+ * on the disk or by inspecting the "npm_config_user_agent".
+ *
+ * Defaults to npm when unable to detect the package manager.
  */
 export function getPackageManager(appRoot: string): 'yarn' | 'pnpm' | 'npm' {
   if (pathExistsSync(resolve(appRoot, 'yarn.lock'))) {
@@ -23,9 +25,15 @@ export function getPackageManager(appRoot: string): 'yarn' | 'pnpm' | 'npm' {
     return 'pnpm'
   }
 
-  return process.env.npm_execpath && process.env.npm_execpath.includes('yarn')
-    ? 'yarn'
-    : process.env.npm_execpath && process.env.npm_execpath.includes('pnpm')
-    ? 'pnpm'
-    : 'npm'
+  if (process.env.npm_config_user_agent) {
+    if (process.env.npm_config_user_agent.includes('yarn')) {
+      return 'yarn'
+    }
+
+    if (process.env.npm_config_user_agent.includes('pnpm')) {
+      return 'pnpm'
+    }
+  }
+
+  return 'npm'
 }
