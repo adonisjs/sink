@@ -82,7 +82,7 @@
     "fs-extra": "^10.1.0",
     "marked": "^4.2.12",
     "marked-terminal": "^5.1.1",
-    "mrm-core": "^7.1.14",
+    "mrm-core": "7.1.13",
     "mustache": "^4.2.0",
     "open": "^8.4.2"
   },
